@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>taoky&#39;s blog</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://taoky.github.io/"/>
+  <updated>2018-01-20T12:57:19.501Z</updated>
+  <id>http://taoky.github.io/</id>
+  
+  <author>
+    <name>taoky</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>高考，与高考之后……</title>
+    <link href="http://taoky.github.io/2017/08/09/after-gaokao/"/>
+    <id>http://taoky.github.io/2017/08/09/after-gaokao/</id>
+    <published>2017-08-09T03:29:29.000Z</published>
+    <updated>2018-01-20T12:57:19.501Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。&lt;/p&gt;
+&lt;p&gt;在框架成功迁移到 Hexo 之后，我觉得是时候应该开始填坑了。（不过那篇关于 BMP 的文章我暂时不想填）&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="高考" scheme="http://taoky.github.io/categories/%E9%AB%98%E8%80%83/"/>
+    
+    
+      <category term="高考" scheme="http://taoky.github.io/tags/%E9%AB%98%E8%80%83/"/>
+    
+      <category term="杂感" scheme="http://taoky.github.io/tags/%E6%9D%82%E6%84%9F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>从 Jekyll 向 Hexo 迁移</title>
+    <link href="http://taoky.github.io/2017/08/08/migration-to-hexo/"/>
+    <id>http://taoky.github.io/2017/08/08/migration-to-hexo/</id>
+    <published>2017-08-08T12:26:46.000Z</published>
+    <updated>2018-01-20T12:52:13.456Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。&lt;/p&gt;
+&lt;p&gt;界面相比原来要更清晰一些。评论系统将会更换，因为使用 D
+      
+    
+    </summary>
+    
+      <category term="Hexo" scheme="http://taoky.github.io/categories/Hexo/"/>
+    
+    
+      <category term="Jekyll" scheme="http://taoky.github.io/tags/Jekyll/"/>
+    
+      <category term="Hexo" scheme="http://taoky.github.io/tags/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用 C++ 读取简单的 24、32 位 BMP 图像</title>
+    <link href="http://taoky.github.io/2017/02/06/read-bmp-with-cpp/"/>
+    <id>http://taoky.github.io/2017/02/06/read-bmp-with-cpp/</id>
+    <published>2017-02-05T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.456Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;BMP 是 Windows 下常见的一种位图格式。之所以我们选择直接读取 BMP 格式（即不使用其他的库）而非 JPG、PNG 等其他图像格式，是因为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BMP 的文档是公开的。没有版权、专利问题。&lt;/li&gt;
+&lt;li&gt;运用较广泛，常见。&lt;/li&gt;
+&lt;li&gt;结构相对简单，一般来讲没有压缩，代码容易写。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接下来，我将尝试用最简单的方式来介绍 BMP 格式的结构，并且尽可能让之后出现的代码不依赖于具体的操作系统平台与特定的编译器实现。建议备一个十六进制查看器以方便理解。&lt;/p&gt;
+&lt;p&gt;（下文可能会有错误，并且不会处理「特殊的」BMP 文件。等我高考完之后如果还有兴趣，可能会再去做其他情况下的 BMP 文件读取。）&lt;br&gt;
+    
+    </summary>
+    
+      <category term="程序" scheme="http://taoky.github.io/categories/%E7%A8%8B%E5%BA%8F/"/>
+    
+    
+      <category term="C++" scheme="http://taoky.github.io/tags/C/"/>
+    
+      <category term="BMP" scheme="http://taoky.github.io/tags/BMP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《你的名字。》观后感——一个关于梦、改变和灾难的故事</title>
+    <link href="http://taoky.github.io/2017/02/02/yourname-my-review/"/>
+    <id>http://taoky.github.io/2017/02/02/yourname-my-review/</id>
+    <published>2017-02-01T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.455Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;《你的名字。》（下简称「君名」）第一次是我在 12 月 2 日和爸妈去电影院看的。记得那天高三破天荒全校第一个放假。一开始是几周前看到一帮人在安利之后想去看的，然后在那天下午看了一遍预告片，感觉……不知道它到底想讲一个什么故事。我很担心君名的风格适不适合我，但最后还是因为好奇心拉着爸妈去看了（虽然我爸更想看《神奇动物在哪里》）。毕竟我没有女票，也没有住得近、一下子就能约出来的朋友，一个人去看也不太可能会被批准的啊 -_-。&lt;/p&gt;
+&lt;p&gt;当然看完之后感觉很棒（不然我就不会写这篇观后感了），虽然第一次看之后感觉时间线有点混乱。记得上一次感觉「这部电影好棒啊」的时候是在小高考考完之后去看《疯狂动物城》的那次。&lt;/p&gt;
+&lt;p&gt;过了两个月了，我基本把所有能看到的资料都看了一遍，电影又看了两遍——虽然是盗版的片源（YN-009 那个，个人各种原因没有机会再去买电影票了）。或许现在我能用我糟糕的文笔来写写我的想法了吧。下面写的有点乱，见谅。&lt;/p&gt;
+&lt;p&gt;（有剧透）&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="影评" scheme="http://taoky.github.io/categories/%E5%BD%B1%E8%AF%84/"/>
+    
+    
+      <category term="影评" scheme="http://taoky.github.io/tags/%E5%BD%B1%E8%AF%84/"/>
+    
+      <category term="《你的名字。》" scheme="http://taoky.github.io/tags/%E3%80%8A%E4%BD%A0%E7%9A%84%E5%90%8D%E5%AD%97%E3%80%82%E3%80%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>无标题</title>
+    <link href="http://taoky.github.io/2017/01/17/untitled/"/>
+    <id>http://taoky.github.io/2017/01/17/untitled/</id>
+    <published>2017-01-16T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.455Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;/* &lt;/p&gt;
+&lt;p&gt;这是一篇风格随意的自编小说，灵感源于敝校期末作文讲义第一篇文章的标题。已经有 1 年没有在博客上写什么东西了。趁这个机会让它「苏醒」一下吧。&lt;/p&gt;
+&lt;p&gt;献给所有有着「作文写作困难症」的同学。&lt;/p&gt;
+&lt;p&gt;*/&lt;/p&gt;
+&lt;p&gt;他新建了一个文档。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="小说" scheme="http://taoky.github.io/categories/%E5%B0%8F%E8%AF%B4/"/>
+    
+    
+      <category term="作品" scheme="http://taoky.github.io/tags/%E4%BD%9C%E5%93%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>信任与不信任</title>
+    <link href="http://taoky.github.io/2015/09/27/trusting-or-not/"/>
+    <id>http://taoky.github.io/2015/09/27/trusting-or-not/</id>
+    <published>2015-09-26T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.455Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。&lt;/p&gt;
+&lt;p&gt;这件事情其实各方都有责任，Apple 的 Mac App Store 做得实在太差：经常连接不上，连接上了还很难下载：经常下载到一半就失败了；Apple Developer Program 没有提供 sha1 校验码；开发者作死关了 Gatekeeper，不了解 OS X 应用的数字证书……这件事闹得太大，很多著名应用被感染，以至于 Apple 发出了一个&lt;a href=&quot;http://www.apple.com/cn/xcodeghost/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;申明&lt;/a&gt;。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="随想" scheme="http://taoky.github.io/categories/%E9%9A%8F%E6%83%B3/"/>
+    
+    
+      <category term="安全" scheme="http://taoky.github.io/tags/%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="信任" scheme="http://taoky.github.io/tags/%E4%BF%A1%E4%BB%BB/"/>
+    
+      <category term="系统" scheme="http://taoky.github.io/tags/%E7%B3%BB%E7%BB%9F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>OS X 下的 App 数字证书和更多</title>
+    <link href="http://taoky.github.io/2015/09/26/the-codesign-in-osx/"/>
+    <id>http://taoky.github.io/2015/09/26/the-codesign-in-osx/</id>
+    <published>2015-09-25T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.454Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近的 XcodeGhost 事情闹得沸沸扬扬，大家都被吓得不轻。假的 Xcode 这么长时间没有被发现，一方面可能是关掉了 Gatekeeper 的原因；另一方面，有时开了 Gatekeeper 还是没有被检测出来，并且表面上是看不出来程序有没有数字签名的，不像 Windows 里面右键属性就可以看到。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="安全" scheme="http://taoky.github.io/categories/%E5%AE%89%E5%85%A8/"/>
+    
+    
+      <category term="数字证书" scheme="http://taoky.github.io/tags/%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6/"/>
+    
+      <category term="安全" scheme="http://taoky.github.io/tags/%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="App" scheme="http://taoky.github.io/tags/App/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>杂记</title>
+    <link href="http://taoky.github.io/2015/09/03/somethink/"/>
+    <id>http://taoky.github.io/2015/09/03/somethink/</id>
+    <published>2015-09-02T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.454Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;我发现似乎我在暑假里并没有在这里写过东西，或者说这里看上去已经「荒废」掉了。当然其中的主要原因是时间分配问题：当我想写点什么的时候发现没有时间，当我有时间的时候我什么都不想写了。而且我本来意图是想把这里变成一个共同记录下生活与技术的地方。结果现在我更想写生活，但又不想透露出所有的事情，总之内心的想法很复杂，但总也实现不了啦。&lt;/p&gt;
+&lt;p&gt;暑假里只是对网页的代码做了一点极小的「更新」。加引号是因为加的部分没啥用，只是使用 Javascript 做一下尝试罢了。&lt;/p&gt;
+&lt;p&gt;开学前一天我发现连接似乎超时了，所以我那时在找替代方案，但是现在可以连了，替代方案什么的以后再说吧。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="http://taoky.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="杂记" scheme="http://taoky.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Markdown 简要使用手册</title>
+    <link href="http://taoky.github.io/2015/06/20/introduction-to-markdown/"/>
+    <id>http://taoky.github.io/2015/06/20/introduction-to-markdown/</id>
+    <published>2015-06-19T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.454Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Markdown 是一种简单易用的标记语言。它被用来编写简单的多格式的文档，语法简单。纵使你不了解它的语法，你也非常容易看懂 Markdown 文档。它可以被转换为 HTML。它有助于编写结构化的文档，实现内容与结构的&lt;del&gt;有机统一&lt;/del&gt;分离。（简单的说，就是 Markdown 写的是结构，至于长什么样子是 CSS 的事）&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Markdown" scheme="http://taoky.github.io/categories/Markdown/"/>
+    
+    
+      <category term="Markdown" scheme="http://taoky.github.io/tags/Markdown/"/>
+    
+      <category term="手册" scheme="http://taoky.github.io/tags/%E6%89%8B%E5%86%8C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>KDE 5 体验：「一下拍扁」</title>
+    <link href="http://taoky.github.io/2015/02/14/flat-kde5-trial/"/>
+    <id>http://taoky.github.io/2015/02/14/flat-kde5-trial/</id>
+    <published>2015-02-13T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.453Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天……嗯……是情人节暨世界癫痫日。我既没有女生喜欢，又没有癫痫，所以今天还是一个平常的日子。当我看到下载堆栈里的 KDE 5 的体验光盘文件的时候，我想，要不今天不写研究性学习报告了，放松一下，来看看 KDE 最近发展的情况吧。&lt;/p&gt;
+&lt;p&gt;在用 OS X 之前，我用的操作系统是 Linux，发行版是 Fedora，桌面环境是 KDE。这是一个不错的桌面环境，并且我也不太喜欢 GNOME、Unity 之类的，自然便投向了 Qt 系的桌面环境。只是换了 OS X 之后不再怎么用 Linux 了。那时的 KDE 应该是到了 4.11 吧，稳定性尚可，但有时还会崩溃，更多的是直接卡住。卡着的时候我便知道八成又是用了 swap，swap 一用太多就卡的很。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="KDE" scheme="http://taoky.github.io/categories/KDE/"/>
+    
+    
+      <category term="Linux" scheme="http://taoky.github.io/tags/Linux/"/>
+    
+      <category term="KDE 5" scheme="http://taoky.github.io/tags/KDE-5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello, 2015!</title>
+    <link href="http://taoky.github.io/2014/12/31/hello-2015/"/>
+    <id>http://taoky.github.io/2014/12/31/hello-2015/</id>
+    <published>2014-12-30T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.453Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;嗯，是的。好像时间过得很快，2014 年春节时候整理照片的事情还记得清清楚楚，这一年的尾声就到了。怎么说好呢？我不知道。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="http://taoky.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="2015" scheme="http://taoky.github.io/tags/2015/"/>
+    
+      <category term="回忆" scheme="http://taoky.github.io/tags/%E5%9B%9E%E5%BF%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>渣翻译：Identifying Back Doors, Attack Points, and Surveillance Mechanisms in iOS Devices</title>
+    <link href="http://taoky.github.io/2014/07/30/translation-iOS-backdoor/"/>
+    <id>http://taoky.github.io/2014/07/30/translation-iOS-backdoor/</id>
+    <published>2014-07-29T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.453Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;似乎最近关于 iOS 被发现存在后门的事情传得火热，本着不怎么相信媒体评论，自己看传出后门的文档的想法，找到了源文档，顺便用了几个小时翻译了一遍。说是翻译，其实信达雅，一样都没有。有几个词出现很多次，但就算查了词典，也根本不知道是什么意思。我只能保证你看完翻译之后了解事情的大概情况。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="翻译" scheme="http://taoky.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="iOS" scheme="http://taoky.github.io/tags/iOS/"/>
+    
+      <category term="英文" scheme="http://taoky.github.io/tags/%E8%8B%B1%E6%96%87/"/>
+    
+      <category term="后门" scheme="http://taoky.github.io/tags/%E5%90%8E%E9%97%A8/"/>
+    
+      <category term="漏洞" scheme="http://taoky.github.io/tags/%E6%BC%8F%E6%B4%9E/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>班级网页第二版发布！</title>
+    <link href="http://taoky.github.io/2014/07/18/class-v2-published/"/>
+    <id>http://taoky.github.io/2014/07/18/class-v2-published/</id>
+    <published>2014-07-17T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.452Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;班级网页第二版发布了！使用最新版本的 Bootstrap，全新扁平化设计，更好兼容手机、平板等移动设备，并抛弃对旧版本浏览器（IE 6/7）的支持。&lt;/p&gt;
+&lt;p&gt;其实新版的班级网页是从八个月前（2013 年 11 月 17 日）开始做的（你没看错）。做了一天，约一个月后（12 月 8 日）又修修补补了一些东西，又两个月后又做了一小部分，然后一直烂尾到……中考结束才继续开始。&lt;/p&gt;
+&lt;p&gt;现在我表示我终于熟悉用 jekyll 和 liquid 的使用了……表示 liquid 竟然不能进行文件的 I/O 操作，导致制作换页器的时候遇到了很大的阻力，用了两天才解决问题，貌似我踩到了一个坑吧……&lt;br&gt;
+    
+    </summary>
+    
+      <category term="班级" scheme="http://taoky.github.io/categories/%E7%8F%AD%E7%BA%A7/"/>
+    
+    
+      <category term="网页" scheme="http://taoky.github.io/tags/%E7%BD%91%E9%A1%B5/"/>
+    
+      <category term="班级" scheme="http://taoky.github.io/tags/%E7%8F%AD%E7%BA%A7/"/>
+    
+      <category term="Bootstrap" scheme="http://taoky.github.io/tags/Bootstrap/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>班级网页 1.1 版</title>
+    <link href="http://taoky.github.io/2014/06/19/class-website-1.1/"/>
+    <id>http://taoky.github.io/2014/06/19/class-website-1.1/</id>
+    <published>2014-06-18T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.452Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;进来发现班级网页 1.0 版访问速度极慢，即使在本地访问也是如此。经检查，发现是浏览器为得到一些网页字体文件与 jQuery 库，访问了一个被超时的服务器。&lt;/p&gt;
+&lt;p&gt;问题已经修复。（其实我本来想放弃维护的。）&lt;br&gt;
+    
+    </summary>
+    
+      <category term="班级" scheme="http://taoky.github.io/categories/%E7%8F%AD%E7%BA%A7/"/>
+    
+    
+      <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
+    
+      <category term="网页" scheme="http://taoky.github.io/tags/%E7%BD%91%E9%A1%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>我认为的文字规范</title>
+    <link href="http://taoky.github.io/2014/06/18/my-thought-of-language-use-in-blog/"/>
+    <id>http://taoky.github.io/2014/06/18/my-thought-of-language-use-in-blog/</id>
+    <published>2014-06-17T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.452Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;中考考完了，先让我抒发一下感受。&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;print(&lt;span class=&quot;string&quot;&gt;&quot;中考考完了&quot;&lt;/span&gt; + &lt;span class=&quot;string&quot;&gt;&quot;啊&quot;&lt;/span&gt; * &lt;span class=&quot;number&quot;&gt;100&lt;/span&gt; + &lt;span class=&quot;string&quot;&gt;&quot;！&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="字体与排版" scheme="http://taoky.github.io/categories/%E5%AD%97%E4%BD%93%E4%B8%8E%E6%8E%92%E7%89%88/"/>
+    
+    
+      <category term="meta" scheme="http://taoky.github.io/tags/meta/"/>
+    
+      <category term="字体" scheme="http://taoky.github.io/tags/%E5%AD%97%E4%BD%93/"/>
+    
+      <category term="排版" scheme="http://taoky.github.io/tags/%E6%8E%92%E7%89%88/"/>
+    
+      <category term="文字" scheme="http://taoky.github.io/tags/%E6%96%87%E5%AD%97/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>天一高中参观游记</title>
+    <link href="http://taoky.github.io/2014/04/06/visiting-Tianyi-High-School/"/>
+    <id>http://taoky.github.io/2014/04/06/visiting-Tianyi-High-School/</id>
+    <published>2014-04-05T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.451Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;周三去参观的，说是初二成绩加起来 130 名以上的可以「偷得浮生半日闲」（笑）去参观。&lt;/p&gt;
+&lt;p&gt;中午 12：20，英语作业还没做完呢，就被拉出去了 -_-#。排队的时候看到貌似是 8 班的语文课代表（男）在那儿对着镜子梳头……和我们班的语文课代表老温样子简直一模一样……&lt;/p&gt;
+&lt;p&gt;难道语文课代表都有相似的爱好吗？！&lt;br&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="http://taoky.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
+    
+      <category term="参观" scheme="http://taoky.github.io/tags/%E5%8F%82%E8%A7%82/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>谈 COS</title>
+    <link href="http://taoky.github.io/2014/01/20/china-operating-system/"/>
+    <id>http://taoky.github.io/2014/01/20/china-operating-system/</id>
+    <published>2014-01-19T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.451Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;前不久有一个叫「COS」的系统发布了，英文名倒是很霸气，叫「China Operating System」，名头够大的，但虽说是发布，但我们都没看到有 ROM 或者是别的系统安装文件出现了，除了几张图片/视频之外。&lt;/p&gt;
+&lt;p&gt;另外，是不是还要有「SIN」和「TAN」系统，然后组成一个三角函数系统？&lt;/p&gt;
+&lt;p&gt;查了查，百度百科上全是对其的赞美之词，反正其一直是这样的，我也见怪不怪了。维基百科的就要中肯一些。&lt;/p&gt;
+&lt;p&gt;网络上已经有人在怀疑，例如界面很像 HTC，但又拒绝承认与其合作什么的，我也不多说了。接下来将是找茬环节。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="系统" scheme="http://taoky.github.io/categories/%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+      <category term="COS" scheme="http://taoky.github.io/tags/COS/"/>
+    
+      <category term="操作系统" scheme="http://taoky.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+      <category term="国产" scheme="http://taoky.github.io/tags/%E5%9B%BD%E4%BA%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>期中考试</title>
+    <link href="http://taoky.github.io/2013/11/17/mid-term-exam/"/>
+    <id>http://taoky.github.io/2013/11/17/mid-term-exam/</id>
+    <published>2013-11-16T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.451Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本周的周三、四是期中考试。语文 130，数学 130，英语 110，物化合起来考，共 130。&lt;/p&gt;
+&lt;p&gt;考试前几天，同桌看我一直盯着她的猪肉脯，于是说：「只要我超过你，而且我在前五名，我就给你一块猪肉脯。」&lt;/p&gt;
+&lt;p&gt;我估摸着超过她没什么太大的希望，于是也来一句：「只要我进前五，我就给你一块饼干。」&lt;/p&gt;
+&lt;p&gt;于是互相同意了「条约」。&lt;/p&gt;
+&lt;p&gt;周二班队课安排考试的座位什么的。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="http://taoky.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
+    
+      <category term="考试" scheme="http://taoky.github.io/tags/%E8%80%83%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>班级网页</title>
+    <link href="http://taoky.github.io/2013/11/10/class-website-available/"/>
+    <id>http://taoky.github.io/2013/11/10/class-website-available/</id>
+    <published>2013-11-09T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.451Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;嗯，上个学期制作的我们班的班级网页上传到了 GitHub 了。&lt;/p&gt;
+&lt;p&gt;PS：我没有在网页上放返回按钮，懒得弄了。&lt;/p&gt;
+&lt;p&gt;地址：&lt;a href=&quot;/Class/index.htm&quot;&gt;班级网页&lt;/a&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="班级" scheme="http://taoky.github.io/categories/%E7%8F%AD%E7%BA%A7/"/>
+    
+    
+      <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
+    
+      <category term="网页" scheme="http://taoky.github.io/tags/%E7%BD%91%E9%A1%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>谈中国软件</title>
+    <link href="http://taoky.github.io/2013/11/03/talking-about-chinese-apps/"/>
+    <id>http://taoky.github.io/2013/11/03/talking-about-chinese-apps/</id>
+    <published>2013-11-02T16:00:00.000Z</published>
+    <updated>2018-01-20T12:52:13.450Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;想写这篇，主要是看到了知乎日报上的&lt;a href=&quot;http://daily.zhihu.com/story/1512313&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这篇&lt;/a&gt;文章，被我们博大精深的「文化」彻底震惊了（尤其是最后一个软件），于是好奇之下，下载了一个纯净的未激活的英文版 Windows XP SP3，把一些著名的软件装装看，看看他们会干什么。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="软件" scheme="http://taoky.github.io/categories/%E8%BD%AF%E4%BB%B6/"/>
+    
+    
+      <category term="Windows" scheme="http://taoky.github.io/tags/Windows/"/>
+    
+      <category term="软件" scheme="http://taoky.github.io/tags/%E8%BD%AF%E4%BB%B6/"/>
+    
+  </entry>
+  
+</feed>
