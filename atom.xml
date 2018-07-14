@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://taoky.github.io/"/>
-  <updated>2018-01-20T12:57:19.501Z</updated>
+  <updated>2018-07-14T03:43:21.882Z</updated>
   <id>http://taoky.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>语言学家</title>
+    <link href="http://taoky.github.io/2018/07/14/language-gaokao-composition/"/>
+    <id>http://taoky.github.io/2018/07/14/language-gaokao-composition/</id>
+    <published>2018-07-14T02:09:29.000Z</published>
+    <updated>2018-07-14T03:43:21.882Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;根据以下材料，选取角度，自拟题目，写一篇不少于800字的文章；文体不限，诗歌除外。&lt;/p&gt;
+&lt;p&gt;花解语，鸟自鸣，生活中处处有语言。&lt;/p&gt;
+&lt;p&gt;不同的语言打开不同的世界，音乐、雕塑、程序、基因……莫不如此。&lt;/p&gt;
+&lt;p&gt;语言丰富生活，语言演绎生命，语言传承文明。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在去年考场&lt;del&gt;开车&lt;/del&gt;（大误）之后，其实我还是挺佩服江苏语文作文的出题人的。在其他省都在搞什么「任务驱动型」的时候，去年就写个车。当然，今年的作文题目也在全国是一股「清流」了。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="小说" scheme="http://taoky.github.io/categories/%E5%B0%8F%E8%AF%B4/"/>
+    
+    
+      <category term="作品" scheme="http://taoky.github.io/tags/%E4%BD%9C%E5%93%81/"/>
+    
+      <category term="高考" scheme="http://taoky.github.io/tags/%E9%AB%98%E8%80%83/"/>
+    
+  </entry>
   
   <entry>
     <title>高考，与高考之后……</title>
@@ -481,28 +510,6 @@
       <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
     
       <category term="网页" scheme="http://taoky.github.io/tags/%E7%BD%91%E9%A1%B5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>谈中国软件</title>
-    <link href="http://taoky.github.io/2013/11/03/talking-about-chinese-apps/"/>
-    <id>http://taoky.github.io/2013/11/03/talking-about-chinese-apps/</id>
-    <published>2013-11-02T16:00:00.000Z</published>
-    <updated>2018-01-20T12:52:13.450Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;想写这篇，主要是看到了知乎日报上的&lt;a href=&quot;http://daily.zhihu.com/story/1512313&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这篇&lt;/a&gt;文章，被我们博大精深的「文化」彻底震惊了（尤其是最后一个软件），于是好奇之下，下载了一个纯净的未激活的英文版 Windows XP SP3，把一些著名的软件装装看，看看他们会干什么。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="软件" scheme="http://taoky.github.io/categories/%E8%BD%AF%E4%BB%B6/"/>
-    
-    
-      <category term="Windows" scheme="http://taoky.github.io/tags/Windows/"/>
-    
-      <category term="软件" scheme="http://taoky.github.io/tags/%E8%BD%AF%E4%BB%B6/"/>
     
   </entry>
   
