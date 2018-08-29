@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://taoky.github.io/"/>
-  <updated>2018-07-14T03:43:21.882Z</updated>
+  <updated>2018-08-29T09:22:08.438Z</updated>
   <id>http://taoky.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>瞎写的大一一年总结</title>
+    <link href="http://taoky.github.io/2018/08/29/freshman-year/"/>
+    <id>http://taoky.github.io/2018/08/29/freshman-year/</id>
+    <published>2018-08-29T08:36:12.000Z</published>
+    <updated>2018-08-29T09:22:08.438Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。
+      
+    
+    </summary>
+    
+      <category term="总结" scheme="http://taoky.github.io/categories/%E6%80%BB%E7%BB%93/"/>
+    
+    
+      <category term="总结" scheme="http://taoky.github.io/tags/%E6%80%BB%E7%BB%93/"/>
+    
+      <category term="大一" scheme="http://taoky.github.io/tags/%E5%A4%A7%E4%B8%80/"/>
+    
+  </entry>
   
   <entry>
     <title>语言学家</title>
@@ -486,30 +511,6 @@
       <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
     
       <category term="考试" scheme="http://taoky.github.io/tags/%E8%80%83%E8%AF%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>班级网页</title>
-    <link href="http://taoky.github.io/2013/11/10/class-website-available/"/>
-    <id>http://taoky.github.io/2013/11/10/class-website-available/</id>
-    <published>2013-11-09T16:00:00.000Z</published>
-    <updated>2018-01-20T12:52:13.451Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;嗯，上个学期制作的我们班的班级网页上传到了 GitHub 了。&lt;/p&gt;
-&lt;p&gt;PS：我没有在网页上放返回按钮，懒得弄了。&lt;/p&gt;
-&lt;p&gt;地址：&lt;a href=&quot;/Class/index.htm&quot;&gt;班级网页&lt;/a&gt;&lt;br&gt;
-    
-    </summary>
-    
-      <category term="班级" scheme="http://taoky.github.io/categories/%E7%8F%AD%E7%BA%A7/"/>
-    
-    
-      <category term="学校" scheme="http://taoky.github.io/tags/%E5%AD%A6%E6%A0%A1/"/>
-    
-      <category term="网页" scheme="http://taoky.github.io/tags/%E7%BD%91%E9%A1%B5/"/>
     
   </entry>
   
