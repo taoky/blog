@@ -764,73 +764,7 @@
 </p>
   </header>
 
-  <div class="user-toc">
-    <h3>TOC | 目录</h3>
-    <p>在网上看到有人用手机的九宫格输入法的键位加密汉字。</p>
-
-<p>比如说「你好」两个字，因为「N」在「6」，「I」在「4」……</p>
-
-<p>然后就「加密」成了「64426」。</p>
-
-<p>但是突然想到这种方法太弱了，又想到前阵子看到的异或加密法，就写了个程序试一试。
-<!--more--></p>
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/stat.h&gt;
-#include &lt;fcntl.h&gt;
-</span>
-<span class="kt">int</span> <span class="n">random</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">number</span><span class="p">;</span>
-    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">number</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="s">"生成随机数：%i</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">number</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">else</span>
-    <span class="p">{</span>
-        <span class="n">number</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-    <span class="p">}</span>
-    <span class="k">while</span><span class="p">((</span><span class="n">c</span><span class="o">=</span><span class="n">getchar</span><span class="p">())</span><span class="o">!=</span><span class="n">EOF</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">^</span> <span class="n">number</span><span class="p">;</span>
-        <span class="n">putchar</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="nf">random</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">dev</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">"/dev/random"</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
-    <span class="cm">/* 因为使用了 /dev/random，所以不能直接在 Windows 下编译 */</span>
-    <span class="kt">int</span> <span class="n">number</span><span class="p">;</span>
-    <span class="n">read</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span><span class="o">&amp;</span><span class="n">number</span><span class="p">,</span><span class="k">sizeof</span> <span class="n">number</span><span class="p">);</span>
-    <span class="n">close</span><span class="p">(</span><span class="n">dev</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">number</span><span class="p">;</span>
-<span class="p">}</span>
-
-</code></pre></div></div>
-
-<p>使用方法：</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./progname &lt; needfile <span class="o">&gt;</span> resultfile 2&gt; randomfile
-</code></pre></div></div>
-<p>就是这样。</p>
-
-<p>解密：</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./progname randomnumber &lt; resultfile <span class="o">&gt;</span> needfile
-</code></pre></div></div>
-
-<p>OK.</p>
-
-<p>PS：维基百科：<a href="https://zh.wikipedia.org/wiki/%E5%BC%82%E6%88%96%E5%AF%86%E7%A0%81">异或密码</a></p>
-
-  </div>
+  
 
   <div class="post-content" itemprop="articleBody">
     <p>在网上看到有人用手机的九宫格输入法的键位加密汉字。</p>
