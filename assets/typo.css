@@ -88,7 +88,7 @@ del {
 }
 
 address, caption, cite, code, dfn, em, th, var {
-  font-style: normal;
+  /* font-style: normal; */
   font-weight: 400;
 }
 
