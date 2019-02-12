@@ -9,12 +9,12 @@
   
   
   
-  <title>About</title>
-  <meta name="description" content="taoky&#39;s blog">
+  <title>重新迁移：回到 Jekyll</title>
+  <meta name="description" content="再次迁移回了 Jekyll。">
   
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://taoky.github.io/about/">
+  <link rel="canonical" href="https://taoky.github.io/2019-02-12/migration-to-jekyll-again.html">
   
   
   <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://taoky.github.io/feed.xml">
@@ -24,8 +24,8 @@
   
   <meta name="twitter:card" content="summary">
   
-  <meta name="twitter:title" content="About">
-  <meta name="twitter:description" content="taoky&#39;s blog">
+  <meta name="twitter:title" content="重新迁移：回到 Jekyll">
+  <meta name="twitter:description" content="再次迁移回了 Jekyll。">
   
   
 
@@ -92,49 +92,302 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post typo">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title">About</h1>
+    
+      <h1 class="post-title" itemprop="name headline">重新迁移：回到 Jekyll</h1>
+    
+    <p class="post-meta"><time datetime="2019-02-12T09:17:00+00:00" itemprop="datePublished">Feb 12, 2019</time>
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/jekyll/">Jekyll</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/hexo/">Hexo</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
   </header>
 
-  <div class="post-content">
-    <p>Howdy!</p>
+  
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ whoami
-- A CS student @ USTC (Since 2017/09)
-- Loves Computer Science
-- Starts watching animes since 2018/04
-- Wants to do everything well, but always fails
-- Well, I REALLY don't like self-introduction.
-</code></pre></div></div>
+  <div class="post-content" itemprop="articleBody">
+    <p>再次迁移回了 Jekyll。</p>
 
-<hr>
+<p>从 Hexo 迁移回去的很大一个原因是 <code class="highlighter-rouge">npm</code> 给人带来的无力感：我只想简简单单做一件事情，但是 <code class="highlighter-rouge">npm</code> 给我带来了无穷无尽的依赖，还有 GitHub 时不时给我发送的安全警告。</p>
 
-<p>感谢：</p>
-<ul>
-  <li>GitHub Pages 托管服务</li>
-  <li>
-<a href="https://jekyllrb.com/">Jekyll</a>: 简单的静态博客网站生成器</li>
-  <li>
-<a href="https://github.com/yous/whiteglass">whiteglass</a>: 一款优雅简洁的 Jekyll 主题</li>
-  <li>
-<a href="https://github.com/sofish/typo.css">typo.css</a>: 为中文网页设计的 CSS 排版文件</li>
-</ul>
+<p><img src="/pictures/migration/1.png" alt="Security Alert by GitHub"></p>
 
-<hr>
+<p><em>啊……</em></p>
 
-<p>友链：</p>
+<p>Hexo 的 <a href="https://github.com/theme-next/hexo-theme-next">NexT 主题</a> 确实很漂亮，但是实话讲有点审美疲劳了吧（尤其是看到有一大帮人用了之后）。原来的评论系统使用的是 <a href="https://github.com/imsun/gitment">Gitment</a>——把 GitHub Issues 搞成评论确实是一个很新奇的主意，但是看到 repo 的 issues 里面一堆让我感到有点尴尬，而且一个更现实的问题是：根本没人评论啊。</p>
 
-<ul>
-  <li>舍友 <a href="https://github.com/iBug" class="user-mention">@iBug</a>: <a href="https://ibug.github.io">https://ibug.github.io/</a>
-</li>
-</ul>
+<p>花了一点时间，重新搞回来了，没有遇到太糟糕的问题，顺便为了用各种 plugins，搞了 CI 部署 GitHub Pages，感谢 <a href="https://github.com/iBug" class="user-mention">@iBug</a> 提供的示例脚本。</p>
+
 
   </div>
 
   
-    <div class="post-comments">
+    <div class="post-comments" itemprop="comment">
       <hr>
 <h3>Comments</h3>
 <div id="disqus_thread"></div>
