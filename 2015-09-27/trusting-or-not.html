@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>信任与不信任</title>
+  <meta name="description" content="XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://taoky.github.io/2015-09-27/trusting-or-not.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://taoky.github.io/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="信任与不信任">
+  <meta name="twitter:description" content="XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。">
+  
+  
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet">
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44647340-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky&#39;s blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path
+              d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">信任与不信任</h1>
+    
+    <p class="post-meta"><time datetime="2015-09-27T00:00:00+00:00" itemprop="datePublished">Sep 27, 2015</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/%E9%9A%8F%E6%83%B3/">随想</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/%E5%AE%89%E5%85%A8/">安全</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/%E4%BF%A1%E4%BB%BB/">信任</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/%E7%B3%BB%E7%BB%9F/">系统</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <p>XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。</p>
+
+<p>这件事情其实各方都有责任，Apple 的 Mac App Store 做得实在太差：经常连接不上，连接上了还很难下载：经常下载到一半就失败了；Apple Developer Program 没有提供 sha1 校验码；开发者作死关了 Gatekeeper，不了解 OS X 应用的数字证书……这件事闹得太大，很多著名应用被感染，以至于 Apple 发出了一个<a href="http://www.apple.com/cn/xcodeghost/">申明</a>。
+<!--more--></p>
+
+<p>不过，这件事情也是很让人大开眼界的：原来在 IDE 里也可以做手脚！然而 XcodeGhost 并不是第一个做这件事的。Ken Thompson，UNIX 的创造者之一，在他获得图灵奖后做了一个演讲：「Reflections on Trusting Trust」。演讲中他证明了可以在编译器里加入代码，使得编译出来的程序（包括编译器自己）都是有问题的。也就是说，不管有问题的编译器用正确的代码自举（Bootstrap）多少次，结果还是有可能有问题。在最后一部分，他说了这样一句话：</p>
+
+<blockquote>
+  <p>You can’t trust code that you did not totally create yourself.</p>
+</blockquote>
+
+<p>如果在一个不被信任的平台上建东西，无论建造过程有多么规范严谨，它也不应该被信任。这样想想其实挺恐怖的：你信任你的编译器吗？你信任你的操作系统吗？你信任你的 BIOS/UEFI 吗？你信任你的硬件吗？</p>
+
+<p>恐怕到最后，结果只有「不」这个字了。</p>
+
+<p>说到这个，我想到了 Richard Stallman。他用的笔记本从操作系统到 BIOS 全部都是开源的（因此他还用过龙芯的笔记本，不过在 2012 年被偷了）。现在把所有的软件和固件全部都换成开源的并不是很现实的事情。诚然大部分都可以替换，但 Flash 呢？各种各样的音视频格式呢？驱动程序呢？以前我看到有人说「RMS 永远是对的」，现在想来，他至少在这件事情上虽然太过激了点，但确实是对的。</p>
+
+<p>你看不出闭源的东西里面构造是什么，那么开源的也可以完全信任吗？不。诚然，开源程序可以看到内部的构造，然而可能根本没耐心看、看不懂或是没有发现隐蔽的问题。开源有时比闭源更加可以信任些，但也很难达到「完全信任」的程度，不然 OpenSSL 的「心脏流血」就不会隔这么长时间才被发现了。毕竟，大部分人都不会自己去编译的，而是用别人编译好的二进制文件。</p>
+
+<p>说到底，做到使用环境能被「完全信任」实在太难，更别说「人」自己也没有办法被完全信任。</p>
+
+<p>这个问题，恐怕找不到一个完美的解决方案。</p>
+
+<hr />
+
+<p>据说写 XcodeGhost 的作者还是个学生。我只能用 Ken Thompson 演讲的最后一段来说了。</p>
+
+<blockquote>
+  <p>I have watched kids testifying before Congress. It is clear that they are completely unaware of the seriousness of their acts. There is obviously a cultural gap. The act of breaking into a computer system has to have the same social stigma as breaking into a neighbor’s house. It should not matter that the neighbor’s door is unlocked. The press must learn that misguided use of a computer is no more amazing than drunk driving of an automobile.</p>
+</blockquote>
+
+<p>现在媒体「misguide」的情况不多了，但如果 XcodeGhost 的编写者真的只是学生，真是只是像他声明里面说的那样没有恶意的话，那他就是「completely unaware of the seriousness of their acts」。</p>
+
+<p>唉。</p>
+
+<hr />
+
+<p>附：我对演讲 Reflections on Trusting Trust 的渣翻译</p>
+
+<h4 id="简介">简介</h4>
+
+<p>我感谢 ACM 给我这个奖项。我不得不感觉到我得到了这个奖是因为机缘巧合和技术的价值。UNIX 迅速流行，给工业从 central main frames（？）到 autonomous minis（？）带来了巨大改变。我推测 Daniel Bobrow 会代替我站在这里，如果他付不起一台 PDP-10 并且要付清 PDP-11 的欠款的话。此外，现在 UNIX 的情况是由许许多多人的辛勤劳动建筑成的。</p>
+
+<p>有句老话，「和那个带你来的人跳舞」（Dance with the one that brought you），意思是说我应该谈谈 UNIX 了。我已经很长时间没有为主流 UNIX 工作了，但我仍旧继续因为其他人的工作而得到不应有的赞扬。所以，我不想再谈 UNIX 了，但我想感谢每个作出贡献的人。那把我带给了 Dennis Ritchie。我们的合作已成为一件美好的事情。在我们过去共同工作的十年里，我只能回忆起一件协作不佳的事。那一次，我发现我们都写了相同的 20 行的汇编程序。我对比了源代码，震惊地发现它们每个字符都毫无差别。我们共同工作的结果已经大大超过我们各自的贡献。我是一个程序员。在我的 1040 税收表格上，我的职业就是这么写的。我想给你们展示一下我曾写过的最可爱的程序。我用三步做了这件事，并且最后把它们放在了一起。</p>
+
+<h4 id="第一步">第一步</h4>
+
+<p>在大学里有电子游戏之前，我们用展示编程练习的方式来愉悦自己。我的其中一个最爱，就是写出最短的可以自我复制的程序。既然这是一个与现实分离的练习，我经常用的是 FORTRAN。的确，选择 FORTRAN 语言的原因和二人三足游戏流行的原因，是一样的。</p>
+
+<p>更清晰地说，这个问题是写出一个源码，当它被编译并执行时，会输出一份自身源代码的精确复制。如果你从来都没有做过这种事情，我强烈建议你自己去试试。自己去探寻如何做事情是一次披露，这远胜过任何被别人告知如何去做的好处。所谓「最短」只是一种刺激来证明技能以及选出冠军。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">char</span> <span class="n">s</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sc">'\t'</span><span class="p">,</span>
+  <span class="sc">'0'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'}'</span><span class="p">,</span>
+  <span class="sc">';'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'/'</span><span class="p">,</span>
+  <span class="sc">'*'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="p">(</span><span class="err">删除了</span> <span class="mi">213</span> <span class="err">行</span><span class="p">)</span>
+  <span class="mi">0</span>
+<span class="p">};</span>
+
+<span class="cm">/*
+ * 字符串 s 是一个
+ * 对从 '0' 到结尾的
+ * 主体程序的
+ * 描述。
+ */</span>
+
+<span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">"char</span><span class="se">\t</span><span class="s">s[ ] = {</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\r</span><span class="s">%d, </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="err">这里是一些简单的翻译，</span>
+<span class="err">使得一个不编写</span> <span class="n">C</span> <span class="err">的程序员也能看懂这段程序。</span>
+<span class="o">=</span>		<span class="err">赋值</span>
+<span class="o">==</span>		<span class="err">等于</span>
+<span class="o">!=</span>		<span class="err">不等于</span>
+<span class="o">++</span>		<span class="err">增加</span>
+<span class="sc">'x'</span>		<span class="err">简单的字符常量</span>
+<span class="s">"xxx"</span>	<span class="err">多重字符串</span>
+<span class="o">%</span><span class="n">d</span>		<span class="err">转换到十进制数格式</span>
+<span class="o">%</span><span class="n">s</span>		<span class="err">转换到字符串格式</span>
+<span class="err">\</span><span class="n">t</span>		<span class="n">tab</span><span class="p">(</span><span class="err">制表符</span><span class="p">)</span>
+<span class="err">\</span><span class="n">n</span>		<span class="err">新行符号</span>
+</code></pre></div></div>
+
+<p><em>插图 1</em>（注：原来是图片）</p>
+
+<p>插图 1 向我们展示了一个用 C 语言编写的自我复制程序。（纯粹主义者会说这个程序并不完全是一个自我复制程序，但会产生一个自我复制程序）这东西太大，没法拿奖，但它证明了这项技术，并且我需要两个重要的特性来完成我的故事：</p>
+
+<ol>
+  <li>这个程序可以容易地被另一个程序编写</li>
+  <li>这个程序可以包含一个任意数量的过度超重的行李（？，excess baggage）来被与主算法一起复制。在这个例子里，甚至是注释也被复制了。</li>
+</ol>
+
+<h4 id="第二步">第二步</h4>
+
+<p>C 编译器是用 C 语言编写的。我想说的是这个其中一个在编译器用它们自己的语言编写时的「先有鸡还是先有蛋」问题。这个例子里，我会用一个 C 编译器中的特定例子。</p>
+
+<p>C 允许一个字符串结构来具体说明一个已被初始化的字符数组。在字符串中的单独的字符可以被转义到显示不可打印字符。比如说，</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"Hello world</span><span class="se">\n</span><span class="s">"</span>
+</code></pre></div></div>
+
+<p>相当于一个包含字符 <code class="highlighter-rouge">\n</code> 的字符串，它表示新行符号。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 2</em></p>
+
+<p>插图 2 是一个理想化的在 C 编译器中的代码来解释字符转义序列。这是段令人惊奇的代码。它用一种很方便的方式「知道」在任意字符集下什么字符代码被编译成新行。这种知道的艺术允许它自编译，所以延续了知识（？）。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'v'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\v'</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 3</em></p>
+
+<p>假设我们希望改变 C 编译器来包括序列 <code class="highlighter-rouge">\v</code> 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 <code class="highlighter-rouge">\v</code>，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 <code class="highlighter-rouge">\v</code> 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'v'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="mi">11</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 4</em></p>
+
+<p>这是一个深入的概念。这是我见过的很靠近「学习」程序的代码。你简要地辨别它一次，然后你可以用这个自引用的定义。</p>
+
+<h4 id="第三步">第三步</h4>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 5</em></p>
+
+<p>再一次，在 C 编译器中，插图 5 显示了当例行代码「compile」被调用来编译下一行代码时对 C 编译器高级别的控制。插图 6 展示了一个对编译器简单的修改使得它当符合一个特定的模式时故意编译错源代码。如果这不是故意的，它被称为一个编译器「漏洞」。既然它是故意的，它应该被称为一个「特洛伊木马」。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 6</em></p>
+
+<p>我植入编译器的真实的代码会匹配 UNIX 中「login」命令的代码。这种替换代码可以错误编译 login 命令，所以它会接受将要加密的密码或是一个特定的已知密码。所以如果这段代码被安装到二进制文件中并且这个二进制文件被用来编译 login 命令，我就能以任意用户的身份自由驰骋于系统之中。</p>
+
+<p>这么明显的代码不会很长时间都不被发现的。即便是最偶然的细读代码也会招致怀疑。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern1"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug1"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern2"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug2"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 7</em></p>
+
+<p>最后一步在插图 7 中显示。这只是简单添加了第二个特洛伊木马到那个已经存在问题的代码中。第二段模式是作用于 C 编译器的。这个在第一步中自我复制的替换代码向编译器插入了两个特洛伊木马。这需要一个在第二步中的学习阶段。首先我们在正常 C 编译器上编译被修改过的代码来产生一个有问题的二进制文件。我们将这个二进制文件作为正式的 C 编译器。我们现在可以去除编译器代码中的漏洞，并且新二进制在它被编译时会被重新插入漏洞。当然了，那个 login 命令将会一直保留漏洞，而在代码中了无踪迹。</p>
+
+<h4 id="寓意">寓意</h4>
+
+<p>寓意很明显。你不能相信不是你自己写的代码。（特别是像招聘了我这样的人的公司的代码）没有代码级别的认证与检查会保护你不使用不可信任的代码。在证明了这种攻击的可行性后，我选中了 C 编译器。我本可以选择任何处理程序的程序，比如说汇编器、加载器，甚至于硬件微代码（microcode）。当程序的级别变得更低时，这些漏洞会变得越来越难找。一个恰当安装的微代码漏洞几乎是不可能发现的。</p>
+
+<p>在努力使你信服我不能被相信之后，我希望来说教一番。我想要批评媒体在处理「黑客」时的方式，比如说 414 帮、Dalton 帮之类的。这些小孩子做的行为是最具有破坏性的并且这些擅自进入与偷窃行为是最糟糕的。只是这些不充足的刑事规范使得他们免于极为严厉的起诉。受到这种行为影响的公司（最大的公司是非常容易受影响的）正在努力推进刑事规范的升级。未授权的计算机系统访问在一些州已是一个大问题，并且正在针对越来越多州的更多立法机构和议会。</p>
+
+<p>这种一触即发的状况正被酝酿。一方面，媒体、电视和电影正给这些蓄意破坏者造势，称他们为行家（？, whiz）小子；另一方面，这些小孩子做的行为很快会被年复一年的监禁处理。</p>
+
+<p>我看过一些孩子在议会前的作证。很明显，他们完全不知道他们行为的严重性。有一道很明显的文化代沟。这种闯入计算机系统的行为与闯入邻居家屋子的行为都是社会的耻辱。邻居家门关没关并没有什么关系。媒体必须认识到计算机的错误使用并不比酒后驾车有趣多少。</p>
+
+  </div>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。</p>
+
+<p>这件事情其实各方都有责任，Apple 的 Mac App Store 做得实在太差：经常连接不上，连接上了还很难下载：经常下载到一半就失败了；Apple Developer Program 没有提供 sha1 校验码；开发者作死关了 Gatekeeper，不了解 OS X 应用的数字证书……这件事闹得太大，很多著名应用被感染，以至于 Apple 发出了一个<a href="http://www.apple.com/cn/xcodeghost/">申明</a>。
+<!--more--></p>
+
+<p>不过，这件事情也是很让人大开眼界的：原来在 IDE 里也可以做手脚！然而 XcodeGhost 并不是第一个做这件事的。Ken Thompson，UNIX 的创造者之一，在他获得图灵奖后做了一个演讲：「Reflections on Trusting Trust」。演讲中他证明了可以在编译器里加入代码，使得编译出来的程序（包括编译器自己）都是有问题的。也就是说，不管有问题的编译器用正确的代码自举（Bootstrap）多少次，结果还是有可能有问题。在最后一部分，他说了这样一句话：</p>
+
+<blockquote>
+  <p>You can’t trust code that you did not totally create yourself.</p>
+</blockquote>
+
+<p>如果在一个不被信任的平台上建东西，无论建造过程有多么规范严谨，它也不应该被信任。这样想想其实挺恐怖的：你信任你的编译器吗？你信任你的操作系统吗？你信任你的 BIOS/UEFI 吗？你信任你的硬件吗？</p>
+
+<p>恐怕到最后，结果只有「不」这个字了。</p>
+
+<p>说到这个，我想到了 Richard Stallman。他用的笔记本从操作系统到 BIOS 全部都是开源的（因此他还用过龙芯的笔记本，不过在 2012 年被偷了）。现在把所有的软件和固件全部都换成开源的并不是很现实的事情。诚然大部分都可以替换，但 Flash 呢？各种各样的音视频格式呢？驱动程序呢？以前我看到有人说「RMS 永远是对的」，现在想来，他至少在这件事情上虽然太过激了点，但确实是对的。</p>
+
+<p>你看不出闭源的东西里面构造是什么，那么开源的也可以完全信任吗？不。诚然，开源程序可以看到内部的构造，然而可能根本没耐心看、看不懂或是没有发现隐蔽的问题。开源有时比闭源更加可以信任些，但也很难达到「完全信任」的程度，不然 OpenSSL 的「心脏流血」就不会隔这么长时间才被发现了。毕竟，大部分人都不会自己去编译的，而是用别人编译好的二进制文件。</p>
+
+<p>说到底，做到使用环境能被「完全信任」实在太难，更别说「人」自己也没有办法被完全信任。</p>
+
+<p>这个问题，恐怕找不到一个完美的解决方案。</p>
+
+<hr />
+
+<p>据说写 XcodeGhost 的作者还是个学生。我只能用 Ken Thompson 演讲的最后一段来说了。</p>
+
+<blockquote>
+  <p>I have watched kids testifying before Congress. It is clear that they are completely unaware of the seriousness of their acts. There is obviously a cultural gap. The act of breaking into a computer system has to have the same social stigma as breaking into a neighbor’s house. It should not matter that the neighbor’s door is unlocked. The press must learn that misguided use of a computer is no more amazing than drunk driving of an automobile.</p>
+</blockquote>
+
+<p>现在媒体「misguide」的情况不多了，但如果 XcodeGhost 的编写者真的只是学生，真是只是像他声明里面说的那样没有恶意的话，那他就是「completely unaware of the seriousness of their acts」。</p>
+
+<p>唉。</p>
+
+<hr />
+
+<p>附：我对演讲 Reflections on Trusting Trust 的渣翻译</p>
+
+<h4 id="简介">简介</h4>
+
+<p>我感谢 ACM 给我这个奖项。我不得不感觉到我得到了这个奖是因为机缘巧合和技术的价值。UNIX 迅速流行，给工业从 central main frames（？）到 autonomous minis（？）带来了巨大改变。我推测 Daniel Bobrow 会代替我站在这里，如果他付不起一台 PDP-10 并且要付清 PDP-11 的欠款的话。此外，现在 UNIX 的情况是由许许多多人的辛勤劳动建筑成的。</p>
+
+<p>有句老话，「和那个带你来的人跳舞」（Dance with the one that brought you），意思是说我应该谈谈 UNIX 了。我已经很长时间没有为主流 UNIX 工作了，但我仍旧继续因为其他人的工作而得到不应有的赞扬。所以，我不想再谈 UNIX 了，但我想感谢每个作出贡献的人。那把我带给了 Dennis Ritchie。我们的合作已成为一件美好的事情。在我们过去共同工作的十年里，我只能回忆起一件协作不佳的事。那一次，我发现我们都写了相同的 20 行的汇编程序。我对比了源代码，震惊地发现它们每个字符都毫无差别。我们共同工作的结果已经大大超过我们各自的贡献。我是一个程序员。在我的 1040 税收表格上，我的职业就是这么写的。我想给你们展示一下我曾写过的最可爱的程序。我用三步做了这件事，并且最后把它们放在了一起。</p>
+
+<h4 id="第一步">第一步</h4>
+
+<p>在大学里有电子游戏之前，我们用展示编程练习的方式来愉悦自己。我的其中一个最爱，就是写出最短的可以自我复制的程序。既然这是一个与现实分离的练习，我经常用的是 FORTRAN。的确，选择 FORTRAN 语言的原因和二人三足游戏流行的原因，是一样的。</p>
+
+<p>更清晰地说，这个问题是写出一个源码，当它被编译并执行时，会输出一份自身源代码的精确复制。如果你从来都没有做过这种事情，我强烈建议你自己去试试。自己去探寻如何做事情是一次披露，这远胜过任何被别人告知如何去做的好处。所谓「最短」只是一种刺激来证明技能以及选出冠军。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">char</span> <span class="n">s</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sc">'\t'</span><span class="p">,</span>
+  <span class="sc">'0'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'}'</span><span class="p">,</span>
+  <span class="sc">';'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="sc">'/'</span><span class="p">,</span>
+  <span class="sc">'*'</span><span class="p">,</span>
+  <span class="sc">'\n'</span><span class="p">,</span>
+  <span class="p">(</span><span class="err">删除了</span> <span class="mi">213</span> <span class="err">行</span><span class="p">)</span>
+  <span class="mi">0</span>
+<span class="p">};</span>
+
+<span class="cm">/*
+ * 字符串 s 是一个
+ * 对从 '0' 到结尾的
+ * 主体程序的
+ * 描述。
+ */</span>
+
+<span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">"char</span><span class="se">\t</span><span class="s">s[ ] = {</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    	<span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\r</span><span class="s">%d, </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="err">这里是一些简单的翻译，</span>
+<span class="err">使得一个不编写</span> <span class="n">C</span> <span class="err">的程序员也能看懂这段程序。</span>
+<span class="o">=</span>		<span class="err">赋值</span>
+<span class="o">==</span>		<span class="err">等于</span>
+<span class="o">!=</span>		<span class="err">不等于</span>
+<span class="o">++</span>		<span class="err">增加</span>
+<span class="sc">'x'</span>		<span class="err">简单的字符常量</span>
+<span class="s">"xxx"</span>	<span class="err">多重字符串</span>
+<span class="o">%</span><span class="n">d</span>		<span class="err">转换到十进制数格式</span>
+<span class="o">%</span><span class="n">s</span>		<span class="err">转换到字符串格式</span>
+<span class="err">\</span><span class="n">t</span>		<span class="n">tab</span><span class="p">(</span><span class="err">制表符</span><span class="p">)</span>
+<span class="err">\</span><span class="n">n</span>		<span class="err">新行符号</span>
+</code></pre></div></div>
+
+<p><em>插图 1</em>（注：原来是图片）</p>
+
+<p>插图 1 向我们展示了一个用 C 语言编写的自我复制程序。（纯粹主义者会说这个程序并不完全是一个自我复制程序，但会产生一个自我复制程序）这东西太大，没法拿奖，但它证明了这项技术，并且我需要两个重要的特性来完成我的故事：</p>
+
+<ol>
+  <li>这个程序可以容易地被另一个程序编写</li>
+  <li>这个程序可以包含一个任意数量的过度超重的行李（？，excess baggage）来被与主算法一起复制。在这个例子里，甚至是注释也被复制了。</li>
+</ol>
+
+<h4 id="第二步">第二步</h4>
+
+<p>C 编译器是用 C 语言编写的。我想说的是这个其中一个在编译器用它们自己的语言编写时的「先有鸡还是先有蛋」问题。这个例子里，我会用一个 C 编译器中的特定例子。</p>
+
+<p>C 允许一个字符串结构来具体说明一个已被初始化的字符数组。在字符串中的单独的字符可以被转义到显示不可打印字符。比如说，</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"Hello world</span><span class="se">\n</span><span class="s">"</span>
+</code></pre></div></div>
+
+<p>相当于一个包含字符 <code class="highlighter-rouge">\n</code> 的字符串，它表示新行符号。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 2</em></p>
+
+<p>插图 2 是一个理想化的在 C 编译器中的代码来解释字符转义序列。这是段令人惊奇的代码。它用一种很方便的方式「知道」在任意字符集下什么字符代码被编译成新行。这种知道的艺术允许它自编译，所以延续了知识（？）。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'v'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\v'</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 3</em></p>
+
+<p>假设我们希望改变 C 编译器来包括序列 <code class="highlighter-rouge">\v</code> 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 <code class="highlighter-rouge">\v</code>，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 <code class="highlighter-rouge">\v</code> 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'\\'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\\'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'n'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">'v'</span><span class="p">)</span>
+	<span class="k">return</span><span class="p">(</span><span class="mi">11</span><span class="p">);</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><em>插图 4</em></p>
+
+<p>这是一个深入的概念。这是我见过的很靠近「学习」程序的代码。你简要地辨别它一次，然后你可以用这个自引用的定义。</p>
+
+<h4 id="第三步">第三步</h4>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 5</em></p>
+
+<p>再一次，在 C 编译器中，插图 5 显示了当例行代码「compile」被调用来编译下一行代码时对 C 编译器高级别的控制。插图 6 展示了一个对编译器简单的修改使得它当符合一个特定的模式时故意编译错源代码。如果这不是故意的，它被称为一个编译器「漏洞」。既然它是故意的，它应该被称为一个「特洛伊木马」。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 6</em></p>
+
+<p>我植入编译器的真实的代码会匹配 UNIX 中「login」命令的代码。这种替换代码可以错误编译 login 命令，所以它会接受将要加密的密码或是一个特定的已知密码。所以如果这段代码被安装到二进制文件中并且这个二进制文件被用来编译 login 命令，我就能以任意用户的身份自由驰骋于系统之中。</p>
+
+<p>这么明显的代码不会很长时间都不被发现的。即便是最偶然的细读代码也会招致怀疑。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="p">{</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern1"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug1"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="k">if</span><span class="p">(</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"pattern2"</span><span class="p">))</span> <span class="p">{</span>
+  		<span class="n">compile</span><span class="p">(</span><span class="s">"bug2"</span><span class="p">);</span>
+      	<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+  	<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>插图 7</em></p>
+
+<p>最后一步在插图 7 中显示。这只是简单添加了第二个特洛伊木马到那个已经存在问题的代码中。第二段模式是作用于 C 编译器的。这个在第一步中自我复制的替换代码向编译器插入了两个特洛伊木马。这需要一个在第二步中的学习阶段。首先我们在正常 C 编译器上编译被修改过的代码来产生一个有问题的二进制文件。我们将这个二进制文件作为正式的 C 编译器。我们现在可以去除编译器代码中的漏洞，并且新二进制在它被编译时会被重新插入漏洞。当然了，那个 login 命令将会一直保留漏洞，而在代码中了无踪迹。</p>
+
+<h4 id="寓意">寓意</h4>
+
+<p>寓意很明显。你不能相信不是你自己写的代码。（特别是像招聘了我这样的人的公司的代码）没有代码级别的认证与检查会保护你不使用不可信任的代码。在证明了这种攻击的可行性后，我选中了 C 编译器。我本可以选择任何处理程序的程序，比如说汇编器、加载器，甚至于硬件微代码（microcode）。当程序的级别变得更低时，这些漏洞会变得越来越难找。一个恰当安装的微代码漏洞几乎是不可能发现的。</p>
+
+<p>在努力使你信服我不能被相信之后，我希望来说教一番。我想要批评媒体在处理「黑客」时的方式，比如说 414 帮、Dalton 帮之类的。这些小孩子做的行为是最具有破坏性的并且这些擅自进入与偷窃行为是最糟糕的。只是这些不充足的刑事规范使得他们免于极为严厉的起诉。受到这种行为影响的公司（最大的公司是非常容易受影响的）正在努力推进刑事规范的升级。未授权的计算机系统访问在一些州已是一个大问题，并且正在针对越来越多州的更多立法机构和议会。</p>
+
+<p>这种一触即发的状况正被酝酿。一方面，媒体、电视和电影正给这些蓄意破坏者造势，称他们为行家（？, whiz）小子；另一方面，这些小孩子做的行为很快会被年复一年的监禁处理。</p>
+
+<p>我看过一些孩子在议会前的作证。很明显，他们完全不知道他们行为的严重性。有一道很明显的文化代沟。这种闯入计算机系统的行为与闯入邻居家屋子的行为都是社会的耻辱。邻居家门关没关并没有什么关系。媒体必须认识到计算机的错误使用并不比酒后驾车有趣多少。</p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr />
+<h3>Comments</h3>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://taokyblog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://taoky.github.io/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

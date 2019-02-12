@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>高中数学必修 1 预习（1.1 - 2.1.3）</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<h1>高中数学必修 1 预习（1.1 - 2.1.3）</h1>
+
+<p><em>不保证正确，欢迎提建议。</em></p>
+
+<ol>
+<li><p>特定集合论符号</p>
+
+<table>
+<thead>
+<tr>
+<th align="center"> 名称 </th>
+<th align="center"> 符号 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"> 自然数集 </td>
+<td align="center"> N </td>
+</tr>
+<tr>
+<td align="center"> 正整数集 </td>
+<td align="center"> $$$N*$$$ 或 $$$N_+$$$ </td>
+</tr>
+<tr>
+<td align="center"> 整数集 </td>
+<td align="center"> Z </td>
+</tr>
+<tr>
+<td align="center"> 有理数集 </td>
+<td align="center"> Q </td>
+</tr>
+<tr>
+<td align="center"> 实数集 </td>
+<td align="center"> R </td>
+</tr>
+<tr>
+<td align="center"> a（元素） 属于 A（集合） </td>
+<td align="center"> \[a \in A\] </td>
+</tr>
+<tr>
+<td align="center"> a 不属于 A </td>
+<td align="center"> \[a \not \in A \] </td>
+</tr>
+<tr>
+<td align="center"> A 包含 B </td>
+<td align="center"> \[A \subseteq B\] </td>
+</tr>
+<tr>
+<td align="center"> 空集 </td>
+<td align="center"> \[\emptyset\] </td>
+</tr>
+<tr>
+<td align="center"> 真子集 </td>
+<td align="center"> \[\subsetneqq\]</td>
+</tr>
+<tr>
+<td align="center"> A 在 S 中的补集 </td>
+<td align="center"> \[\complement_sA\] </td>
+</tr>
+<tr>
+<td align="center"> 全集 </td>
+<td align="center"> U </td>
+</tr>
+<tr>
+<td align="center"> 交集（A 交 B） </td>
+<td align="center"> \[A \cap B\] </td>
+</tr>
+<tr>
+<td align="center"> 并集（A 并 B） </td>
+<td align="center"> \[A \cup B\] </td>
+</tr>
+<tr>
+<td align="center"> 无穷大 </td>
+<td align="center"> \[\infty\] </td>
+</tr>
+<tr>
+<td align="center"> 闭区间 </td>
+<td align="center"> [a, b] </td>
+</tr>
+<tr>
+<td align="center"> 开区间 </td>
+<td align="center"> (a, b) </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>概念</p>
+
+<ol>
+<li><p>表示集合：</p>
+
+<p> 列举法：{a, b, c, d}</p>
+
+<p> 描述法：{x | p(x)}，如 $$$\left\{x | x &lt; -3, x \in R\right\}$$$</p></li>
+<li><p>含有有限元素：有限集</p>
+
+<p> 含有无限元素：无限集</p>
+
+<p> 不含任何元素：空集</p></li>
+<li><p>若 A 的任意元素都是 B 的元素，A 是 B 的子集。</p></li>
+<li><p>空集是任何集合的子集。</p></li>
+<li><p>真子集：$$$A \subseteq B$$$ 且 $$$A \neq B$$$，A 为 B 的真子集。</p></li>
+<li><p>补集：$$$\complement_sA = \left\{x | x \in S, 且  x \not \in A \right\}$$$（在 S 中，但不在 A 中）</p></li>
+<li><p>全集包含研究的各个集合。</p></li>
+<li><p>交集（$$$\cap$$$）：既属于 A，又属于 B</p></li>
+<li><p>并集（$$$\cup$$$）：属于 A 或 属于 B</p></li>
+<li><p> 闭区间（[]）：大于<strong>等于</strong>／小于<strong>等于</strong></p></li>
+<li><p> 开区间（()）：大于／小于</p></li>
+<li><p> $$$(-\infty, +\infty) = R$$$</p></li>
+<li><p> 函数：$$$y = f(x), x \in A$$$</p>
+
+<p> 条件：A、B 为非空数集，A 中每一个元素 x，B 中都有惟一元素 y 与之对应，此对应称为 A 到 B 的一个函数。</p>
+
+<p> A 称为定义域（x），B 称为值域（y）。</p></li>
+<li><p> 函数简单性质</p>
+
+<ol>
+<li><p>单调性</p>
+
+<p> 设 y = f(x) 定义域为 A，区间 $$$I \subseteq A$$$</p>
+
+<p> 当 I 中任意两值 $$$x_1$$$, $$$x_2$$$ 中 $$$x_1 &lt; x_2$$$，函数在区间中为单调增函数，区间 I 为单调增区间。</p>
+
+<p> 反之函数为单调减函数，区间为单调减区间。</p>
+
+<p> 函数在区间中是单调增／减函数：单调性。</p>
+
+<p> 单调区间：单调增区间、单调减区间。</p></li>
+<li><p>奇偶性</p>
+
+<ol>
+<li><p>奇函数图像关于原点对称，偶函数图像关于 y 轴对称。</p></li>
+<li><p>设函数 y = f(x) 定义域为 A。</p>
+
+<p> f(-x) = f(x)：偶函数</p>
+
+<p> f(-x) = -f(x)：奇函数</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+</body>
+</html>
