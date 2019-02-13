@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh_CN">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh">
   <generator uri="http://jekyllrb.com" version="3.8.5">Jekyll</generator>
   
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
-  <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh_CN" />
-  <updated>2019-02-12T11:44:50+00:00</updated>
+  <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
+  <updated>2019-02-13T06:04:51+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -24,6 +24,210 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">在 iOS 设备上编译原生 lc3tools</title>
+      
+      
+      <link href="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html" rel="alternate" type="text/html" title="在 iOS 设备上编译原生 lc3tools" />
+      
+      <published>2019-02-12T12:01:00+00:00</published>
+      <updated>2019-02-12T12:01:00+00:00</updated>
+      <id>https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device</id>
+      <content type="html" xml:base="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ ssh root@192.168.0.109
+root@192.168.0.109&lt;span class=&quot;s1&quot;&gt;'s password: # password is '&lt;/span&gt;alpine&lt;span class=&quot;s1&quot;&gt;' by default
+Kud:~ root# uname -a
+Darwin Kud 13.0.0 Darwin Kernel Version 13.0.0: Wed Feb 13 21:37:47 PST 2013; root:xnu-2107.7.55.2.2~1/RELEASE_ARM_S5L8942X iPad2,5 arm P105AP Darwin
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是系统内置的命令很少，基本干不了什么事情（当然要想 &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get&lt;/code&gt;——所以我们在 Cydia 中安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;APT 0.6 Transitional&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;APT 0.7 Strict&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;，然后就可以抛弃掉这个缓慢的前端界面了。&lt;/p&gt;
+
+&lt;p&gt;默认的 APT 源（在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/&lt;/code&gt; 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。&lt;/p&gt;
+
+&lt;p&gt;当然，这是可以做到的。至于为什么选择 &lt;code class=&quot;highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 作为我们的目标？那是因为这个程序足够小，同时舍友 @iBug 也成功在 Android 上编译了这个工具。&lt;/p&gt;
+
+&lt;p&gt;有什么用吗？emmmmmm，&lt;strong&gt;其实没什么用&lt;/strong&gt;，至少我相信不会有人去拿这玩意去完成自己的 ICS 作业。&lt;/p&gt;
+
+&lt;h2 id=&quot;准备工具链&quot;&gt;准备工具链&lt;/h2&gt;
+
+&lt;p&gt;默认源里可以找到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# apt-cache search gcc
+iphone-gcc - a native c compiler _on_ the phone
+com.macciti.sliderkoenigseggccxorange - Nice Slider of a orange Koenigsegg CCX. If you want your Car as a Slider on your iPhone, email me! I will make Sliders of all your Cars!! &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+com.bigboss.20toolchain - Full &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;compatibility&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; toolchain with one click! Use this to compile your 1.1.x apps &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;2.0 with some limitations. BigBoss&lt;span class=&quot;s1&quot;&gt;' headers for 1.1.1 from working Cygwin toolchain. Also depends on all other necessary packages. Copies to /var/include and symlinks /usr/local/include to /var/include if possible. Also links gcc to arm-apple-darwin-gcc.
+# 以下省略
+Kud:~ root# apt-cache search clang
+org.coolstar.iostoolchain - LLVM+Clang, ld64, CC tools, Make, ldid
+org.coolstar.llvm-clang - LLVM, Clang, and Compiler for 32/64Bit devices
+org.coolstar.llvm-clang32 - LLVM, Clang, and Compiler-RT 3.4 SVN
+org.coolstar.llvm-clang64 - LLVM, Clang, and LLD 5.0.1 for iOS/arm64
+# 以下省略
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但如果你去尝试安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，会发现缺少 &lt;code class=&quot;highlighter-rouge&quot;&gt;libgcc&lt;/code&gt; 的依赖。所以还是去安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;org.coolstar.iostoolchain&lt;/code&gt; 吧（据说&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 的版本比 &lt;code class=&quot;highlighter-rouge&quot;&gt;LLVM+Clang&lt;/code&gt; 工具链要老得多）。&lt;/p&gt;
+
+&lt;p&gt;好，安装完这一套工具链，写个 Hello, world! 编译看看。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# &lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;helloworld.c
+&lt;span class=&quot;c&quot;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+
+int main&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;void&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Hello, world!&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+Kud:~ root# clang helloworld.c
+helloworld.c:1:10: fatal error: &lt;span class=&quot;s1&quot;&gt;'stdio.h'&lt;/span&gt; file not found
+&lt;span class=&quot;c&quot;&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+         ^
+1 error generated.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;最后你会绝望得发现，就算去掉 &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt;，自己动手声明函数，也会在链接的时候遇到问题。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# &lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;test.c
+int &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;const char &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; restrict format, ...&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+int main&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;void&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Hello, world!&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+Kud:~ root# clang test.c
+ld: library not found &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-lcrt1&lt;/span&gt;.3.1.o
+clang-3.7: error: linker &lt;span class=&quot;nb&quot;&gt;command &lt;/span&gt;failed with &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;code 1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;use &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; to see invocation&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;关于-sdk&quot;&gt;关于 SDK&lt;/h2&gt;
+
+&lt;p&gt;为了解决这个问题，我们需要 iOS 对应的 SDK。在下载&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;对应版本的 SDK 之后，我们可以看看里面有什么东西。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/ios-compile/sdk.png&quot; alt=&quot;The structure of iOS SDK&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们看到了熟悉的 &lt;code class=&quot;highlighter-rouge&quot;&gt;usr/lib&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;usr/include&lt;/code&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  iPhoneOS6.1.sdk &lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;usr/include/stdio.h 
+usr/include/stdio.h
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  iPhoneOS6.1.sdk &lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;usr/lib/crt1.3.1.o 
+usr/lib/crt1.3.1.o
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;缺少的文件都在这里。&lt;/p&gt;
+
+&lt;p&gt;可以理解为什么 iOS 不自带这些文件，作为移动端的操作系统，头文件和运行库的目标文件对于终端用户而言没有任何意义。&lt;/p&gt;
+
+&lt;p&gt;用 &lt;code class=&quot;highlighter-rouge&quot;&gt;scp&lt;/code&gt; 传过去，然后怎么让 &lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt; 知道 SDK 的位置呢？&lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt; 有一个参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;-isysroot&lt;/code&gt;，可以指定系统根目录的位置。正常情况下，这个目录就是 &lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;，但是很明显 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/&lt;/code&gt; 下面没有我们想要的东西。&lt;/p&gt;
+
+&lt;p&gt;所以我们来试一下：&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# clang helloworld.c &lt;span class=&quot;nt&quot;&gt;-isysroot&lt;/span&gt; ~/sdk &lt;span class=&quot;c&quot;&gt;# ~/sdk is where you store your iOS SDK&lt;/span&gt;
+Kud:~ root# ./a.out
+Hello, world!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以了。&lt;/p&gt;
+
+&lt;p&gt;如果手头有一台 Linux 机器，那么也可以看到类似于 &lt;code class=&quot;highlighter-rouge&quot;&gt;crt1.3.1.o&lt;/code&gt; 的文件。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;taoky@linux-cloud:/usr/lib/x86_64-linux-gnu&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.o &lt;span class=&quot;c&quot;&gt;# on a Ubuntu 18.04.2 machine&lt;/span&gt;
+Mcrt1.o  crt1.o  crtn.o   grcrt1.o           rcrt1.o
+Scrt1.o  crti.o  gcrt1.o  libtsan_preinit.o
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;crt&lt;/code&gt; 是 C Runtime 的缩写。我们知道 Linux 一般而言 C 运行库是 &lt;code class=&quot;highlighter-rouge&quot;&gt;glibc&lt;/code&gt;，那么 macOS/iOS 下是什么？&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# otool &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt; a.out
+a.out:
+	/usr/lib/libSystem.B.dylib &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;compatibility version 1.0.0, current version 173.8.0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dylib&lt;/code&gt; 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 &lt;code class=&quot;highlighter-rouge&quot;&gt;*.so&lt;/code&gt;。而 &lt;code class=&quot;highlighter-rouge&quot;&gt;libSystem&lt;/code&gt; 库提供了 &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; 的功能&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+
+&lt;h2 id=&quot;开始编译&quot;&gt;开始编译&lt;/h2&gt;
+
+&lt;p&gt;下载一份 &lt;code class=&quot;highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 源代码，丢过去。（这里的 OpenSSL 版本太老了，连 GitHub 都连不上，所以只能电脑上下载好之后传过去）&lt;/p&gt;
+
+&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;./configure&lt;/code&gt; 中缺失的 &lt;code class=&quot;highlighter-rouge&quot;&gt;flex&lt;/code&gt; 依赖（用于汇编器的词法分析）可以在源里找到。但 &lt;code class=&quot;highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是什么？&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是 Tcl/Tk 的解释器，可以用来创建 GUI 界面。显然我们这里不需要 GUI（也显示不了），所以可以直接删掉。&lt;/p&gt;
+
+&lt;p&gt;另外会报告找不到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，一个简单粗暴的解决方法是创建软链接。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~/lc3tools root# &lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /usr/bin/clang /usr/bin/gcc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;由于我们先前提到的原因，我们还要修改 &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile.def&lt;/code&gt;，以使 &lt;code class=&quot;highlighter-rouge&quot;&gt;configure&lt;/code&gt; 生成正确的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;将&lt;/p&gt;
+
+&lt;div class=&quot;language-makefile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;CFLAGS&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Wall&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 编译时选项&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LDFLAGS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 链接时选项&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;修改为&lt;/p&gt;
+
+&lt;div class=&quot;language-makefile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;CFLAGS&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Wall&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-isysroot&lt;/span&gt; ~/sdk
+&lt;span class=&quot;nv&quot;&gt;LDFLAGS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-isysroot&lt;/span&gt; ~/sdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;再运行 &lt;code class=&quot;highlighter-rouge&quot;&gt;./configure&lt;/code&gt;，之后就可以顺利编译了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/ios-compile/success.png&quot; alt=&quot;Success&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;成功～&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/ &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;http://iphonedevwiki.net/index.php/On-device_toolchains &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot;&gt;
+      &lt;p&gt;见 http://resources.airnativeextensions.com/ios/，https://github.com/theos/sdks 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:4&quot;&gt;
+      &lt;p&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="iOS" />
+      
+        <category term="jailbreak" />
+      
+        <category term="编译" />
+      
+
+      
+        <summary type="html">这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 CoolBooter 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 ssh 到我们的设备上搞事啦。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -2563,118 +2767,6 @@ Bob  | 2
 
       
         <summary type="html">周三去参观的，说是初二成绩加起来 130 名以上的可以「偷得浮生半日闲」（笑）去参观。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">谈 COS</title>
-      
-      
-      <link href="https://taoky.github.io/2014-01-20/china-operating-system.html" rel="alternate" type="text/html" title="谈 COS" />
-      
-      <published>2014-01-20T00:00:00+00:00</published>
-      <updated>2014-01-20T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-01-20/china-operating-system</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-01-20/china-operating-system.html">&lt;p&gt;前不久有一个叫「COS」的系统发布了，英文名倒是很霸气，叫「China Operating System」，名头够大的，但虽说是发布，但我们都没看到有 ROM 或者是别的系统安装文件出现了，除了几张图片/视频之外。&lt;/p&gt;
-
-&lt;p&gt;另外，是不是还要有「SIN」和「TAN」系统，然后组成一个三角函数系统？&lt;/p&gt;
-
-&lt;p&gt;查了查，百度百科上全是对其的赞美之词，反正其一直是这样的，我也见怪不怪了。维基百科的就要中肯一些。&lt;/p&gt;
-
-&lt;p&gt;网络上已经有人在怀疑，例如界面很像 HTC，但又拒绝承认与其合作什么的，我也不多说了。接下来将是找茬环节。
-&lt;!--more--&gt;
-1、 新闻（「&lt;a href=&quot;http://www.china-cos.com/news/detail/news_id/18.html&quot;&gt;自主知识产权操作系统COS在京发布&lt;/a&gt;」）&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;「目前基于开源的操作系统在安全性上存在很多问题，无论是乌班图（Ubuntu）还是安卓，都已经出现很多公开的安全缺陷，更有很多隐蔽的安全漏洞，随时可以控制个人设备，引发大面积的安全问题。」&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;「开源系统在安全性上存在很多问题」？笑了。按这意思，闭源系统就在安全性上牛 X 了是不？那为什么 Windows 还会有「周二补丁日」，每个月送来一堆补丁？为什么 Mac OS X/iOS 在每次更新后都会有「关于 XXX 软件更新的安全性内容」？不是闭源系统安全性很牛的吗？&lt;/p&gt;
-
-&lt;p&gt;另外，说 Ubuntu 不安全的，这里有份报告打脸来了：&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.omgubuntu.co.uk/2014/01/ubuntu-12-04-secure-os-uk-government-gchq&quot;&gt;Ubuntu 12.04 Beats Windows, Mac In GCHQ Security Report&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;「 COS不同于部分嫁接于其他操作系统之上的产品，虽然也吸取了开源软件的精华，……」&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;说的真好听啊，「吸取了开源软件的精华」是吧？不是刚刚还在说开源不安全来着……变脸了？&lt;/p&gt;
-
-&lt;p&gt;对了，说到开闭源问题，这一帮子家伙有没有注意开源许可证？我在此十分担心他们的节操问题。不知道 COS 会不会严格遵守开源许可证。这一点上，iOS 就做得很好。点击设置-通用-关于本机-法律信息-法律声明，其中所有用到的开源软件的许可证都列出来了。&lt;/p&gt;
-
-&lt;p&gt;另外，如果用 Linux 内核的话，不开源内核？作死。（BSD 应该可以这样做）&lt;/p&gt;
-
-&lt;p&gt;2、 视频「&lt;a href=&quot;http://sm.resource.china-cos.com/player.swf?type=http&amp;amp;file=cos_intro.flv&quot;&gt;更有竞争力的操作系统&lt;/a&gt;」&lt;/p&gt;
-
-&lt;p&gt;开头就是瞎扯，不管其发展到什么程度，COS 根本不可能有实力与中国古今发明相提并论。&lt;/p&gt;
-
-&lt;p&gt;视频 00：58 部分，总感觉这个 COS 电脑版似曾相识，给我的第一感觉是：「Linux Deepin」。&lt;/p&gt;
-
-&lt;p&gt;然后突然反应过来：这就是 Cinnamon 啊！窗口不太清楚，但是下面的任务栏就是 Cinnamon 的（视频看不清楚，不过非常像）&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/pictures/cos/cos-desktop.png&quot; alt=&quot;Cinnamon Panel&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;（我电脑里装的 Cinnamon 截图）&lt;/p&gt;
-
-&lt;p&gt;至于有多少应用之类的，看看笑笑就行了。100% 是 COS 中有 Dalvik 虚拟机或是其类似实现。&lt;/p&gt;
-
-&lt;p&gt;3、 网页「&lt;a href=&quot;http://www.china-cos.com/introduce/index.html&quot;&gt;COS 介绍&lt;/a&gt;」&lt;/p&gt;
-
-&lt;p&gt;一图胜千言。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/pictures/cos/cos-intro.png&quot; alt=&quot;Cut the Rope&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;4、 某台对 COS 的宣传&lt;/p&gt;
-
-&lt;p&gt;里面貌似有一个细节，说是可以在播放四段视频的同时，流畅编辑短信。其实……视频码率调到很低不就流畅了吗，再加上播放窗口很小，也看不出来什么，不是吗？这个根本无法说明 COS 的效率有多高。&lt;/p&gt;
-
-&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;
-
-&lt;p&gt;我觉得我不需要说什么了，从目前的资料看，COS 就是个大草包，大奇葩。我不看好任何搭载有 COS 的手机、平板、桌面计算机、机顶盒等。个人认为，开源无国界，要开源，好好地用 Android 就行了，在 &lt;a href=&quot;http://source.android.com/&quot;&gt;Android Developers&lt;/a&gt; 下载的源码不会有什么后门（毕竟世界各地无数双眼睛看着呢）。当然，像什么 Google 的服务的 App 会不会有什么问题，我不去评论（这是闭源的），发展什么「自主」啊之类的，没多大必要性。&lt;/p&gt;
-
-&lt;p&gt;好吧，看着这东西，我想到了汉芯——买几个摩托罗拉的芯片磨一磨，就变成了自个儿个 CPU；龙芯——造假什么的倒是没有，但也不顺；麒麟——所谓完全自主版权，就是拿 FreeBSD 的成果改一改；红旗 Linux——有段时间发展的还行（我还用过！），但现在已经基本倒闭。&lt;/p&gt;
-
-&lt;p&gt;不知道 COS 拿了多少钱，要是我来分，我会把钱全捐给 Wine，KDE 这些开源项目，这可比搞什么虚无缥缈，假冒伪劣的系统、软件靠谱不知多少倍。&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;random&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;呵呵&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="系统" />
-      
-
-      
-        <category term="COS" />
-      
-        <category term="操作系统" />
-      
-        <category term="国产" />
-      
-
-      
-        <summary type="html">前不久有一个叫「COS」的系统发布了，英文名倒是很霸气，叫「China Operating System」，名头够大的，但虽说是发布，但我们都没看到有 ROM 或者是别的系统安装文件出现了，除了几张图片/视频之外。</summary>
       
 
       

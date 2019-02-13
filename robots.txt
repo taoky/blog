@@ -82,6 +82,7 @@
 
 Sitemap: https://taoky.github.io/sitemap.xml
 
+User-agent: *
 Disallow: /Class/*
 Disallow: /class-9/*
 Disallow: /tianyi_class2/*
