@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2019-02-13T06:04:51+00:00</updated>
+  <updated>2019-02-19T08:04:46+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -24,6 +24,185 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround</title>
+      
+      
+      <link href="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html" rel="alternate" type="text/html" title="在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround" />
+      
+      <published>2019-02-19T05:53:00+00:00</published>
+      <updated>2019-02-19T05:53:00+00:00</updated>
+      <id>https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem</id>
+      <content type="html" xml:base="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
+
+&lt;p&gt;（PS：Linux 上的 Docker 未见此问题）&lt;/p&gt;
+
+&lt;h2 id=&quot;复现问题&quot;&gt;复现问题&lt;/h2&gt;
+
+&lt;p&gt;版本：Docker Desktop 2.0.0.2 (30215)，Engine: 18.09.1&lt;/p&gt;
+
+&lt;p&gt;跑一个 Ubuntu 的容器。设置 &lt;code class=&quot;highlighter-rouge&quot;&gt;--privileged=true&lt;/code&gt; 以使 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 成功执行。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker container run &lt;span class=&quot;nt&quot;&gt;--privileged&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; ubuntu bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;创建 immutable 的文件。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@1865cedf0ef0:/# &lt;span class=&quot;nb&quot;&gt;ls
+&lt;/span&gt;bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@1865cedf0ef0:/# &lt;span class=&quot;nb&quot;&gt;touch test
+&lt;/span&gt;root@1865cedf0ef0:/# chattr +i &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# now `test` is immutable&lt;/span&gt;
+root@1865cedf0ef0:/# &lt;span class=&quot;nb&quot;&gt;rm test&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# cannot remove when you're root&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt;: cannot remove &lt;span class=&quot;s1&quot;&gt;'test'&lt;/span&gt;: Operation not permitted
+root@1865cedf0ef0:/# &lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# even `-f` won't work&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt;: cannot remove &lt;span class=&quot;s1&quot;&gt;'test'&lt;/span&gt;: Operation not permitted
+root@1865cedf0ef0:/# &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在退出之后看一下现有的容器。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS                      PORTS               NAMES
+1865cedf0ef0        ubuntu               &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;                   2 minutes ago       Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 2 minutes ago                        ecstatic_hawking
+&lt;span class=&quot;c&quot;&gt;# 省略其他容器&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后……删不掉。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ docker container &lt;span class=&quot;nb&quot;&gt;rm &lt;/span&gt;186
+Error response from daemon: container 1865cedf0ef0e58303a0361b8e19cd3a882a1bc741990603fb446e153656589f: driver &lt;span class=&quot;s2&quot;&gt;&quot;overlay2&quot;&lt;/span&gt; failed to remove root filesystem: remove /var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff/test: operation not permitted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;同样，加上 &lt;code class=&quot;highlighter-rouge&quot;&gt;-f&lt;/code&gt; 也没有任何作用。可以注意到，我们创建的文件阻止了容器的正常删除。&lt;/p&gt;
+
+&lt;h2 id=&quot;workaround&quot;&gt;Workaround&lt;/h2&gt;
+
+&lt;p&gt;那么，返回中指向的路径在哪里呢？很明显这不是我们主机上的路径。&lt;/p&gt;
+
+&lt;p&gt;由 Docker 的工作原理我们知道，Docker for Mac 需要虚拟一个 Linux 内核才能够在 macOS 上正常运行，而这个最外层的虚拟机就是我们的目标：我们需要在其上把 &lt;code class=&quot;highlighter-rouge&quot;&gt;test&lt;/code&gt; 文件删掉。&lt;/p&gt;
+
+&lt;p&gt;Docker for Mac 选择的虚拟机环境是 Xhyve VM。根据&lt;a href=&quot;https://forums.docker.com/t/is-it-possible-to-ssh-to-the-xhyve-machine/17426&quot;&gt;这条链接&lt;/a&gt;的内容，我们可以进入这个虚拟机环境。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;screen ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是……&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff# &lt;span class=&quot;nb&quot;&gt;ls
+test
+&lt;/span&gt;linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff# chattr
+&lt;span class=&quot;nt&quot;&gt;-sh&lt;/span&gt;: chattr: not found
+linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff#
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这个环境没有 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt;……虽然有个包管理器 &lt;code class=&quot;highlighter-rouge&quot;&gt;apk&lt;/code&gt;，但是……&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;linuxkit-025000000001:/var/lib# apk update
+ERROR: Unable to lock database: Read-only file system
+ERROR: Failed to open apk database: Read-only file system
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt;，但是一些基础的东西还是比较齐的——甚至有 &lt;code class=&quot;highlighter-rouge&quot;&gt;wget&lt;/code&gt;。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 的啊&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+
+&lt;p&gt;这就尴尬了。&lt;/p&gt;
+
+&lt;p&gt;所幸的是，在 BusyBox 的网站上可以直接下载到编译好的二进制文件。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget https://busybox.net/downloads/binaries/1.30.0-i686/busybox_CHATTR
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后，&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff# &lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x ./busybox_CHATTR
+linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff# ./busybox_CHATTR &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test
+&lt;/span&gt;linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff# &lt;span class=&quot;nb&quot;&gt;rm test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;之后退出虚拟机环境，再删一次就行了。&lt;/p&gt;
+
+&lt;h2 id=&quot;附录-1-能不能直接从其他-linux-机器上复制一份-chattr-过来&quot;&gt;附录 1: 能不能直接从其他 Linux 机器上复制一份 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 过来？&lt;/h2&gt;
+
+&lt;p&gt;答案是：（大部分情况下）不行。&lt;/p&gt;
+
+&lt;p&gt;实话讲，这是我想到的第一个办法。但最终证明是行不通的。为什么？动态链接。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@tao-kali:~# &lt;span class=&quot;nb&quot;&gt;uname&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+Linux tao-kali 4.19.0-kali1-amd64 &lt;span class=&quot;c&quot;&gt;#1 SMP Debian 4.19.13-1kali1 (2019-01-03) x86_64 GNU/Linux&lt;/span&gt;
+root@tao-kali:~# ldd /usr/bin/chattr
+	linux-vdso.so.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ffe607c1000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libe2p.so.2 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libe2p.so.2 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779d4e000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libcom_err.so.2 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libcom_err.so.2 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779d48000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libblkid.so.1 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libblkid.so.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779cf3000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libc.so.6 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libc.so.6 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779b32000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libpthread.so.0 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libpthread.so.0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779b11000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	/lib64/ld-linux-x86-64.so.2 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779d86000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	libuuid.so.1 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libuuid.so.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779b08000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以注意到，这份 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 依赖于 7 个动态链接库。而这个精简的虚拟环境很难满足这些需求。&lt;/p&gt;
+
+&lt;p&gt;而下载得到的 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是静态链接的。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  Downloads file busybox_CHATTR
+busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SYSV&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, statically linked, stripped
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;所以说……用于 rescue 的程序最好还是静态链接。&lt;/p&gt;
+
+&lt;h2 id=&quot;附录-2-chattr-i-到底做了什么&quot;&gt;附录 2: &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 到底做了什么？&lt;/h2&gt;
+
+&lt;p&gt;简单地说，”immutable” 等实际是文件系统提供的一种特性。所以要对不支持此特性的文件系统（比如 FAT32）上的文件运行 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是行不通的。&lt;/p&gt;
+
+&lt;p&gt;从 BusyBox 的源码中可以找到 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr.c&lt;/code&gt;，该文件属于 &lt;code class=&quot;highlighter-rouge&quot;&gt;e2fsprogs&lt;/code&gt;。分析代码可以发现在解码完参数之后，调用了宏 &lt;code class=&quot;highlighter-rouge&quot;&gt;fsetflags(name, flags)&lt;/code&gt;（实际指向函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;fgetsetflags(name, NULL, flags)&lt;/code&gt;），通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;ioctl&lt;/code&gt; 对文件的 &lt;code class=&quot;highlighter-rouge&quot;&gt;flags&lt;/code&gt; 进行了修改。&lt;/p&gt;
+
+&lt;p&gt;目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。而在虚拟环境中 &lt;code class=&quot;highlighter-rouge&quot;&gt;df -hT&lt;/code&gt; 可以看到，&lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;（虚拟磁盘）是以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ext4&lt;/code&gt; 挂在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/lib&lt;/code&gt; 上的。&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://busybox.net/downloads/BusyBox.html&quot;&gt;https://busybox.net/downloads/BusyBox.html&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&quot;&gt;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="Docker" />
+      
+        <category term="Mac" />
+      
+        <category term="Troubleshoot" />
+      
+
+      
+        <summary type="html">昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 chattr +i 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -182,16 +361,16 @@ a.out:
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/ &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&quot;&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
     &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;http://iphonedevwiki.net/index.php/On-device_toolchains &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;&lt;a href=&quot;http://iphonedevwiki.net/index.php/On-device_toolchains&quot;&gt;http://iphonedevwiki.net/index.php/On-device_toolchains&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
     &lt;li id=&quot;fn:3&quot;&gt;
-      &lt;p&gt;见 http://resources.airnativeextensions.com/ios/，https://github.com/theos/sdks 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;见 &lt;a href=&quot;http://resources.airnativeextensions.com/ios/&quot;&gt;http://resources.airnativeextensions.com/ios/&lt;/a&gt;，&lt;a href=&quot;https://github.com/theos/sdks&quot;&gt;https://github.com/theos/sdks&lt;/a&gt; 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
     &lt;li id=&quot;fn:4&quot;&gt;
-      &lt;p&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&quot;&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
@@ -2689,84 +2868,6 @@ Bob  | 2
 
       
         <summary type="html">中考考完了，先让我抒发一下感受。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">天一高中参观游记</title>
-      
-      
-      <link href="https://taoky.github.io/2014-04-06/visiting-Tianyi-High-School.html" rel="alternate" type="text/html" title="天一高中参观游记" />
-      
-      <published>2014-04-06T00:00:00+00:00</published>
-      <updated>2014-04-06T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-04-06/visiting-Tianyi-High-School</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-04-06/visiting-Tianyi-High-School.html">&lt;p&gt;周三去参观的，说是初二成绩加起来 130 名以上的可以「偷得浮生半日闲」（笑）去参观。&lt;/p&gt;
-
-&lt;p&gt;中午 12：20，英语作业还没做完呢，就被拉出去了 -_-#。排队的时候看到貌似是 8 班的语文课代表（男）在那儿对着镜子梳头……和我们班的语文课代表老温样子简直一模一样……&lt;/p&gt;
-
-&lt;p&gt;难道语文课代表都有相似的爱好吗？！
-&lt;!--more--&gt;
-上了车之后就是各种聊天各种扯。&lt;/p&gt;
-
-&lt;p&gt;到天一高中后，先去参观「信息楼」。&lt;/p&gt;
-
-&lt;p&gt;带队老师：「信息楼里有 Computer rooms, libraries, 还有 International (?，没听清楚)。」&lt;/p&gt;
-
-&lt;p&gt;从旁边的一个小门绕进了国际部（AP 班）的领地。一开始看到的是高三，从教室外面的大玻璃看的时候我被惊呆了：每个人手里怎么都有一台电脑……不过高二高一就看不到了。还有电子阅览室什么的。似乎条件挺不错的。但是我就想想吧，我不可能来 AP 班的。&lt;/p&gt;
-
-&lt;p&gt;接下来到科学楼（还是叫科技楼？记不清了），仪器都不错，而且竟然连数控机床都有。那儿的天文社团到目前为止竟然发现了 18 颗（？）小行星。&lt;/p&gt;
-
-&lt;p&gt;在去科学楼的路上，徐娟在那边扯：「这儿有下午茶吗？能不能续杯？」&lt;/p&gt;
-
-&lt;p&gt;我：「下午茶，那不是肯德基吗？」&lt;/p&gt;
-
-&lt;p&gt;「是必胜客。」&lt;/p&gt;
-
-&lt;p&gt;我：「徐娟，天一高中不适合你，你还是去必胜客吧。」（暗笑）&lt;/p&gt;
-
-&lt;p&gt;然后徐娟的脸色顿时阴沉了下来……&lt;/p&gt;
-
-&lt;p&gt;去过科学楼后记得是去了游泳馆，一股漂白粉的味道。之后去体育馆，本人对此无爱，所以就不多做介绍了，反正很大的样子。&lt;/p&gt;
-
-&lt;p&gt;接下来去信息楼的图书馆。确实很大，虽然我只找到一本关于电脑的书。不过时不时可以听到有文艺青年在喊：「让我死在这里吧！」&lt;/p&gt;
-
-&lt;p&gt;最后去会议室听高中校长讲话。有人用一句话总结校长讲话：「天一高中是个好学校，你们快点过来吧！」（笑）&lt;/p&gt;
-
-&lt;p&gt;最后回学校，到时已是 4：50，差点就能赶上吃晚饭了。&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="生活" />
-      
-
-      
-        <category term="学校" />
-      
-        <category term="参观" />
-      
-
-      
-        <summary type="html">周三去参观的，说是初二成绩加起来 130 名以上的可以「偷得浮生半日闲」（笑）去参观。</summary>
       
 
       
