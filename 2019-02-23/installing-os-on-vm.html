@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>水文 | 在 macOS 下配置虚拟机，安装其他操作系统</title>
+  <meta name="description" content="感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（英文）。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://taoky.github.io/2019-02-23/installing-os-on-vm.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://taoky.github.io/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+
+  
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44647340-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky's blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger">
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewbox="0 0 18 15" width="18px" height="15px">
+            <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</h1>
+    
+    <p class="post-meta"><time datetime="2019-02-23T12:00:00+00:00" itemprop="datePublished">Feb 23, 2019</time>
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/linux/">Linux</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/macos/">macOS</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">准备工作</a></li>
+<li class="toc-entry toc-h2">
+<a href="#vmware-fusion-%E7%AF%87">VMware Fusion 篇</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F">安装系统</a></li>
+<li class="toc-entry toc-h3">
+<a href="#%E6%9C%89%E5%85%B3%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E9%85%8D%E7%BD%AE">有关虚拟机的配置</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB">文件共享</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h2">
+<a href="#virtualbox-%E7%AF%87">VirtualBox 篇</a>
+<ul>
+<li class="toc-entry toc-h3">
+<a href="#%E6%9C%89%E5%85%B3%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E9%85%8D%E7%BD%AE-1">有关虚拟机的配置</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB-1">文件共享</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p>感谢 <a href="https://github.com/iBug" class="user-mention">@iBug</a> 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在<a href="https://ibug.github.io/blog/2019/02/setup-ubuntu-in-vmware.html">此</a>（英文）。</p>
+
+<p>主要目的是帮助使用 Mac 的同学简单配置虚拟机，以应对本学期的 操作系统原理与设计 课程（还有日常可能需要的 Windows 需求）。</p>
+
+<h2 id="准备工作">准备工作</h2>
+
+<p>需要以下内容：</p>
+
+<ul>
+  <li>虚拟机软件。可以使用 Parallels Desktop, VMware Fusion 或 VirtualBox。其中前两者是商业、收费的软件，后者是免费开源的。以下将以后两者为例。</li>
+  <li>需要安装的操作系统的镜像文件，一般为 <code class="highlighter-rouge">*.iso</code> 格式。
+    <ul>
+      <li>如果需要安装 Windows，镜像文件可以在一些网站找到，微软也会提供最新的 Windows 10 镜像的下载。</li>
+      <li>一般来说，大部分 Linux 发行版的镜像是很容易下载到的。如果遇到了网络障碍，可以至<a href="https://mirrors.ustc.edu.cn/"><del>肥科</del>科大开源镜像站</a>下载。</li>
+      <li>macOS 已经基本上 64 位化了，所以在下载时选择 32 位或 64 位均可。</li>
+      <li>以下将以 Ubuntu 18.04.2 64 位版本为例。该版本是 Ubuntu 最新的 LTS（长期支持版本）。</li>
+      <li>记得验证哈希。</li>
+    </ul>
+  </li>
+  <li>足够的硬盘与内存空间。
+    <ul>
+      <li>根据需求的不同，可能需要几个 GiB 至几十个 GiB 的硬盘空间。</li>
+      <li>同样根据需求，建议分配 1～2 GiB 的内存。如果你的内存不大，建议在安装 Linux 时不选择重量级的图形界面（如 Unity, GNOME, KDE 等），或者选择不安装 GUI 的版本（如 Ubuntu Server）。</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="vmware-fusion-篇">VMware Fusion 篇</h2>
+
+<p>由于法律原因，请自行下载、购买、激活此软件。对于较新版本的 macOS，在安装时需要在 系统偏好设置 =&gt; 安全性与隐私中，同意内核驱动的安装。</p>
+
+<h3 id="安装系统">安装系统</h3>
+
+<p><img src="/pictures/vm/vf_ui.png" alt="The Interface of VMware Fusion"></p>
+
+<p><em>图 1 VMware Fusion 的界面。</em></p>
+
+<p>由于使用了比较长的时间，我的虚拟机比较多。</p>
+
+<p>点按 + 号，新建虚拟机。将你的 <code class="highlighter-rouge">.iso</code> 文件拖进去。</p>
+
+<p><img src="/pictures/vm/install-1.png" alt="Installing Ubuntu - 1"></p>
+
+<p><em>图 2 开始安装</em></p>
+
+<p><img src="/pictures/vm/install-2.png" alt="Installing Ubuntu - 2"></p>
+
+<p><em>图 3 使用「快捷安装」配置</em></p>
+
+<p>其实流程还是比较简单的。我们使用 VMware 提供的「快捷安装」功能。如果需要自己体验一下安装的感觉，可以参看下文的 VirtualBox 篇。</p>
+
+<p>点击「继续」，选择「自定设置」，以改变虚拟机设置信息。为虚拟机选择一个放置的目录，然后继续。</p>
+
+<p>接下来在开机之前，进行一些简单的配置。</p>
+
+<p><img src="/pictures/vm/install-3.png" alt="Installing Ubuntu - 3"></p>
+
+<ul>
+  <li>删除打印机、摄像头这种奇怪的设备，除非你需要。USB 与蓝牙、声卡也可以删掉。
+    <ul>
+      <li>软盘在安装结束后再删除。「快捷安装」需要软盘。</li>
+    </ul>
+  </li>
+  <li>在硬盘处改变你需要分配的磁盘大小。在安装系统之后，硬盘空间可以增大，但不能减小。</li>
+  <li>在处理器和内存处改变分配 CPU 核心与内存大小。</li>
+  <li>在共享此处可以添加希望虚拟机能够访问到的宿主机（host）的文件夹。</li>
+</ul>
+
+<p>在一切办妥之后开机。静静等待「快捷安装」完成。</p>
+
+<p>（注：如果发现 Ubuntu 安装器很长时间卡在 Retrieving file 处，可以尝试断开一下网络。）</p>
+
+<h3 id="有关虚拟机的配置">有关虚拟机的配置</h3>
+
+<p>本文<strong>不会</strong>介绍 Linux 的基本使用方法。仅就 Linux 配置中与虚拟机有关的内容进行介绍。</p>
+
+<p>一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 <code class="highlighter-rouge">open-vm-tools</code>。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。</p>
+
+<p>如果发现 <code class="highlighter-rouge">open-vm-tools</code> 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。</p>
+
+<p>另外，如果需要连接 USB 设备，可能需要将 USB 兼容性设置为 USB 3.0。</p>
+
+<h4 id="文件共享">文件共享</h4>
+
+<p>在设置中选择共享文件夹后，共享的文件夹放置在 <code class="highlighter-rouge">/mnt/hgfs</code> 下。如果没有，需要手动挂载。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount <span class="nt">-t</span> fuse.vmhgfs-fuse .host:/ /mnt/hgfs <span class="nt">-o</span> allow_other
+</code></pre></div></div>
+
+<p>需要以 root 用户权限执行。</p>
+
+<h2 id="virtualbox-篇">VirtualBox 篇</h2>
+
+<p>下载并安装，与 VMware 相似，也需要同意安装内核驱动。</p>
+
+<p>新建虚拟机，输入想给虚拟机起的名字以及放置位置，选择 Linux =&gt; Ubuntu (64-bit)。之后选择分配的内存空间。</p>
+
+<p>创建虚拟磁盘，格式默认。建议选择「动态分配」（除非你硬盘非常大）。</p>
+
+<p>在启动之前，需要将镜像挂载到虚拟光驱。选择 设置 =&gt; 存储 =&gt; 没有盘片 处，在右边可以选择虚拟光驱文件。</p>
+
+<p><img src="/pictures/vm/vb-install-1.png" alt="Installing Ubuntu By VirtualBox"></p>
+
+<p>另外，对于使用 Retina 屏幕（高分屏）的机器，建议缩放率调整到 200%，否则安装的时候界面很小，会比较尴尬。</p>
+
+<p>其他选项可以酌情调整，例如开启 3D 加速，增大内存等。</p>
+
+<p>启动之后选择语言（这里选择中文简体），选择安装 Ubuntu。之后按照安装器的提示即可。对于课程要求来说，建议「最小安装」，并且不要选择在安装时下载更新（在配置好软件源后再下载）。</p>
+
+<p>在分区处直接根据安装器的建议即可。这里清除的是虚拟机的虚拟磁盘，真实的磁盘不会受到影响。</p>
+
+<p>之后配置时区、用户等内容，等待安装结束。重启，按下回车键继续。</p>
+
+<h3 id="有关虚拟机的配置-1">有关虚拟机的配置</h3>
+
+<p>虚拟机需要安装 Guest Additions。在安装之前，需要先安装 <code class="highlighter-rouge">build-essential</code> 软件包，以编译内核模块。</p>
+
+<p>选择 Devices =&gt; Insert Guest Additions CD Image…，运行光盘中的软件。结束后重启。安装后，也可以支持拖放、剪贴板共享等。（不过，似乎有些功能还有点问题）</p>
+
+<h4 id="文件共享-1">文件共享</h4>
+
+<p><img src="/pictures/vm/vb-configure.png" alt="Configuring File Sharing"></p>
+
+<p>像这样配置文件共享后，Ubuntu 会自动挂载，但是可能会遇到权限问题。此时在终端中运行</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>adduser <span class="nv">$USER</span> vboxsf
+</code></pre></div></div>
+
+<p>将自己加入 <code class="highlighter-rouge">vboxsf</code> 用户组。重启即可。默认目录会被挂载在 <code class="highlighter-rouge">/media</code> 下。</p>
+
+<p><img src="/pictures/vm/vb-shared-folder.png" alt="VirtualBox Shared Folder"></p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr>
+<h3>Comments</h3>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://taokyblog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://taoky.github.io/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

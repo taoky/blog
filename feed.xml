@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2019-02-19T08:04:46+00:00</updated>
+  <updated>2019-02-23T14:57:13+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -24,6 +24,182 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</title>
+      
+      
+      <link href="https://taoky.github.io/2019-02-23/installing-os-on-vm.html" rel="alternate" type="text/html" title="水文 | 在 macOS 下配置虚拟机，安装其他操作系统" />
+      
+      <published>2019-02-23T12:00:00+00:00</published>
+      <updated>2019-02-23T12:00:00+00:00</updated>
+      <id>https://taoky.github.io/2019-02-23/installing-os-on-vm</id>
+      <content type="html" xml:base="https://taoky.github.io/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在&lt;a href=&quot;https://ibug.github.io/blog/2019/02/setup-ubuntu-in-vmware.html&quot;&gt;此&lt;/a&gt;（英文）。&lt;/p&gt;
+
+&lt;p&gt;主要目的是帮助使用 Mac 的同学简单配置虚拟机，以应对本学期的 操作系统原理与设计 课程（还有日常可能需要的 Windows 需求）。&lt;/p&gt;
+
+&lt;h2 id=&quot;准备工作&quot;&gt;准备工作&lt;/h2&gt;
+
+&lt;p&gt;需要以下内容：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;虚拟机软件。可以使用 Parallels Desktop, VMware Fusion 或 VirtualBox。其中前两者是商业、收费的软件，后者是免费开源的。以下将以后两者为例。&lt;/li&gt;
+  &lt;li&gt;需要安装的操作系统的镜像文件，一般为 &lt;code class=&quot;highlighter-rouge&quot;&gt;*.iso&lt;/code&gt; 格式。
+    &lt;ul&gt;
+      &lt;li&gt;如果需要安装 Windows，镜像文件可以在一些网站找到，微软也会提供最新的 Windows 10 镜像的下载。&lt;/li&gt;
+      &lt;li&gt;一般来说，大部分 Linux 发行版的镜像是很容易下载到的。如果遇到了网络障碍，可以至&lt;a href=&quot;https://mirrors.ustc.edu.cn/&quot;&gt;&lt;del&gt;肥科&lt;/del&gt;科大开源镜像站&lt;/a&gt;下载。&lt;/li&gt;
+      &lt;li&gt;macOS 已经基本上 64 位化了，所以在下载时选择 32 位或 64 位均可。&lt;/li&gt;
+      &lt;li&gt;以下将以 Ubuntu 18.04.2 64 位版本为例。该版本是 Ubuntu 最新的 LTS（长期支持版本）。&lt;/li&gt;
+      &lt;li&gt;记得验证哈希。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;足够的硬盘与内存空间。
+    &lt;ul&gt;
+      &lt;li&gt;根据需求的不同，可能需要几个 GiB 至几十个 GiB 的硬盘空间。&lt;/li&gt;
+      &lt;li&gt;同样根据需求，建议分配 1～2 GiB 的内存。如果你的内存不大，建议在安装 Linux 时不选择重量级的图形界面（如 Unity, GNOME, KDE 等），或者选择不安装 GUI 的版本（如 Ubuntu Server）。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;vmware-fusion-篇&quot;&gt;VMware Fusion 篇&lt;/h2&gt;
+
+&lt;p&gt;由于法律原因，请自行下载、购买、激活此软件。对于较新版本的 macOS，在安装时需要在 系统偏好设置 =&amp;gt; 安全性与隐私中，同意内核驱动的安装。&lt;/p&gt;
+
+&lt;h3 id=&quot;安装系统&quot;&gt;安装系统&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/vf_ui.png&quot; alt=&quot;The Interface of VMware Fusion&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;图 1 VMware Fusion 的界面。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;由于使用了比较长的时间，我的虚拟机比较多。&lt;/p&gt;
+
+&lt;p&gt;点按 + 号，新建虚拟机。将你的 &lt;code class=&quot;highlighter-rouge&quot;&gt;.iso&lt;/code&gt; 文件拖进去。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/install-1.png&quot; alt=&quot;Installing Ubuntu - 1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;图 2 开始安装&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/install-2.png&quot; alt=&quot;Installing Ubuntu - 2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;图 3 使用「快捷安装」配置&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;其实流程还是比较简单的。我们使用 VMware 提供的「快捷安装」功能。如果需要自己体验一下安装的感觉，可以参看下文的 VirtualBox 篇。&lt;/p&gt;
+
+&lt;p&gt;点击「继续」，选择「自定设置」，以改变虚拟机设置信息。为虚拟机选择一个放置的目录，然后继续。&lt;/p&gt;
+
+&lt;p&gt;接下来在开机之前，进行一些简单的配置。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/install-3.png&quot; alt=&quot;Installing Ubuntu - 3&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;删除打印机、摄像头这种奇怪的设备，除非你需要。USB 与蓝牙、声卡也可以删掉。
+    &lt;ul&gt;
+      &lt;li&gt;软盘在安装结束后再删除。「快捷安装」需要软盘。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;在硬盘处改变你需要分配的磁盘大小。在安装系统之后，硬盘空间可以增大，但不能减小。&lt;/li&gt;
+  &lt;li&gt;在处理器和内存处改变分配 CPU 核心与内存大小。&lt;/li&gt;
+  &lt;li&gt;在共享此处可以添加希望虚拟机能够访问到的宿主机（host）的文件夹。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在一切办妥之后开机。静静等待「快捷安装」完成。&lt;/p&gt;
+
+&lt;p&gt;（注：如果发现 Ubuntu 安装器很长时间卡在 Retrieving file 处，可以尝试断开一下网络。）&lt;/p&gt;
+
+&lt;h3 id=&quot;有关虚拟机的配置&quot;&gt;有关虚拟机的配置&lt;/h3&gt;
+
+&lt;p&gt;本文&lt;strong&gt;不会&lt;/strong&gt;介绍 Linux 的基本使用方法。仅就 Linux 配置中与虚拟机有关的内容进行介绍。&lt;/p&gt;
+
+&lt;p&gt;一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt;。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。&lt;/p&gt;
+
+&lt;p&gt;如果发现 &lt;code class=&quot;highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt; 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。&lt;/p&gt;
+
+&lt;p&gt;另外，如果需要连接 USB 设备，可能需要将 USB 兼容性设置为 USB 3.0。&lt;/p&gt;
+
+&lt;h4 id=&quot;文件共享&quot;&gt;文件共享&lt;/h4&gt;
+
+&lt;p&gt;在设置中选择共享文件夹后，共享的文件夹放置在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/mnt/hgfs&lt;/code&gt; 下。如果没有，需要手动挂载。&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mount &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; fuse.vmhgfs-fuse .host:/ /mnt/hgfs &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; allow_other
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;需要以 root 用户权限执行。&lt;/p&gt;
+
+&lt;h2 id=&quot;virtualbox-篇&quot;&gt;VirtualBox 篇&lt;/h2&gt;
+
+&lt;p&gt;下载并安装，与 VMware 相似，也需要同意安装内核驱动。&lt;/p&gt;
+
+&lt;p&gt;新建虚拟机，输入想给虚拟机起的名字以及放置位置，选择 Linux =&amp;gt; Ubuntu (64-bit)。之后选择分配的内存空间。&lt;/p&gt;
+
+&lt;p&gt;创建虚拟磁盘，格式默认。建议选择「动态分配」（除非你硬盘非常大）。&lt;/p&gt;
+
+&lt;p&gt;在启动之前，需要将镜像挂载到虚拟光驱。选择 设置 =&amp;gt; 存储 =&amp;gt; 没有盘片 处，在右边可以选择虚拟光驱文件。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/vb-install-1.png&quot; alt=&quot;Installing Ubuntu By VirtualBox&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;另外，对于使用 Retina 屏幕（高分屏）的机器，建议缩放率调整到 200%，否则安装的时候界面很小，会比较尴尬。&lt;/p&gt;
+
+&lt;p&gt;其他选项可以酌情调整，例如开启 3D 加速，增大内存等。&lt;/p&gt;
+
+&lt;p&gt;启动之后选择语言（这里选择中文简体），选择安装 Ubuntu。之后按照安装器的提示即可。对于课程要求来说，建议「最小安装」，并且不要选择在安装时下载更新（在配置好软件源后再下载）。&lt;/p&gt;
+
+&lt;p&gt;在分区处直接根据安装器的建议即可。这里清除的是虚拟机的虚拟磁盘，真实的磁盘不会受到影响。&lt;/p&gt;
+
+&lt;p&gt;之后配置时区、用户等内容，等待安装结束。重启，按下回车键继续。&lt;/p&gt;
+
+&lt;h3 id=&quot;有关虚拟机的配置-1&quot;&gt;有关虚拟机的配置&lt;/h3&gt;
+
+&lt;p&gt;虚拟机需要安装 Guest Additions。在安装之前，需要先安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;build-essential&lt;/code&gt; 软件包，以编译内核模块。&lt;/p&gt;
+
+&lt;p&gt;选择 Devices =&amp;gt; Insert Guest Additions CD Image…，运行光盘中的软件。结束后重启。安装后，也可以支持拖放、剪贴板共享等。（不过，似乎有些功能还有点问题）&lt;/p&gt;
+
+&lt;h4 id=&quot;文件共享-1&quot;&gt;文件共享&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/vb-configure.png&quot; alt=&quot;Configuring File Sharing&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;像这样配置文件共享后，Ubuntu 会自动挂载，但是可能会遇到权限问题。此时在终端中运行&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;nv&quot;&gt;$USER&lt;/span&gt; vboxsf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;将自己加入 &lt;code class=&quot;highlighter-rouge&quot;&gt;vboxsf&lt;/code&gt; 用户组。重启即可。默认目录会被挂载在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/media&lt;/code&gt; 下。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/vm/vb-shared-folder.png&quot; alt=&quot;VirtualBox Shared Folder&quot; /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="虚拟机" />
+      
+        <category term="Linux" />
+      
+        <category term="macOS" />
+      
+
+      
+        <summary type="html">感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（英文）。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -2756,118 +2932,6 @@ Bob  | 2
 
       
         <summary type="html">进来发现班级网页 1.0 版访问速度极慢，即使在本地访问也是如此。经检查，发现是浏览器为得到一些网页字体文件与 jQuery 库，访问了一个被超时的服务器。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">我认为的文字规范</title>
-      
-      
-      <link href="https://taoky.github.io/2014-06-18/my-thought-of-language-use-in-blog.html" rel="alternate" type="text/html" title="我认为的文字规范" />
-      
-      <published>2014-06-18T00:00:00+00:00</published>
-      <updated>2014-06-18T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-06-18/my-thought-of-language-use-in-blog</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-06-18/my-thought-of-language-use-in-blog.html">&lt;p&gt;中考考完了，先让我抒发一下感受。&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;中考考完了&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;啊&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;！&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;!--more--&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;进来看自己以前写的东西，很惊讶，格式很难看。不知是不是受到了什么的影响，总觉得自己以前写的东西格式有问题、错乱啊之类的，所以我觉得我应该把自己对排版的看法记下来。或许，以后看看，可能会有自己一套新主意，可能会觉得自己那个时候怎么这么幼稚……&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;中文与英文、数字间统一空一格。&lt;/p&gt;
-
-    &lt;p&gt;Example: 这台电脑安装了 Mac OS X 与 Windows 7 的双系统。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;所有引文使用 Markdown 的区块引用，并且引文内容不变。&lt;/p&gt;
-
-    &lt;p&gt;Example:&lt;/p&gt;
-
-    &lt;blockquote&gt;
-      &lt;p&gt;“GNU/Linux”是GNU计划的支持者与开发者，特别是其创立者理查德·斯托曼对于以Linux内核为内核的操作系统的称呼。由于Linux使用了许多GNU程序，理查德·斯托曼认为应该将该操作系统称为“GNU/Linux”比较恰当。绝大多数Linux操作系统使用了大量的GNU软件，包括了一个shell程序、工具、库、编译器及工具，还有许多其他程序，例如Emacs、Vi。正因为如此，GNU计划的开创者理查德·马修·斯托曼提议将Linux操作系统改名为GNU/Linux，但多数人仍然习惯性地使用“Linux”。	——维基百科&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;以中文为主体的情况下，连接英文与中文的标点符号使用中文标点，连接英文与英文的标点符号使用英文标点。&lt;/p&gt;
-
-    &lt;p&gt;Example: 「Hello, World!」他喊道。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;中文引号统一使用直角引号（「」），英文中使用西式引号（”“）。&lt;/p&gt;
-
-    &lt;p&gt;Example: 书中写道：「Click “Help”, and you will find more information.」&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;命令、代码中关键字使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;code&amp;gt;&lt;/code&gt;、代码使用代码高亮，格式不变。&lt;/p&gt;
-
-    &lt;p&gt;Example: 打开 Terminal，然后输入「&lt;code class=&quot;highlighter-rouge&quot;&gt;df -h /&lt;/code&gt;」，就可以看到你的硬盘中还剩下多少可用空间。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;在英文环境中，使用半角括号包裹文字；在中文环境中，使用全角括号包裹文字。括号前后不加空格。&lt;/p&gt;
-
-    &lt;p&gt;Example: 使用通用串行总线（USB）的设备在我们的生活中十分常见。&lt;/p&gt;
-
-    &lt;p&gt;Example: I don’t feel well(really?).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;生僻字添加汉语拼音标注。&lt;/p&gt;
-
-    &lt;p&gt;Example: 他&lt;ruby&gt;彳&lt;rt&gt;chì&lt;/rt&gt;亍&lt;rt&gt;chù&lt;/rt&gt;&lt;/ruby&gt;在林中小径上。&lt;/p&gt;
-
-    &lt;p&gt;注意：Firefox 不支持 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;ruby&amp;gt;&lt;/code&gt; 标签，所以在 Firefox 上汉语拼音标注不会正常显示，而是显示成：&lt;/p&gt;
-
-    &lt;p&gt;他彳chì亍chù在林中小径上。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;中文加粗表示强调，英文斜体表示强调。&lt;/p&gt;
-
-    &lt;p&gt;Example: 首先进入&lt;strong&gt;安全模式&lt;/strong&gt;，然后再右击 &lt;em&gt;This Computer&lt;/em&gt;……&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;不知道还有没有别的内容了，反正我就想到了这么多。&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="字体与排版" />
-      
-
-      
-        <category term="meta" />
-      
-        <category term="字体" />
-      
-        <category term="排版" />
-      
-        <category term="文字" />
-      
-
-      
-        <summary type="html">中考考完了，先让我抒发一下感受。</summary>
       
 
       
