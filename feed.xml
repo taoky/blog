@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2019-07-08T04:31:20+00:00</updated>
+  <updated>2019-07-10T15:37:04+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -24,6 +24,237 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">epoll 的故事</title>
+      
+      
+      <link href="https://taoky.github.io/2019-07-08/epoll-101.html" rel="alternate" type="text/html" title="epoll 的故事" />
+      
+      <published>2019-07-08T04:33:00+00:00</published>
+      <updated>2019-07-08T04:33:00+00:00</updated>
+      <id>https://taoky.github.io/2019-07-08/epoll-101</id>
+      <content type="html" xml:base="https://taoky.github.io/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
+
+&lt;p&gt;在介绍 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 之前，不如让我们来看看，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 到底是怎么出现的。&lt;/p&gt;
+
+&lt;h2 id=&quot;网页服务器与-c10k-问题&quot;&gt;网页服务器与 C10K 问题&lt;/h2&gt;
+
+&lt;p&gt;C10K 问题指同时处理一万个并发连接时的优化问题&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;起初&quot;&gt;起初……&lt;/h3&gt;
+
+&lt;p&gt;最开始的时候，网页服务器处理连接的做法非常简单：&lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 阻塞在那，接收到连接之后就处理、返回数据。但这样简单的做法在多用户的情况下效果是很差的：如果我在下载一个超大的文件，其他用户的连接就根本无法被处理，这显然是无法接受的。&lt;/p&gt;
+
+&lt;p&gt;既然要同时处理多个连接，那 &lt;code class=&quot;highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 总可以吧——接收到连接后先 &lt;code class=&quot;highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 一下，新进程去处理当前请求，父进程继续 &lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt;，或者我 &lt;code class=&quot;highlighter-rouge&quot;&gt;pthread_create()&lt;/code&gt; 创建新线程也行。这样确实部分解决了上一段的问题，但是创建新的进程/线程是有比较大的开销的。&lt;/p&gt;
+
+&lt;p&gt;既然开销大，那么我能不能在最开始的时候就先创建一些进程/线程呢？这种做法最后就变成了进程/线程池（Apache prefork 就是这样做的）。看起来，我们很好地解决了这个问题，但是……&lt;/p&gt;
+
+&lt;h3 id=&quot;一万个并发连接--一万个进程线程&quot;&gt;一万个并发连接 = 一万个进程/线程？&lt;/h3&gt;
+
+&lt;p&gt;很遗憾的事情是，我们没有一万个 CPU 核心可以来并行运行这些进程/线程。让一万个进程/线程同时保持高性能处理连接是不切实际的。&lt;/p&gt;
+
+&lt;p&gt;所以，我们能否让一个进程/线程&lt;strong&gt;同时&lt;/strong&gt;处理多个连接？答案当然是可以的：这就是 I/O 复用。&lt;/p&gt;
+
+&lt;h3 id=&quot;select&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;我们可以注意到，在处理 socket 文件描述符的时候，有一些操作是阻塞的：这包括了读取 (&lt;code class=&quot;highlighter-rouge&quot;&gt;read&lt;/code&gt;)、写入 (&lt;code class=&quot;highlighter-rouge&quot;&gt;write&lt;/code&gt;) 以及接受连接 (&lt;code class=&quot;highlighter-rouge&quot;&gt;accept&lt;/code&gt;) 等等。如果我们有一种方法，能够让我们的进程知道某个文件描述符&lt;strong&gt;已经准备&lt;/strong&gt;好某个操作的话，每次只要把准备好的描述符拿出来做处理就可以了，在执行这些阻塞操作的时候也就不会一直卡在那儿了。这样我们的处理流程就是：&lt;/p&gt;
+
+&lt;p&gt;首先由某个函数来告诉我们文件描述符准备好读/写，然后我们对那个文件描述符做短小快速的处理，最后回到那个函数，不停循环。我们不用太担心这样对性能会不会带来比较大的影响，因为网络的 I/O 相比 CPU 来讲慢得多。这样的话我们的单个进程/线程也可以处理好多个连接了。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; 就可以做到「通知」的作用。它使用的 &lt;code class=&quot;highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writefds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exceptfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;看起来很好，但是 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 仍有一些问题。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;描述符数量有限制。POSIX 标准允许实现自己来定义数量上限，Linux 内核也没有硬性限制，但是 glibc 有——它把 &lt;code class=&quot;highlighter-rouge&quot;&gt;FD_SETSIZE&lt;/code&gt; 直接定义为了 1024。&lt;/li&gt;
+  &lt;li&gt;第二个问题在于 &lt;code class=&quot;highlighter-rouge&quot;&gt;nfds&lt;/code&gt; 这个参数：&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会检查 0 到 &lt;code class=&quot;highlighter-rouge&quot;&gt;nfds - 1&lt;/code&gt; 在内的所有文件描述符的情况——这很 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(n)&lt;/code&gt;。在大量连接的情况下，我们当然希望轮询的时间复杂度越低越好。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会改变 &lt;code class=&quot;highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体的内容，每次调用都要重新初始化。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;poll&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 是另一种 I/O 复用的函数。它和 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 类似。&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;poll&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pollfd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pollfd&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  	&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;fd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;cm&quot;&gt;/* file descriptor */&lt;/span&gt;
+  	&lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;events&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;cm&quot;&gt;/* requested events */&lt;/span&gt;
+  	&lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;revents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;cm&quot;&gt;/* returned events */&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里，&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 解决了 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 的描述符数量和重新初始化的问题，但是 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(n)&lt;/code&gt; 的性能问题还是没能得到解决，所以在 Linux 中就出现了 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h2 id=&quot;epoll-简介&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 简介&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 能够用 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(1)&lt;/code&gt; 的时间复杂度去监控文件描述符，解决了 &lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 的问题。与 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 不同，它不是一个「跨 (POSIX) 平台」的解决方案，例如在 FreeBSD 中，与 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 相似的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;kqueue&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;相比于前两者来说，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 也更加复杂了。它有三个系列函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_create()&lt;/code&gt;: 创建 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt;: 向 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例注册文件描述符，可以设置添加、修改、删除目标文件描述符。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;: 等待 I/O 事件。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;水平触发-lt-与边缘触发-et&quot;&gt;水平触发 (LT) 与边缘触发 (ET)&lt;/h3&gt;
+
+&lt;p&gt;这个术语总有种数电的感觉。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/epoll/lt-strange-example.gif&quot; alt=&quot;A bad example of level trigger&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;del&gt;呆唯逗梓喵——一个水平触发的非典型示例&lt;/del&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;简单地说，水平触发时，只要某个文件描述符处在准备好了的状态，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 就会一直告诉你；边缘触发时，某个文件描述符准备好后，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会告诉你一次，或者说 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会在描述符状态变化的时候告诉你。边缘触发是 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 新带来的特性。&lt;/p&gt;
+
+&lt;p&gt;文档中举了一个例子：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;某个文件描述符的读端 &lt;code class=&quot;highlighter-rouge&quot;&gt;rfd&lt;/code&gt; 在 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中注册。&lt;/li&gt;
+  &lt;li&gt;有一个 pipe writer 在管道写端写入了 2 kB 数据。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 函数返回 &lt;code class=&quot;highlighter-rouge&quot;&gt;rfd&lt;/code&gt;，标记它已经准备好读取了。&lt;/li&gt;
+  &lt;li&gt;Pipe reader 在管道读端读取了 1 kB 数据。（之后回到 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;）&lt;/li&gt;
+  &lt;li&gt;如果是水平触发，那么 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的话（&lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt; &lt;strong&gt;不能保证&lt;/strong&gt;一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt;，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+
+&lt;p&gt;文档对使用边缘触发给出的建议是：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;使用非阻塞的文件描述符。&lt;/li&gt;
+  &lt;li&gt;直到 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt; 返回 &lt;code class=&quot;highlighter-rouge&quot;&gt;EAGAIN&lt;/code&gt;，再等待 I/O 事件。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;一般来说，边缘触发的性能更好，但是编写也更费劲一些。&lt;/p&gt;
+
+&lt;h3 id=&quot;epoll_event-结构中可用的事件类型&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_event&lt;/code&gt; 结构中可用的事件类型&lt;/h3&gt;
+
+&lt;p&gt;以下根据 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 的文档整理，可能会有错误，所以我尽量附上了参考的链接。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt;: 输入 (&lt;code class=&quot;highlighter-rouge&quot;&gt;read&lt;/code&gt;) 事件。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLOUT&lt;/code&gt;: 输出 (&lt;code class=&quot;highlighter-rouge&quot;&gt;write&lt;/code&gt;) 事件。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLRDHUP&lt;/code&gt;: 对方关闭连接，或者 shutdown 了写入端的事件。
+    &lt;ul&gt;
+      &lt;li&gt;「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt; 之后跑一次 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt;，返回 0 后判断对方已经 shutdown 了写入端&lt;sup id=&quot;fnref:5&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLPRI&lt;/code&gt;: 文件描述符异常（接收紧急数据&lt;sup id=&quot;fnref:6&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;）。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLERR&lt;/code&gt;: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLHUP&lt;/code&gt;: 文件描述符被「挂断」，对方 shutdown 或关闭了连接&lt;sup id=&quot;fnref:7&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLET&lt;/code&gt;: 边缘触发。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt;: 当文件描述符从 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 中被拿出来后，就不会再被其他对 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的调用中拿出来了。例如，多个线程使用同一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLWAKEUP&lt;/code&gt;: 保证事件在等待/处理的时候，系统不会进入休眠状态。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt;: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 也能达到类似的效果，只是每次都额外多出了一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 系统调用&lt;sup id=&quot;fnref:8&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;实现网页服务器的思路与一些问题&quot;&gt;实现网页服务器的思路与一些问题&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;这里没有完整的实现代码，因为我写得并不好，完美实现需要的功能是一件很困难的事情。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;有限状态机&quot;&gt;有限状态机&lt;/h3&gt;
+
+&lt;p&gt;假设我们的服务器功能很简单：从用户读取一些信息（比如说 HTTP 头），经过处理后向用户返回一些信息。如果要做到快速、安全、可靠的话，我们就不得不考虑以下的问题：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;每一阶段的时间不能太长，否则用户的延迟会大大提升。&lt;/li&gt;
+  &lt;li&gt;网络并不可靠：用户可能不会一次性把数据发送过来，我们有时也没有办法一次性给用户发送所有需要的数据。如果单纯在一个状态中处理完所有的输入或输出，那么当数据很大，或者丢包率很高的情况下，单个进程/线程会花大量的时间在一个连接上，无法为其他用户提供服务了。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这样的话，我们就不得不在每次切回 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 时维护每个连接已有的状态（比如说接收到了哪些数据、发送了哪些数据），编程的复杂度也大大提高了。&lt;/p&gt;
+
+&lt;h3 id=&quot;惊群-thundering-herd&quot;&gt;惊群 (thundering herd)&lt;/h3&gt;
+
+&lt;p&gt;理论上，假设我们的 CPU 有 n 个核心，我们的网页服务器在启用 n 个进程/线程的时候性能是最好的。但我们服务器的 socket 只有一个，那么很自然的想法就是把这个 socket 分享给所有进程/线程。&lt;/p&gt;
+
+&lt;p&gt;这没什么问题，但是比如说我们把服务器的 socket 放在了 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中，在 &lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 的时候，一个连接可能会唤起多个进程，但是最后只有一个进程会成功，其他被唤醒的进程徒劳无功。这就是惊群现象。&lt;/p&gt;
+
+&lt;p&gt;以上提到的 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; 可以部分解决这样的惊群问题，除此之外，使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;SO_REUSEPORT&lt;/code&gt; 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.&lt;sup id=&quot;fnref:8:1&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;或许真的拿 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;这篇是当初写完网页服务器的实验之后想写的，当初写实验的时候就花了好几天查 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 的资料，迷迷糊糊的；这几天又查了一些资料，实话讲比原来清楚了一些，但我还是无法保证这里的每句话都是正确的。&lt;/p&gt;
+
+&lt;p&gt;就这样吧……&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Epoll&quot;&gt;https://en.wikipedia.org/wiki/Epoll&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/C10k_problem&quot;&gt;https://en.wikipedia.org/wiki/C10k_problem&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot;&gt;
+      &lt;p&gt;参考了 CSAPP 的 13.2 节。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:4&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&quot;&gt;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:5&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;amp;pg=PA1343&amp;amp;lpg=PA1343&amp;amp;dq=EPOLLRDHUP+edge+trigger&amp;amp;source=bl&amp;amp;ots=kMHdB9wVu3&amp;amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;amp;hl=zh-CN&amp;amp;sa=X&amp;amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;amp;q=EPOLLRDHUP edge trigger&amp;amp;f=false&quot;&gt;The Linux Programming Interface: A Linux and UNIX System Programming Handbook&lt;/a&gt; &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:6&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&quot;&gt;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&lt;/a&gt; &lt;a href=&quot;#fnref:6&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:7&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&quot;&gt;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&lt;/a&gt; &lt;a href=&quot;#fnref:7&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:8&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&quot;&gt;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&lt;/a&gt; &lt;a href=&quot;#fnref:8&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:8:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="epoll" />
+      
+        <category term="Linux" />
+      
+
+      
+        <summary type="html">epoll 是 Linux 下的一种 I/O 事件通知机制1——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。epoll 作为一种提高性能的方式被不少人拿去用，虽然理解与写 epoll 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。 https://en.wikipedia.org/wiki/Epoll &amp;#8617;</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -2883,55 +3114,6 @@ Bob  | 2
 
       
         <summary type="html">班级网页第二版发布了！使用最新版本的 Bootstrap，全新扁平化设计，更好兼容手机、平板等移动设备，并抛弃对旧版本浏览器（IE 6/7）的支持。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">班级网页 1.1 版</title>
-      
-      
-      <link href="https://taoky.github.io/2014-06-19/class-website-1.1.html" rel="alternate" type="text/html" title="班级网页 1.1 版" />
-      
-      <published>2014-06-19T00:00:00+00:00</published>
-      <updated>2014-06-19T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-06-19/class-website-1.1</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-06-19/class-website-1.1.html">&lt;p&gt;进来发现班级网页 1.0 版访问速度极慢，即使在本地访问也是如此。经检查，发现是浏览器为得到一些网页字体文件与 jQuery 库，访问了一个被超时的服务器。&lt;/p&gt;
-
-&lt;p&gt;问题已经修复。（其实我本来想放弃维护的。）
-&lt;!--more--&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="班级" />
-      
-
-      
-        <category term="学校" />
-      
-        <category term="网页" />
-      
-
-      
-        <summary type="html">进来发现班级网页 1.0 版访问速度极慢，即使在本地访问也是如此。经检查，发现是浏览器为得到一些网页字体文件与 jQuery 库，访问了一个被超时的服务器。</summary>
       
 
       

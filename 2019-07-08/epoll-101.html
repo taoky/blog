@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>epoll 的故事</title>
+  <meta name="description" content="epoll 是 Linux 下的一种 I/O 事件通知机制1——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。epoll 作为一种提高性能的方式被不少人拿去用，虽然理解与写 epoll 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。 https://en.wikipedia.org/wiki/Epoll &amp;#8617;">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://taoky.github.io/2019-07-08/epoll-101.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://taoky.github.io/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+
+  
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44647340-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky&#39;s blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path
+              d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">epoll 的故事</h1>
+    
+    <p class="post-meta"><time datetime="2019-07-08T04:33:00+00:00" itemprop="datePublished">Jul 8, 2019</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/epoll/">epoll</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/linux/">Linux</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#网页服务器与-c10k-问题">网页服务器与 C10K 问题</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#起初">起初……</a></li>
+<li class="toc-entry toc-h3"><a href="#一万个并发连接--一万个进程线程">一万个并发连接 = 一万个进程/线程？</a></li>
+<li class="toc-entry toc-h3"><a href="#select">select()</a></li>
+<li class="toc-entry toc-h3"><a href="#poll">poll()</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#epoll-简介">epoll() 简介</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#水平触发-lt-与边缘触发-et">水平触发 (LT) 与边缘触发 (ET)</a></li>
+<li class="toc-entry toc-h3"><a href="#epoll_event-结构中可用的事件类型">epoll_event 结构中可用的事件类型</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#实现网页服务器的思路与一些问题">实现网页服务器的思路与一些问题</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#有限状态机">有限状态机</a></li>
+<li class="toc-entry toc-h3"><a href="#惊群-thundering-herd">惊群 (thundering herd)</a></li>
+</ul>
+</li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p><code class="highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
+
+<p>在介绍 <code class="highlighter-rouge">epoll</code> 之前，不如让我们来看看，<code class="highlighter-rouge">epoll</code> 到底是怎么出现的。</p>
+
+<h2 id="网页服务器与-c10k-问题">网页服务器与 C10K 问题</h2>
+
+<p>C10K 问题指同时处理一万个并发连接时的优化问题<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>。</p>
+
+<h3 id="起初">起初……</h3>
+
+<p>最开始的时候，网页服务器处理连接的做法非常简单：<code class="highlighter-rouge">accept()</code> 阻塞在那，接收到连接之后就处理、返回数据。但这样简单的做法在多用户的情况下效果是很差的：如果我在下载一个超大的文件，其他用户的连接就根本无法被处理，这显然是无法接受的。</p>
+
+<p>既然要同时处理多个连接，那 <code class="highlighter-rouge">fork()</code> 总可以吧——接收到连接后先 <code class="highlighter-rouge">fork()</code> 一下，新进程去处理当前请求，父进程继续 <code class="highlighter-rouge">accept()</code>，或者我 <code class="highlighter-rouge">pthread_create()</code> 创建新线程也行。这样确实部分解决了上一段的问题，但是创建新的进程/线程是有比较大的开销的。</p>
+
+<p>既然开销大，那么我能不能在最开始的时候就先创建一些进程/线程呢？这种做法最后就变成了进程/线程池（Apache prefork 就是这样做的）。看起来，我们很好地解决了这个问题，但是……</p>
+
+<h3 id="一万个并发连接--一万个进程线程">一万个并发连接 = 一万个进程/线程？</h3>
+
+<p>很遗憾的事情是，我们没有一万个 CPU 核心可以来并行运行这些进程/线程。让一万个进程/线程同时保持高性能处理连接是不切实际的。</p>
+
+<p>所以，我们能否让一个进程/线程<strong>同时</strong>处理多个连接？答案当然是可以的：这就是 I/O 复用。</p>
+
+<h3 id="select"><code class="highlighter-rouge">select()</code></h3>
+
+<p>我们可以注意到，在处理 socket 文件描述符的时候，有一些操作是阻塞的：这包括了读取 (<code class="highlighter-rouge">read</code>)、写入 (<code class="highlighter-rouge">write</code>) 以及接受连接 (<code class="highlighter-rouge">accept</code>) 等等。如果我们有一种方法，能够让我们的进程知道某个文件描述符<strong>已经准备</strong>好某个操作的话，每次只要把准备好的描述符拿出来做处理就可以了，在执行这些阻塞操作的时候也就不会一直卡在那儿了。这样我们的处理流程就是：</p>
+
+<p>首先由某个函数来告诉我们文件描述符准备好读/写，然后我们对那个文件描述符做短小快速的处理，最后回到那个函数，不停循环。我们不用太担心这样对性能会不会带来比较大的影响，因为网络的 I/O 相比 CPU 来讲慢得多。这样的话我们的单个进程/线程也可以处理好多个连接了。</p>
+
+<p><code class="highlighter-rouge">select()</code><sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup> 就可以做到「通知」的作用。它使用的 <code class="highlighter-rouge">fd_set</code> 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">select</span><span class="p">(</span><span class="kt">int</span> <span class="n">nfds</span><span class="p">,</span> <span class="n">fd_set</span> <span class="o">*</span><span class="n">readfds</span><span class="p">,</span> <span class="n">fd_set</span> <span class="o">*</span><span class="n">writefds</span><span class="p">,</span>
+           <span class="n">fd_set</span> <span class="o">*</span><span class="n">exceptfds</span><span class="p">,</span> <span class="k">struct</span> <span class="n">timeval</span> <span class="o">*</span><span class="n">timeout</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>看起来很好，但是 <code class="highlighter-rouge">select()</code> 仍有一些问题。</p>
+
+<ul>
+  <li>描述符数量有限制。POSIX 标准允许实现自己来定义数量上限，Linux 内核也没有硬性限制，但是 glibc 有——它把 <code class="highlighter-rouge">FD_SETSIZE</code> 直接定义为了 1024。</li>
+  <li>第二个问题在于 <code class="highlighter-rouge">nfds</code> 这个参数：<code class="highlighter-rouge">select()</code> 会检查 0 到 <code class="highlighter-rouge">nfds - 1</code> 在内的所有文件描述符的情况——这很 <code class="highlighter-rouge">O(n)</code>。在大量连接的情况下，我们当然希望轮询的时间复杂度越低越好。</li>
+  <li><code class="highlighter-rouge">select()</code> 会改变 <code class="highlighter-rouge">fd_set</code> 结构体的内容，每次调用都要重新初始化。</li>
+</ul>
+
+<h3 id="poll"><code class="highlighter-rouge">poll()</code></h3>
+
+<p><code class="highlighter-rouge">poll()</code> 是另一种 I/O 复用的函数。它和 <code class="highlighter-rouge">select()</code> 类似。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">poll</span><span class="p">(</span><span class="k">struct</span> <span class="n">pollfd</span> <span class="o">*</span><span class="n">fds</span><span class="p">,</span> <span class="n">nfds_t</span> <span class="n">nfds</span><span class="p">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="n">pollfd</span> <span class="p">{</span>
+  	<span class="kt">int</span>   <span class="n">fd</span><span class="p">;</span>         <span class="cm">/* file descriptor */</span>
+  	<span class="kt">short</span> <span class="n">events</span><span class="p">;</span>     <span class="cm">/* requested events */</span>
+  	<span class="kt">short</span> <span class="n">revents</span><span class="p">;</span>    <span class="cm">/* returned events */</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>这里，<code class="highlighter-rouge">poll()</code> 解决了 <code class="highlighter-rouge">select()</code> 的描述符数量和重新初始化的问题，但是 <code class="highlighter-rouge">O(n)</code> 的性能问题还是没能得到解决，所以在 Linux 中就出现了 <code class="highlighter-rouge">epoll()</code>。</p>
+
+<h2 id="epoll-简介"><code class="highlighter-rouge">epoll()</code> 简介</h2>
+
+<p><code class="highlighter-rouge">epoll()</code> 能够用 <code class="highlighter-rouge">O(1)</code> 的时间复杂度去监控文件描述符，解决了 <code class="highlighter-rouge">poll()</code> 的问题。与 <code class="highlighter-rouge">select()</code> 和 <code class="highlighter-rouge">poll()</code> 不同，它不是一个「跨 (POSIX) 平台」的解决方案，例如在 FreeBSD 中，与 <code class="highlighter-rouge">epoll</code> 相似的是 <code class="highlighter-rouge">kqueue</code>。</p>
+
+<p>相比于前两者来说，<code class="highlighter-rouge">epoll</code> 也更加复杂了。它有三个系列函数：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">epoll_create()</code>: 创建 <code class="highlighter-rouge">epoll</code> 实例。</li>
+  <li><code class="highlighter-rouge">epoll_ctl()</code>: 向 <code class="highlighter-rouge">epoll</code> 实例注册文件描述符，可以设置添加、修改、删除目标文件描述符。</li>
+  <li><code class="highlighter-rouge">epoll_wait()</code>: 等待 I/O 事件。</li>
+</ul>
+
+<h3 id="水平触发-lt-与边缘触发-et">水平触发 (LT) 与边缘触发 (ET)</h3>
+
+<p>这个术语总有种数电的感觉。</p>
+
+<p><img src="/pictures/epoll/lt-strange-example.gif" alt="A bad example of level trigger" /></p>
+
+<p><em><del>呆唯逗梓喵——一个水平触发的非典型示例</del></em></p>
+
+<p>简单地说，水平触发时，只要某个文件描述符处在准备好了的状态，<code class="highlighter-rouge">epoll</code> 就会一直告诉你；边缘触发时，某个文件描述符准备好后，<code class="highlighter-rouge">epoll</code> 只会告诉你一次，或者说 <code class="highlighter-rouge">epoll</code> 只会在描述符状态变化的时候告诉你。边缘触发是 <code class="highlighter-rouge">epoll</code> 新带来的特性。</p>
+
+<p>文档中举了一个例子：</p>
+
+<ol>
+  <li>某个文件描述符的读端 <code class="highlighter-rouge">rfd</code> 在 <code class="highlighter-rouge">epoll</code> 实例中注册。</li>
+  <li>有一个 pipe writer 在管道写端写入了 2 kB 数据。</li>
+  <li><code class="highlighter-rouge">epoll_wait()</code> 函数返回 <code class="highlighter-rouge">rfd</code>，标记它已经准备好读取了。</li>
+  <li>Pipe reader 在管道读端读取了 1 kB 数据。（之后回到 <code class="highlighter-rouge">epoll_wait()</code>）</li>
+  <li>如果是水平触发，那么 <code class="highlighter-rouge">epoll_wait()</code> 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。</li>
+</ol>
+
+<p>如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 <code class="highlighter-rouge">epoll_wait()</code> 的话（<code class="highlighter-rouge">read()</code> 和 <code class="highlighter-rouge">write()</code> <strong>不能保证</strong>一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 <code class="highlighter-rouge">read()</code> 或者 <code class="highlighter-rouge">write()</code>，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>。</p>
+
+<p>文档对使用边缘触发给出的建议是：</p>
+
+<ol>
+  <li>使用非阻塞的文件描述符。</li>
+  <li>直到 <code class="highlighter-rouge">read()</code> 或者 <code class="highlighter-rouge">write()</code> 返回 <code class="highlighter-rouge">EAGAIN</code>，再等待 I/O 事件。</li>
+</ol>
+
+<p>一般来说，边缘触发的性能更好，但是编写也更费劲一些。</p>
+
+<h3 id="epoll_event-结构中可用的事件类型"><code class="highlighter-rouge">epoll_event</code> 结构中可用的事件类型</h3>
+
+<p>以下根据 <code class="highlighter-rouge">epoll_ctl()</code> 的文档整理，可能会有错误，所以我尽量附上了参考的链接。</p>
+
+<ul>
+  <li><code class="highlighter-rouge">EPOLLIN</code>: 输入 (<code class="highlighter-rouge">read</code>) 事件。</li>
+  <li><code class="highlighter-rouge">EPOLLOUT</code>: 输出 (<code class="highlighter-rouge">write</code>) 事件。</li>
+  <li><code class="highlighter-rouge">EPOLLRDHUP</code>: 对方关闭连接，或者 shutdown 了写入端的事件。
+    <ul>
+      <li>「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 <code class="highlighter-rouge">EPOLLIN</code> 之后跑一次 <code class="highlighter-rouge">read()</code>，返回 0 后判断对方已经 shutdown 了写入端<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup>。</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">EPOLLPRI</code>: 文件描述符异常（接收紧急数据<sup id="fnref:6"><a href="#fn:6" class="footnote">6</a></sup>）。</li>
+  <li><code class="highlighter-rouge">EPOLLERR</code>: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。</li>
+  <li><code class="highlighter-rouge">EPOLLHUP</code>: 文件描述符被「挂断」，对方 shutdown 或关闭了连接<sup id="fnref:7"><a href="#fn:7" class="footnote">7</a></sup>。</li>
+  <li><code class="highlighter-rouge">EPOLLET</code>: 边缘触发。</li>
+  <li><code class="highlighter-rouge">EPOLLONESHOT</code>: 当文件描述符从 <code class="highlighter-rouge">epoll_wait()</code> 中被拿出来后，就不会再被其他对 <code class="highlighter-rouge">epoll_wait()</code> 的调用中拿出来了。例如，多个线程使用同一个 <code class="highlighter-rouge">epoll</code> 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。</li>
+  <li><code class="highlighter-rouge">EPOLLWAKEUP</code>: 保证事件在等待/处理的时候，系统不会进入休眠状态。</li>
+  <li><code class="highlighter-rouge">EPOLLEXCLUSIVE</code>: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 <code class="highlighter-rouge">EPOLLONESHOT</code> 也能达到类似的效果，只是每次都额外多出了一个 <code class="highlighter-rouge">epoll_ctl()</code> 系统调用<sup id="fnref:8"><a href="#fn:8" class="footnote">8</a></sup>。</li>
+</ul>
+
+<h2 id="实现网页服务器的思路与一些问题">实现网页服务器的思路与一些问题</h2>
+
+<p><em>这里没有完整的实现代码，因为我写得并不好，完美实现需要的功能是一件很困难的事情。</em></p>
+
+<h3 id="有限状态机">有限状态机</h3>
+
+<p>假设我们的服务器功能很简单：从用户读取一些信息（比如说 HTTP 头），经过处理后向用户返回一些信息。如果要做到快速、安全、可靠的话，我们就不得不考虑以下的问题：</p>
+
+<ul>
+  <li>每一阶段的时间不能太长，否则用户的延迟会大大提升。</li>
+  <li>网络并不可靠：用户可能不会一次性把数据发送过来，我们有时也没有办法一次性给用户发送所有需要的数据。如果单纯在一个状态中处理完所有的输入或输出，那么当数据很大，或者丢包率很高的情况下，单个进程/线程会花大量的时间在一个连接上，无法为其他用户提供服务了。</li>
+</ul>
+
+<p>这样的话，我们就不得不在每次切回 <code class="highlighter-rouge">epoll_wait()</code> 时维护每个连接已有的状态（比如说接收到了哪些数据、发送了哪些数据），编程的复杂度也大大提高了。</p>
+
+<h3 id="惊群-thundering-herd">惊群 (thundering herd)</h3>
+
+<p>理论上，假设我们的 CPU 有 n 个核心，我们的网页服务器在启用 n 个进程/线程的时候性能是最好的。但我们服务器的 socket 只有一个，那么很自然的想法就是把这个 socket 分享给所有进程/线程。</p>
+
+<p>这没什么问题，但是比如说我们把服务器的 socket 放在了 <code class="highlighter-rouge">epoll</code> 实例中，在 <code class="highlighter-rouge">accept()</code> 的时候，一个连接可能会唤起多个进程，但是最后只有一个进程会成功，其他被唤醒的进程徒劳无功。这就是惊群现象。</p>
+
+<p>以上提到的 <code class="highlighter-rouge">EPOLLONESHOT</code> 和 <code class="highlighter-rouge">EPOLLEXCLUSIVE</code> 可以部分解决这样的惊群问题，除此之外，使用 <code class="highlighter-rouge">SO_REUSEPORT</code> 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：</p>
+
+<blockquote>
+  <p>The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with <code class="highlighter-rouge">EPOLLEXCLUSIVE</code> flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.<sup id="fnref:8:1"><a href="#fn:8" class="footnote">8</a></sup></p>
+</blockquote>
+
+<p>或许真的拿 <code class="highlighter-rouge">epoll</code> 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……</p>
+
+<hr />
+
+<p>这篇是当初写完网页服务器的实验之后想写的，当初写实验的时候就花了好几天查 <code class="highlighter-rouge">epoll</code> 的资料，迷迷糊糊的；这几天又查了一些资料，实话讲比原来清楚了一些，但我还是无法保证这里的每句话都是正确的。</p>
+
+<p>就这样吧……</p>
+
+<hr />
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p><a href="https://en.wikipedia.org/wiki/Epoll">https://en.wikipedia.org/wiki/Epoll</a> <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p><a href="https://en.wikipedia.org/wiki/C10k_problem">https://en.wikipedia.org/wiki/C10k_problem</a> <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>参考了 CSAPP 的 13.2 节。 <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:4">
+      <p><a href="https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function">https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function</a> <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:5">
+      <p><a href="https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;pg=PA1343&amp;lpg=PA1343&amp;dq=EPOLLRDHUP+edge+trigger&amp;source=bl&amp;ots=kMHdB9wVu3&amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;q=EPOLLRDHUP edge trigger&amp;f=false">The Linux Programming Interface: A Linux and UNIX System Programming Handbook</a> <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:6">
+      <p><a href="https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen">https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen</a> <a href="#fnref:6" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:7">
+      <p><a href="https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated">https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated</a> <a href="#fnref:7" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:8">
+      <p><a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/">https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/</a> <a href="#fnref:8" class="reversefootnote">&#8617;</a> <a href="#fnref:8:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr />
+<h3>Comments</h3>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://taokyblog.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://taoky.github.io/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

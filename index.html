@@ -99,6 +99,499 @@
         <header class="post-header">
           <h1 class="post-title">
             
+              <a class="post-link" href="/2019-07-08/epoll-101.html">epoll 的故事</a>
+            
+          </h1>
+
+          <p class="post-meta">
+            Jul 8, 2019
+            
+               •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/epoll/">epoll</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/linux/">Linux</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+            
+            
+          </p>
+        </header>
+
+        <div class="post-content">
+          <p><code class="highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p><a href="https://en.wikipedia.org/wiki/Epoll">https://en.wikipedia.org/wiki/Epoll</a> <a href="#fnref:1" class="reversefootnote">↩</a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        
+          <p class="post-continue">
+            <a href="/2019-07-08/epoll-101.html">Read on →</a>
+          </p>
+        
+      </li>
+    
+      
+      
+
+      <li>
+        <header class="post-header">
+          <h1 class="post-title">
+            
               <a class="post-link" href="/2019-02-23/installing-os-on-vm.html">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</a>
             
           </h1>
@@ -254,6 +747,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -265,6 +762,10 @@
     
       
         <a href="/tags/linux/">Linux</a>,
+      
+    
+      
+    
       
     
       
@@ -544,6 +1045,10 @@
     
       
     
+      
+    
+      
+    
   
 
 
@@ -684,6 +1189,10 @@
     
       
         <a href="/tags/docker/">Docker</a>,
+      
+    
+      
+    
       
     
       
@@ -871,6 +1380,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -1016,6 +1529,10 @@
     
       
     
+      
+    
+      
+    
   
 
 
@@ -1100,6 +1617,10 @@
     
       
         <a href="/tags/ios/">iOS</a>,
+      
+    
+      
+    
       
     
       
@@ -1343,6 +1864,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -1444,6 +1969,10 @@
     
       
         <a href="/tags/%E7%BC%96%E8%AF%91/">编译</a>
+      
+    
+      
+    
       
     
       
@@ -1670,6 +2199,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -1815,6 +2348,10 @@
     
       
     
+      
+    
+      
+    
   
 
 
@@ -1831,480 +2368,6 @@
         
           <p class="post-continue">
             <a href="/2019-02-12/migration-to-jekyll-again.html">Read on →</a>
-          </p>
-        
-      </li>
-    
-      
-      
-
-      <li>
-        <header class="post-header">
-          <h1 class="post-title">
-            
-              <a class="post-link" href="/2018-08-29/freshman-year.html">瞎写的大一一年总结</a>
-            
-          </h1>
-
-          <p class="post-meta">
-            Aug 29, 2018
-            
-               •
-  
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-        <a href="/categories/%E6%80%BB%E7%BB%93/">总结</a>
-      
-    
-  
-
-
- •
-  
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-        <a href="/tags/%E6%80%BB%E7%BB%93/">总结</a>,
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  
-    
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-        <a href="/tags/%E5%A4%A7%E4%B8%80/">大一</a>
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  
-
-
-            
-            
-          </p>
-        </header>
-
-        <div class="post-content">
-          <p>我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。</p>
-
-
-        </div>
-        
-          <p class="post-continue">
-            <a href="/2018-08-29/freshman-year.html">Read on →</a>
           </p>
         
       </li>
