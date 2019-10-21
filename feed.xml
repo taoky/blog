@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2019-07-10T15:37:04+00:00</updated>
+  <updated>2019-10-21T06:10:51+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -267,7 +267,7 @@
       <published>2019-02-23T12:00:00+00:00</published>
       <updated>2019-02-23T12:00:00+00:00</updated>
       <id>https://taoky.github.io/2019-02-23/installing-os-on-vm</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（&lt;a href=&quot;https://ibug.github.io/blog/2019/02/setup-ubuntu-in-vmware.html&quot;&gt;English&lt;/a&gt;，&lt;a href=&quot;https://ibug.github.io/blog/2019/02/setup-ubuntu-in-vmware-cn.html&quot;&gt;中文&lt;/a&gt;）。&lt;/p&gt;
+      <content type="html" xml:base="https://taoky.github.io/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（&lt;a href=&quot;https://ibugone.com/p/15&quot;&gt;English&lt;/a&gt;，&lt;a href=&quot;https://ibugone.com/p/15-cn&quot;&gt;中文&lt;/a&gt;）。&lt;/p&gt;
 
 &lt;p&gt;主要目的是帮助使用 Mac 的同学简单配置虚拟机，以应对本学期的 操作系统原理与设计 课程（还有日常可能需要的 Windows 需求）。&lt;/p&gt;
 
