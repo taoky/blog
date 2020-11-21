@@ -862,7 +862,7 @@
 #include &lt;sys/stat.h&gt;
 #include &lt;fcntl.h&gt;
 </span>
-<span class="kt">int</span> <span class="n">random</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">random</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
@@ -920,8 +920,21 @@
       <hr />
 <h3>Comments</h3>
 <div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
 <script>
-
+var dsqjs = new DisqusJS({
+    shortname: 'taokyblog',
+    siteName: 'taoky\'s blog',
+    // identifier: '',
+    // url: '',
+    // title: '',
+    // api: '',
+    apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+    nocomment: '无评论.',
+    admin: 'taoky',
+    adminLabel: 'taoky'
+});
 /**
 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
@@ -931,14 +944,14 @@ this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL va
 this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
 */
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://taokyblog.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<noscript>Disqus comment requires JavaScript.</a></noscript>
     </div>
   
 

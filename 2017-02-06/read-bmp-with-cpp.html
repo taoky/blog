@@ -712,7 +712,7 @@
 
 <p>首先把两个文件头，加上表示像素的结构，包在 <code class="highlighter-rouge">struct</code> 里面：</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">BITMAPFILEHEADER</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="nc">BITMAPFILEHEADER</span>
 <span class="p">{</span>
   <span class="kt">char</span> <span class="n">bfType</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> <span class="c1">// must be "BM"</span>
   <span class="kt">char</span> <span class="n">bfSize</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="c1">// the size of the bmp file</span>
@@ -721,7 +721,7 @@
   <span class="kt">char</span> <span class="n">bfOffBits</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="c1">// the offset to the bitmap data</span>
 <span class="p">}</span> <span class="n">FileHeader</span><span class="p">;</span>
 
-<span class="k">struct</span> <span class="n">BITMAPINFOHEADER</span>
+<span class="k">struct</span> <span class="nc">BITMAPINFOHEADER</span>
 <span class="p">{</span>
   <span class="kt">char</span> <span class="n">biSize</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="c1">// the size of BITMAPINFOHEADER</span>
   <span class="kt">char</span> <span class="n">biWidth</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="c1">// width (pixels)</span>
@@ -736,7 +736,7 @@
   <span class="kt">char</span> <span class="n">biClrImportant</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="c1">// "important" colors, usually 0</span>
 <span class="p">}</span> <span class="n">InfoHeader</span><span class="p">;</span>
 
-<span class="k">struct</span> <span class="n">Pixel</span>
+<span class="k">struct</span> <span class="nc">Pixel</span>
 <span class="p">{</span>
   <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">b</span><span class="p">;</span>
   <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">g</span><span class="p">;</span>
@@ -845,7 +845,7 @@
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="n">vector</span> <span class="o">&lt;</span><span class="n">Pixel</span><span class="o">&gt;</span> <span class="o">*</span> <span class="n">ReadBitmap</span><span class="p">()</span>
+<span class="n">vector</span> <span class="o">&lt;</span><span class="n">Pixel</span><span class="o">&gt;</span> <span class="o">*</span> <span class="nf">ReadBitmap</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">int</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="kt">int</span> <span class="n">height</span> <span class="o">=</span> <span class="n">ToHumanRead</span><span class="p">(</span><span class="n">InfoHeader</span><span class="p">.</span><span class="n">biHeight</span><span class="p">);</span>
@@ -907,8 +907,21 @@
       <hr />
 <h3>Comments</h3>
 <div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
 <script>
-
+var dsqjs = new DisqusJS({
+    shortname: 'taokyblog',
+    siteName: 'taoky\'s blog',
+    // identifier: '',
+    // url: '',
+    // title: '',
+    // api: '',
+    apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+    nocomment: '无评论.',
+    admin: 'taoky',
+    adminLabel: 'taoky'
+});
 /**
 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
@@ -918,14 +931,14 @@ this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL va
 this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
 */
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://taokyblog.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<noscript>Disqus comment requires JavaScript.</a></noscript>
     </div>
   
 
