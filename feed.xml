@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2021-01-01T16:41:10+00:00</updated>
+  <updated>2021-04-18T08:16:51+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -24,6 +24,60 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">THU 半日游：参加 tunight 杂记</title>
+      
+      
+      <link href="https://taoky.github.io/2021-04-18/tunight.html" rel="alternate" type="text/html" title="THU 半日游：参加 tunight 杂记" />
+      
+      <published>2021-04-18T08:10:00+00:00</published>
+      <updated>2021-04-18T08:10:00+00:00</updated>
+      <id>https://taoky.github.io/2021-04-18/tunight</id>
+      <content type="html" xml:base="https://taoky.github.io/2021-04-18/tunight.html">&lt;p&gt;博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&quot;/attachments/2021-04-17-tunight/show.html&quot;&gt;我的 Slides&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;THU 比肥科大多了，整体的体验也挺好的，详细的杂记部分争取暑假的时候能够补上。&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="life" />
+      
+
+      
+        <category term="tuna" />
+      
+        <category term="tunight" />
+      
+        <category term="thu" />
+      
+
+      
+        <summary type="html">博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -3043,77 +3097,6 @@ Bob  | 2
 
       
         <summary type="html">似乎最近关于 iOS 被发现存在后门的事情传得火热，本着不怎么相信媒体评论，自己看传出后门的文档的想法，找到了源文档，顺便用了几个小时翻译了一遍。说是翻译，其实信达雅，一样都没有。有几个词出现很多次，但就算查了词典，也根本不知道是什么意思。我只能保证你看完翻译之后了解事情的大概情况。 源文档：Here</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">班级网页第二版发布！</title>
-      
-      
-      <link href="https://taoky.github.io/2014-07-18/class-v2-published.html" rel="alternate" type="text/html" title="班级网页第二版发布！" />
-      
-      <published>2014-07-18T00:00:00+00:00</published>
-      <updated>2014-07-18T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-07-18/class-v2-published</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-07-18/class-v2-published.html">&lt;p&gt;班级网页第二版发布了！使用最新版本的 Bootstrap，全新扁平化设计，更好兼容手机、平板等移动设备，并抛弃对旧版本浏览器（IE 6/7）的支持。&lt;/p&gt;
-
-&lt;p&gt;其实新版的班级网页是从八个月前（2013 年 11 月 17 日）开始做的（你没看错）。做了一天，约一个月后（12 月 8 日）又修修补补了一些东西，又两个月后又做了一小部分，然后一直烂尾到……中考结束才继续开始。&lt;/p&gt;
-
-&lt;p&gt;现在我表示我终于熟悉用 jekyll 和 liquid 的使用了……表示 liquid 竟然不能进行文件的 I/O 操作，导致制作换页器的时候遇到了很大的阻力，用了两天才解决问题，貌似我踩到了一个坑吧……
-&lt;!--more--&gt;
-因为 GitHub 上「建议」不要放视频（也放不了，文件太大了），所以视频托管在优酷上，广告什么的我不负责。&lt;/p&gt;
-
-&lt;p&gt;另外表示从老师博客上搜集文章也是一件很繁的事情。我居然打开了 Firefox（OS X 上 Firefox 的触摸板体验太差，所以我换 Chrome 了），用 DownThemAll 一页页翻出来下载，然后用 Sublime Text 的文件批量替换网页的各种格式（网易博客的 HTML 文件很乱，各种内嵌 CSS），最后转换成 Markdown，就花了我两天。&lt;/p&gt;
-
-&lt;p&gt;另外压缩图片也很繁琐。表示压缩图片需要小心翼翼——可能一个参数没弄好，图片就糊了（在 Retina 屏幕上特别明显）。一开始图片有 &amp;gt;300 M，最后尝试各种压缩方法才压到 &amp;lt;1 M（当然图像的损失很多）。&lt;/p&gt;
-
-&lt;p&gt;PS：OS X 上无损压缩可以用 ImageOptim，有损可以尝试安装 imagemagick，然后 &lt;code class=&quot;highlighter-rouge&quot;&gt;convert -resize 80%x80%&lt;/code&gt; [原图像] [目标图像] 来缩放，运行多次直到压缩到满意效果。&lt;/p&gt;
-
-&lt;p&gt;最后发布的时候也踩到一个 jekyll 的大坑。我路径用的是 “/path/file” 这类的，结果放到子目录里面各种文件加载不出。结果新建一个 repo，定义变量 &lt;code class=&quot;highlighter-rouge&quot;&gt;site.baseurl&lt;/code&gt;，然后各种修改才解决……然后发现 https 的时候因为浏览器的安全规定文件加载不出，最后干脆用 &lt;code class=&quot;highlighter-rouge&quot;&gt;baseurl = https://...&lt;/code&gt; 这样了。&lt;/p&gt;
-
-&lt;p&gt;不管怎么说，沉沉浮浮八个月，它终于上来了，不是吗 :-) ？&lt;/p&gt;
-
-&lt;p&gt;附：
-班级网页第二版地址：https://taoky.github.io/class-9/index.html&lt;/p&gt;
-
-&lt;p&gt;源代码（jekyll）：https://github.com/taoky/ClassV2&lt;/p&gt;
-
-&lt;p&gt;发布版本：https://github.com/taoky/class-9/tree/gh-pages&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="班级" />
-      
-
-      
-        <category term="班级" />
-      
-        <category term="网页" />
-      
-        <category term="Bootstrap" />
-      
-
-      
-        <summary type="html">班级网页第二版发布了！使用最新版本的 Bootstrap，全新扁平化设计，更好兼容手机、平板等移动设备，并抛弃对旧版本浏览器（IE 6/7）的支持。</summary>
       
 
       
