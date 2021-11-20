@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -335,7 +337,7 @@
       
     
       
-        <a href="/tags/c/">C++</a>,
+        <a href="/tags/c++/">C++</a>,
       
     
       
@@ -588,9 +590,9 @@
 <p>（下文可能会有错误，并且不会处理「特殊的」BMP 文件。等我高考完之后如果还有兴趣，可能会再去做其他情况下的 BMP 文件读取。）
 <!--more--></p>
 
-<h2 id="文件头-1bitmapfileheader">文件头 1：<code class="highlighter-rouge">BITMAPFILEHEADER</code></h2>
+<h2 id="文件头-1bitmapfileheader">文件头 1：<code class="language-plaintext highlighter-rouge">BITMAPFILEHEADER</code></h2>
 
-<p><code class="highlighter-rouge">BITMAPFILEHEADER</code> 有四小块。如下表：</p>
+<p><code class="language-plaintext highlighter-rouge">BITMAPFILEHEADER</code> 有四小块。如下表：</p>
 
 <table>
   <thead>
@@ -602,40 +604,40 @@
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">bfType</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bfType</code></td>
       <td style="text-align: left">2</td>
       <td style="text-align: left">Windows 格式的 BMP 文件为「BM」。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">bfSize</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bfSize</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">BMP 文件的大小。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">bfReserved1</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bfReserved1</code></td>
       <td style="text-align: left">2</td>
       <td style="text-align: left">保留值。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">bfReserved2</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bfReserved2</code></td>
       <td style="text-align: left">2</td>
       <td style="text-align: left">保留值。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">bfOffBits</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">bfOffBits</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">位图像素内容的偏移量（起始地址）。</td>
     </tr>
   </tbody>
 </table>
 
-<p>可能没有什么特别的地方，<code class="highlighter-rouge">bfType</code> 中检查是不是 <code class="highlighter-rouge">BM</code> 就行了，OS/2 有其他类型的 BMP 格式，可是也不想想它死了多少年了……</p>
+<p>可能没有什么特别的地方，<code class="language-plaintext highlighter-rouge">bfType</code> 中检查是不是 <code class="language-plaintext highlighter-rouge">BM</code> 就行了，OS/2 有其他类型的 BMP 格式，可是也不想想它死了多少年了……</p>
 
 <p>注意，文件头中的所有数据均以<strong>小端序</strong>存放。（简单而很不严谨地说，就是字节倒着读）</p>
 
-<h2 id="文件头-2bitmapinfoheader">文件头 2：<code class="highlighter-rouge">BITMAPINFOHEADER</code></h2>
+<h2 id="文件头-2bitmapinfoheader">文件头 2：<code class="language-plaintext highlighter-rouge">BITMAPINFOHEADER</code></h2>
 
-<p>其实在这个位置是有其他版本的不同的文件头的，但是一般的 BMP 文件都是 <code class="highlighter-rouge">BITMAPINFOHEADER</code>。</p>
+<p>其实在这个位置是有其他版本的不同的文件头的，但是一般的 BMP 文件都是 <code class="language-plaintext highlighter-rouge">BITMAPINFOHEADER</code>。</p>
 
 <p>它有十一小块，如下表：</p>
 
@@ -649,78 +651,78 @@
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biSize</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biSize</code></td>
       <td style="text-align: left">4</td>
-      <td style="text-align: left">此文件头（<code class="highlighter-rouge">BITMAPINFOHEADER</code>）的大小。</td>
+      <td style="text-align: left">此文件头（<code class="language-plaintext highlighter-rouge">BITMAPINFOHEADER</code>）的大小。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biWidth</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biWidth</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像的宽度，以像素为单位。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biHeight</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biHeight</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像的高度，以像素为单位。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biPlanes</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biPlanes</code></td>
       <td style="text-align: left">2</td>
       <td style="text-align: left">图像的色彩平面，正常情况下均为 1。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biBitCount</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biBitCount</code></td>
       <td style="text-align: left">2</td>
       <td style="text-align: left">每个像素的位数。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biCompression</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biCompression</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">BMP 文件的压缩种类，0 为无压缩。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biSizeImage</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biSizeImage</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">位图像素内容的大小，无压缩时可以填 0。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biXPelsPerMeter</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biXPelsPerMeter</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像横向每米存放的像素。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biYPelsPerMeter</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biYPelsPerMeter</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像纵向每米存放的像素。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biClrUsed</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biClrUsed</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像使用的色彩数，可以为 0。</td>
     </tr>
     <tr>
-      <td style="text-align: left"><code class="highlighter-rouge">biClrImportant</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">biClrImportant</code></td>
       <td style="text-align: left">4</td>
       <td style="text-align: left">图像使用的「重要」的色彩数，0 时均重要。</td>
     </tr>
   </tbody>
 </table>
 
-<p>因为我们不想写解压算法，所以需要保证处理的 BMP 文件的 <code class="highlighter-rouge">biCompression</code> 为 0。我们之后也不想处理调色板（Color Table, Palette），而是直接读取像素内容，所以需要保证 <code class="highlighter-rouge">biBitCount</code> 为 24 或者 32（即 24 或 32 位的位图），因为它们一般是不含调色板的。</p>
+<p>因为我们不想写解压算法，所以需要保证处理的 BMP 文件的 <code class="language-plaintext highlighter-rouge">biCompression</code> 为 0。我们之后也不想处理调色板（Color Table, Palette），而是直接读取像素内容，所以需要保证 <code class="language-plaintext highlighter-rouge">biBitCount</code> 为 24 或者 32（即 24 或 32 位的位图），因为它们一般是不含调色板的。</p>
 
 <p>注意，图像的高度<strong>可以为负</strong>。负数值表示接下来的像素内容将从左上角从左到右、从上到下读取；而正数值表示接下来的像素内容将从右下角从左到右、从下到上读取。必要的时候请记得取绝对值。</p>
 
 <p><img src="/pictures/bmp-cpp/1.png" alt="对高度取相反数后的结果" /></p>
 
-<p>（对 <code class="highlighter-rouge">biHeight</code> 取相反数后的结果，改了四个字节，图像就反过来了～）</p>
+<p>（对 <code class="language-plaintext highlighter-rouge">biHeight</code> 取相反数后的结果，改了四个字节，图像就反过来了～）</p>
 
 <h2 id="像素内容">像素内容</h2>
 
-<p>接下来就是我们期待的位图像素内容了。我们之前说过<strong>忽略</strong>了调色板等其他的东西，所以在 <code class="highlighter-rouge">BITMAPINFOHEADER</code> 之后便直接是像素内容了。</p>
+<p>接下来就是我们期待的位图像素内容了。我们之前说过<strong>忽略</strong>了调色板等其他的东西，所以在 <code class="language-plaintext highlighter-rouge">BITMAPINFOHEADER</code> 之后便直接是像素内容了。</p>
 
 <p>标题中只写了 24 位和 32 位的图像，所以更低的位数不考虑。（毕竟你现在，除了在 gif 动图之外，还能见到 8 位色的图像吗？）</p>
 
-<p>在 24 位（3 字节）的位图中，每个像素按<strong>顺序</strong>由三部分组成：蓝色值、绿色值、红色值。32 位（4 字节）的图像添加了 Alpha 透明度部分，在红色值后添加了一字节的 Alpha 值（不透明的 32 位 BMP 图像，每个像素的 Alpha 值字节十六进制均为 <code class="highlighter-rouge">FF</code>）。</p>
+<p>在 24 位（3 字节）的位图中，每个像素按<strong>顺序</strong>由三部分组成：蓝色值、绿色值、红色值。32 位（4 字节）的图像添加了 Alpha 透明度部分，在红色值后添加了一字节的 Alpha 值（不透明的 32 位 BMP 图像，每个像素的 Alpha 值字节十六进制均为 <code class="language-plaintext highlighter-rouge">FF</code>）。</p>
 
 <p>然后我们只需要一个一个读就行了吗？</p>
 
@@ -734,7 +736,7 @@
 
 <p>（这个实现比较草率，因为我确实时间不多了。）</p>
 
-<p>首先把两个文件头，加上表示像素的结构，包在 <code class="highlighter-rouge">struct</code> 里面：</p>
+<p>首先把两个文件头，加上表示像素的结构，包在 <code class="language-plaintext highlighter-rouge">struct</code> 里面：</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="nc">BITMAPFILEHEADER</span>
 <span class="p">{</span>
@@ -827,7 +829,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>其中的 <code class="highlighter-rouge">vector</code> 是用来储存像素内容的，Output 部分输出 BMP 文件头内容，使用 <code class="highlighter-rouge">ReadBitmap()</code> 读入后等待用户输入坐标，显示对应像素的 RGB 值。</p>
+<p>其中的 <code class="language-plaintext highlighter-rouge">vector</code> 是用来储存像素内容的，Output 部分输出 BMP 文件头内容，使用 <code class="language-plaintext highlighter-rouge">ReadBitmap()</code> 读入后等待用户输入坐标，显示对应像素的 RGB 值。</p>
 
 <p>Output 部分：</p>
 
@@ -906,7 +908,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">drop_alpha()</code> 是为了把 32 位位图中的 Alpha 信息丢掉，方便处理，当然你也可以把它们留着……<code class="highlighter-rouge">ReadBitmap()</code> 部分先计算 <code class="highlighter-rouge">offset</code>（每行需要补齐的字节），再根据高度的正负值分类读取数据。</p>
+<p><code class="language-plaintext highlighter-rouge">drop_alpha()</code> 是为了把 32 位位图中的 Alpha 信息丢掉，方便处理，当然你也可以把它们留着……<code class="language-plaintext highlighter-rouge">ReadBitmap()</code> 部分先计算 <code class="language-plaintext highlighter-rouge">offset</code>（每行需要补齐的字节），再根据高度的正负值分类读取数据。</p>
 
 <p>最后一个部分，输出 RGB 值：</p>
 

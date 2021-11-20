@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -579,17 +581,17 @@
 <!--more-->
 初次使用时注意一个特点：段与段之间需要空一行。不然下面的文档：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>First line
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>First line
 Second line
 </code></pre></div></div>
 
 <p>会变成以下 HTML 代码：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;p&gt;First line
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;p&gt;First line
 Second line&lt;/p&gt;
 </code></pre></div></div>
 
-<p>在 <code class="highlighter-rouge">&lt;p&gt;</code> 标签中有空行，然而这并没有什么用，显示结果是：</p>
+<p>在 <code class="language-plaintext highlighter-rouge">&lt;p&gt;</code> 标签中有空行，然而这并没有什么用，显示结果是：</p>
 
 <hr />
 <p>First line
@@ -602,7 +604,7 @@ Second line</p>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Heading 1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Heading 1
 ## Heading 2
 ### Heading 3
 #### Heading 4
@@ -610,13 +612,13 @@ Second line</p>
 ###### Heading 6
 </code></pre></div></div>
 
-<p>Markdown 将根据 # 的个数，分别使用 <code class="highlighter-rouge">&lt;h1&gt;</code> 到 <code class="highlighter-rouge">&lt;h6&gt;</code> 的标签显示标题。</p>
+<p>Markdown 将根据 # 的个数，分别使用 <code class="language-plaintext highlighter-rouge">&lt;h1&gt;</code> 到 <code class="language-plaintext highlighter-rouge">&lt;h6&gt;</code> 的标签显示标题。</p>
 
 <h3 id="引用">引用</h3>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; 640 K ought to be enough for anybody.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; 640 K ought to be enough for anybody.
 </code></pre></div></div>
 
 <p>显示为：</p>
@@ -634,12 +636,12 @@ Second line</p>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* Review lessons
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* Review lessons
 * Update software
 * Write an article
 </code></pre></div></div>
 
-<p>（<code class="highlighter-rouge">*</code> 也可以用 <code class="highlighter-rouge">-</code>）</p>
+<p>（<code class="language-plaintext highlighter-rouge">*</code> 也可以用 <code class="language-plaintext highlighter-rouge">-</code>）</p>
 
 <p>显示为：</p>
 
@@ -656,7 +658,7 @@ Second line</p>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Install OS X 10.10
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Install OS X 10.10
 2. Open 'Terminal.app'
 3. Input 'ls'
 </code></pre></div></div>
@@ -676,7 +678,7 @@ Second line</p>
 
 <p>注意：列表包含多个段落时需要缩进（四个空格或一个制表符），像这样：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Today is a nice day.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Today is a nice day.
 
 	I hope you will think so.
 	
@@ -689,7 +691,7 @@ Second line</p>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```
 #include &lt;stdio.h&gt;
 
 int main(void)
@@ -705,7 +707,7 @@ int main(void)
 <p>显示为：</p>
 
 <hr />
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include &lt;stdio.h&gt;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include &lt;stdio.h&gt;
 
 int main(void)
 {
@@ -720,23 +722,23 @@ int main(void)
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The first line of the code of a HTML5 web page is ``&lt;!DOCTYPE html&gt;``.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The first line of the code of a HTML5 web page is ``&lt;!DOCTYPE html&gt;``.
 </code></pre></div></div>
 
 <p>显示为：</p>
 
 <hr />
-<p>The first line of the code of a HTML5 web page is <code class="highlighter-rouge"><span class="cp">&lt;!DOCTYPE html&gt;</span></code>.</p>
+<p>The first line of the code of a HTML5 web page is <code class="language-plaintext highlighter-rouge">&lt;!DOCTYPE html&gt;</code>.</p>
 
 <hr />
 
-<p>如果代码内无 <code class="highlighter-rouge">`</code>，也可以使用 <code class="highlighter-rouge">`Code Inside...`</code> 单个包裹。</p>
+<p>如果代码内无 <code class="language-plaintext highlighter-rouge">`</code>，也可以使用 <code class="language-plaintext highlighter-rouge">`Code Inside...`</code> 单个包裹。</p>
 
 <h3 id="分隔符">分隔符</h3>
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
 ***
 </code></pre></div></div>
 
@@ -746,7 +748,7 @@ int main(void)
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>**Attention!**: System will close all connections in 30 minutes!
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>**Attention!**: System will close all connections in 30 minutes!
 
 *Isn't it amazing?*
 </code></pre></div></div>
@@ -766,7 +768,7 @@ int main(void)
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~~What I said is wrong.~~
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~~What I said is wrong.~~
 
 &lt;http://www.github.com&gt;
 </code></pre></div></div>
@@ -784,7 +786,7 @@ int main(void)
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![Test (Alt Text)](/pictures/md/test.png "Photo in markdown")
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![Test (Alt Text)](/pictures/md/test.png "Photo in markdown")
 </code></pre></div></div>
 
 <p>显示为：</p>
@@ -798,7 +800,7 @@ int main(void)
 
 <p>或者是「参考式」：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![Test (Alt Text)][2536]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![Test (Alt Text)][2536]
 [2536]: /pictures/md/test.png "Photo in markdown"
 </code></pre></div></div>
 
@@ -806,7 +808,7 @@ int main(void)
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Fork this repo: [website]("http://www.github.com" "GitHub")
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Fork this repo: [website]("http://www.github.com" "GitHub")
 
 Wikipedia: [English][wiki]
 
@@ -830,7 +832,7 @@ Wikipedia: [English][wiki]
 
 <p>使用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name  | Class
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name  | Class
 ------------- | -------------
 Alice  | 1
 Bob  | 2
@@ -863,7 +865,7 @@ Bob  | 2
 
 <p>可以设置对齐：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| Application  | Operating System  | Latest Version |
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>| Application  | Operating System  | Latest Version |
 |:------------- |:---------------:| -------------:|
 | Microsoft Office | Windows, OS X | 2013 |
 | iTunes      | Windows, OS X | 12 |

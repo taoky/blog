@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -750,7 +752,6 @@
         <div class="post-content">
           <p>博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。</p>
 
-
         </div>
         
           <p class="post-continue">
@@ -1258,12 +1259,12 @@
         </header>
 
         <div class="post-content">
-          <p><code class="highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
+          <p><code class="language-plaintext highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="language-plaintext highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="language-plaintext highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
 
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1">
-      <p><a href="https://en.wikipedia.org/wiki/Epoll">https://en.wikipedia.org/wiki/Epoll</a> <a href="#fnref:1" class="reversefootnote">↩</a></p>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="https://en.wikipedia.org/wiki/Epoll">https://en.wikipedia.org/wiki/Epoll</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>
 </div>
@@ -1775,7 +1776,6 @@
         <div class="post-content">
           <p>感谢 <a href="https://github.com/iBug" class="user-mention">@iBug</a> 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（<a href="https://ibugone.com/p/15">English</a>，<a href="https://ibugone.com/p/15-cn">中文</a>）。</p>
 
-
         </div>
         
           <p class="post-continue">
@@ -2281,8 +2281,7 @@
         </header>
 
         <div class="post-content">
-          <p>昨天，学长 <a href="https://github.com/zzh1996" class="user-mention">@zzh1996</a> 发现在 Docker for Mac 的容器中对文件 <code class="highlighter-rouge">chattr +i</code> 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。</p>
-
+          <p>昨天，学长 <a href="https://github.com/zzh1996" class="user-mention">@zzh1996</a> 发现在 Docker for Mac 的容器中对文件 <code class="language-plaintext highlighter-rouge">chattr +i</code> 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。</p>
 
         </div>
         
@@ -2789,8 +2788,7 @@
         </header>
 
         <div class="post-content">
-          <p>这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 <a href="https://coolbooter.com/">CoolBooter</a> 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 <code class="highlighter-rouge">ssh</code> 到我们的设备上搞事啦。</p>
-
+          <p>这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 <a href="https://coolbooter.com/">CoolBooter</a> 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 <code class="language-plaintext highlighter-rouge">ssh</code> 到我们的设备上搞事啦。</p>
 
         </div>
         

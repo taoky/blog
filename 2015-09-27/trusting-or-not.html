@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -846,7 +848,7 @@
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"Hello world</span><span class="se">\n</span><span class="s">"</span>
 </code></pre></div></div>
 
-<p>相当于一个包含字符 <code class="highlighter-rouge">\n</code> 的字符串，它表示新行符号。</p>
+<p>相当于一个包含字符 <code class="language-plaintext highlighter-rouge">\n</code> 的字符串，它表示新行符号。</p>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>
@@ -880,7 +882,7 @@
 
 <p><em>插图 3</em></p>
 
-<p>假设我们希望改变 C 编译器来包括序列 <code class="highlighter-rouge">\v</code> 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 <code class="highlighter-rouge">\v</code>，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 <code class="highlighter-rouge">\v</code> 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。</p>
+<p>假设我们希望改变 C 编译器来包括序列 <code class="language-plaintext highlighter-rouge">\v</code> 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 <code class="language-plaintext highlighter-rouge">\v</code>，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 <code class="language-plaintext highlighter-rouge">\v</code> 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。</p>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">...</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">next</span><span class="p">();</span>

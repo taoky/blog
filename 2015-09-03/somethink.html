@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -462,13 +464,13 @@
 
 <p>集训主要内容就是刷题，这个没有什么好说的。坐在我右边的是钱逗，他这几天就是刷一会儿题目再浪一会儿。他用 Windows API 写了一个屏幕彩色闪烁的程序，后来这个程序的功能越来越多，我也「帮」他找出了不少 bug，比如说输入字母会无法返回选择菜单（他不准备修），输入 -1 会越界访问其它内存的内容然后崩溃掉之类。当然我们还开发了一种名为「256 色」的娱乐项目。</p>
 
-<p>其实只用机房里的电脑娱乐是有很多方法的，比如说一直输出 <code class="highlighter-rouge">\a</code>（这会让电脑一直发出滴滴声，而且窗口会关不掉），用 Windows API 的 <code class="highlighter-rouge">Beep()</code> 发出不同旋律的声音。只是后来我们玩得太过头，结果老师把声卡驱动直接删掉（电脑不能直接连外网，每次启动自动恢复硬盘），顺带禁用了很多东西（似乎是用组策略干的）：任务管理器、控制面板、MMC……</p>
+<p>其实只用机房里的电脑娱乐是有很多方法的，比如说一直输出 <code class="language-plaintext highlighter-rouge">\a</code>（这会让电脑一直发出滴滴声，而且窗口会关不掉），用 Windows API 的 <code class="language-plaintext highlighter-rouge">Beep()</code> 发出不同旋律的声音。只是后来我们玩得太过头，结果老师把声卡驱动直接删掉（电脑不能直接连外网，每次启动自动恢复硬盘），顺带禁用了很多东西（似乎是用组策略干的）：任务管理器、控制面板、MMC……</p>
 
 <p>但是你要知道，只要想玩，总是可以找到玩的方法的。钱逗一开始把「开始菜单」的样式切换了一下，然后就发现了 Outlook Express，顺带给自己起了个英文名：John Smith（这是 Outlook Express 的示例名称）。不久后他在某程序上点了右键属性，发现了「兼容模式」，又发现点击「用 256 色运行」后会有复古效果出现，于是我们就开始玩了。</p>
 
 <p>首先我发现在 explorer.exe 上加选项，然后到「网上邻居」里面让资源管理器卡死重启就能有很长时间的效果了；之后我又想到在 Dev-C++（这是我们用的 IDE）的 ConsolePauser.exe 或者是 g++.exe 上加选项可以有「暂时」而烦人的效果；最后，他发现控制台程序加选项后 Alt + Enter 全屏之后退出会有永久的 256 色效果……</p>
 
-<p>我们真是一群无聊的人。我还用了一种捉弄钱逗的极好方法：在 iostream.h 里面加 <code class="highlighter-rouge">#include &lt;con&gt;</code>，然后……hhh（仅限 Windows）。</p>
+<p>我们真是一群无聊的人。我还用了一种捉弄钱逗的极好方法：在 iostream.h 里面加 <code class="language-plaintext highlighter-rouge">#include &lt;con&gt;</code>，然后……hhh（仅限 Windows）。</p>
 
 <p>隔壁的机房在空闲的时候也是可以去的。那儿有 4 台 Mac，虽然一台坏了，只会在开机的时候嘟嘟叫，还有很多 PC 台式机。有一台 Mac 上面装了游戏「地狱边界」（LIMBO），于是我们都围在一起玩出主意。</p>
 

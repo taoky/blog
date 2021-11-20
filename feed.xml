@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh">
-  <generator uri="http://jekyllrb.com" version="3.8.7">Jekyll</generator>
+  <generator uri="http://jekyllrb.com" version="4.2.1">Jekyll</generator>
   
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2021-08-02T03:47:58+00:00</updated>
+  <updated>2021-11-20T19:39:58+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -158,19 +158,19 @@
       <published>2019-07-08T04:33:00+00:00</published>
       <updated>2019-07-08T04:33:00+00:00</updated>
       <id>https://taoky.github.io/2019-07-08/epoll-101</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
+      <content type="html" xml:base="https://taoky.github.io/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
 
-&lt;p&gt;在介绍 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 之前，不如让我们来看看，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 到底是怎么出现的。&lt;/p&gt;
+&lt;p&gt;在介绍 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 之前，不如让我们来看看，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 到底是怎么出现的。&lt;/p&gt;
 
 &lt;h2 id=&quot;网页服务器与-c10k-问题&quot;&gt;网页服务器与 C10K 问题&lt;/h2&gt;
 
-&lt;p&gt;C10K 问题指同时处理一万个并发连接时的优化问题&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;C10K 问题指同时处理一万个并发连接时的优化问题&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;h3 id=&quot;起初&quot;&gt;起初……&lt;/h3&gt;
 
-&lt;p&gt;最开始的时候，网页服务器处理连接的做法非常简单：&lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 阻塞在那，接收到连接之后就处理、返回数据。但这样简单的做法在多用户的情况下效果是很差的：如果我在下载一个超大的文件，其他用户的连接就根本无法被处理，这显然是无法接受的。&lt;/p&gt;
+&lt;p&gt;最开始的时候，网页服务器处理连接的做法非常简单：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 阻塞在那，接收到连接之后就处理、返回数据。但这样简单的做法在多用户的情况下效果是很差的：如果我在下载一个超大的文件，其他用户的连接就根本无法被处理，这显然是无法接受的。&lt;/p&gt;
 
-&lt;p&gt;既然要同时处理多个连接，那 &lt;code class=&quot;highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 总可以吧——接收到连接后先 &lt;code class=&quot;highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 一下，新进程去处理当前请求，父进程继续 &lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt;，或者我 &lt;code class=&quot;highlighter-rouge&quot;&gt;pthread_create()&lt;/code&gt; 创建新线程也行。这样确实部分解决了上一段的问题，但是创建新的进程/线程是有比较大的开销的。&lt;/p&gt;
+&lt;p&gt;既然要同时处理多个连接，那 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 总可以吧——接收到连接后先 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 一下，新进程去处理当前请求，父进程继续 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;accept()&lt;/code&gt;，或者我 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pthread_create()&lt;/code&gt; 创建新线程也行。这样确实部分解决了上一段的问题，但是创建新的进程/线程是有比较大的开销的。&lt;/p&gt;
 
 &lt;p&gt;既然开销大，那么我能不能在最开始的时候就先创建一些进程/线程呢？这种做法最后就变成了进程/线程池（Apache prefork 就是这样做的）。看起来，我们很好地解决了这个问题，但是……&lt;/p&gt;
 
@@ -180,29 +180,29 @@
 
 &lt;p&gt;所以，我们能否让一个进程/线程&lt;strong&gt;同时&lt;/strong&gt;处理多个连接？答案当然是可以的：这就是 I/O 复用。&lt;/p&gt;
 
-&lt;h3 id=&quot;select&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;/h3&gt;
+&lt;h3 id=&quot;select&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;/h3&gt;
 
-&lt;p&gt;我们可以注意到，在处理 socket 文件描述符的时候，有一些操作是阻塞的：这包括了读取 (&lt;code class=&quot;highlighter-rouge&quot;&gt;read&lt;/code&gt;)、写入 (&lt;code class=&quot;highlighter-rouge&quot;&gt;write&lt;/code&gt;) 以及接受连接 (&lt;code class=&quot;highlighter-rouge&quot;&gt;accept&lt;/code&gt;) 等等。如果我们有一种方法，能够让我们的进程知道某个文件描述符&lt;strong&gt;已经准备&lt;/strong&gt;好某个操作的话，每次只要把准备好的描述符拿出来做处理就可以了，在执行这些阻塞操作的时候也就不会一直卡在那儿了。这样我们的处理流程就是：&lt;/p&gt;
+&lt;p&gt;我们可以注意到，在处理 socket 文件描述符的时候，有一些操作是阻塞的：这包括了读取 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read&lt;/code&gt;)、写入 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write&lt;/code&gt;) 以及接受连接 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;accept&lt;/code&gt;) 等等。如果我们有一种方法，能够让我们的进程知道某个文件描述符&lt;strong&gt;已经准备&lt;/strong&gt;好某个操作的话，每次只要把准备好的描述符拿出来做处理就可以了，在执行这些阻塞操作的时候也就不会一直卡在那儿了。这样我们的处理流程就是：&lt;/p&gt;
 
 &lt;p&gt;首先由某个函数来告诉我们文件描述符准备好读/写，然后我们对那个文件描述符做短小快速的处理，最后回到那个函数，不停循环。我们不用太担心这样对性能会不会带来比较大的影响，因为网络的 I/O 相比 CPU 来讲慢得多。这样的话我们的单个进程/线程也可以处理好多个连接了。&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; 就可以做到「通知」的作用。它使用的 &lt;code class=&quot;highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; 就可以做到「通知」的作用。它使用的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writefds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
            &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exceptfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;看起来很好，但是 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 仍有一些问题。&lt;/p&gt;
+&lt;p&gt;看起来很好，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 仍有一些问题。&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;描述符数量有限制。POSIX 标准允许实现自己来定义数量上限，Linux 内核也没有硬性限制，但是 glibc 有——它把 &lt;code class=&quot;highlighter-rouge&quot;&gt;FD_SETSIZE&lt;/code&gt; 直接定义为了 1024。&lt;/li&gt;
-  &lt;li&gt;第二个问题在于 &lt;code class=&quot;highlighter-rouge&quot;&gt;nfds&lt;/code&gt; 这个参数：&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会检查 0 到 &lt;code class=&quot;highlighter-rouge&quot;&gt;nfds - 1&lt;/code&gt; 在内的所有文件描述符的情况——这很 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(n)&lt;/code&gt;。在大量连接的情况下，我们当然希望轮询的时间复杂度越低越好。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会改变 &lt;code class=&quot;highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体的内容，每次调用都要重新初始化。&lt;/li&gt;
+  &lt;li&gt;描述符数量有限制。POSIX 标准允许实现自己来定义数量上限，Linux 内核也没有硬性限制，但是 glibc 有——它把 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FD_SETSIZE&lt;/code&gt; 直接定义为了 1024。&lt;/li&gt;
+  &lt;li&gt;第二个问题在于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nfds&lt;/code&gt; 这个参数：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会检查 0 到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nfds - 1&lt;/code&gt; 在内的所有文件描述符的情况——这很 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;O(n)&lt;/code&gt;。在大量连接的情况下，我们当然希望轮询的时间复杂度越低越好。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 会改变 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体的内容，每次调用都要重新初始化。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;poll&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt;&lt;/h3&gt;
+&lt;h3 id=&quot;poll&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;poll()&lt;/code&gt;&lt;/h3&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 是另一种 I/O 复用的函数。它和 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 类似。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 是另一种 I/O 复用的函数。它和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 类似。&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;poll&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pollfd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
@@ -213,18 +213,18 @@
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;这里，&lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 解决了 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 的描述符数量和重新初始化的问题，但是 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(n)&lt;/code&gt; 的性能问题还是没能得到解决，所以在 Linux 中就出现了 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这里，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 解决了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 的描述符数量和重新初始化的问题，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;O(n)&lt;/code&gt; 的性能问题还是没能得到解决，所以在 Linux 中就出现了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll()&lt;/code&gt;。&lt;/p&gt;
 
-&lt;h2 id=&quot;epoll-简介&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 简介&lt;/h2&gt;
+&lt;h2 id=&quot;epoll-简介&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 简介&lt;/h2&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 能够用 &lt;code class=&quot;highlighter-rouge&quot;&gt;O(1)&lt;/code&gt; 的时间复杂度去监控文件描述符，解决了 &lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 的问题。与 &lt;code class=&quot;highlighter-rouge&quot;&gt;select()&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 不同，它不是一个「跨 (POSIX) 平台」的解决方案，例如在 FreeBSD 中，与 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 相似的是 &lt;code class=&quot;highlighter-rouge&quot;&gt;kqueue&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll()&lt;/code&gt; 能够用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;O(1)&lt;/code&gt; 的时间复杂度去监控文件描述符，解决了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 的问题。与 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;poll()&lt;/code&gt; 不同，它不是一个「跨 (POSIX) 平台」的解决方案，例如在 FreeBSD 中，与 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 相似的是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kqueue&lt;/code&gt;。&lt;/p&gt;
 
-&lt;p&gt;相比于前两者来说，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 也更加复杂了。它有三个系列函数：&lt;/p&gt;
+&lt;p&gt;相比于前两者来说，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 也更加复杂了。它有三个系列函数：&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_create()&lt;/code&gt;: 创建 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt;: 向 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例注册文件描述符，可以设置添加、修改、删除目标文件描述符。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;: 等待 I/O 事件。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_create()&lt;/code&gt;: 创建 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt;: 向 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例注册文件描述符，可以设置添加、修改、删除目标文件描述符。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;: 等待 I/O 事件。&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&quot;水平触发-lt-与边缘触发-et&quot;&gt;水平触发 (LT) 与边缘触发 (ET)&lt;/h3&gt;
@@ -235,48 +235,48 @@
 
 &lt;p&gt;&lt;em&gt;&lt;del&gt;呆唯逗梓喵——一个水平触发的非典型示例&lt;/del&gt;&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;简单地说，水平触发时，只要某个文件描述符处在准备好了的状态，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 就会一直告诉你；边缘触发时，某个文件描述符准备好后，&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会告诉你一次，或者说 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会在描述符状态变化的时候告诉你。边缘触发是 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 新带来的特性。&lt;/p&gt;
+&lt;p&gt;简单地说，水平触发时，只要某个文件描述符处在准备好了的状态，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 就会一直告诉你；边缘触发时，某个文件描述符准备好后，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会告诉你一次，或者说 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 只会在描述符状态变化的时候告诉你。边缘触发是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 新带来的特性。&lt;/p&gt;
 
 &lt;p&gt;文档中举了一个例子：&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;某个文件描述符的读端 &lt;code class=&quot;highlighter-rouge&quot;&gt;rfd&lt;/code&gt; 在 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中注册。&lt;/li&gt;
+  &lt;li&gt;某个文件描述符的读端 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rfd&lt;/code&gt; 在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中注册。&lt;/li&gt;
   &lt;li&gt;有一个 pipe writer 在管道写端写入了 2 kB 数据。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 函数返回 &lt;code class=&quot;highlighter-rouge&quot;&gt;rfd&lt;/code&gt;，标记它已经准备好读取了。&lt;/li&gt;
-  &lt;li&gt;Pipe reader 在管道读端读取了 1 kB 数据。（之后回到 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;）&lt;/li&gt;
-  &lt;li&gt;如果是水平触发，那么 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 函数返回 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rfd&lt;/code&gt;，标记它已经准备好读取了。&lt;/li&gt;
+  &lt;li&gt;Pipe reader 在管道读端读取了 1 kB 数据。（之后回到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt;）&lt;/li&gt;
+  &lt;li&gt;如果是水平触发，那么 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的话（&lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt; &lt;strong&gt;不能保证&lt;/strong&gt;一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt;，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的话（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt; &lt;strong&gt;不能保证&lt;/strong&gt;一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt;，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;p&gt;文档对使用边缘触发给出的建议是：&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;使用非阻塞的文件描述符。&lt;/li&gt;
-  &lt;li&gt;直到 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt; 返回 &lt;code class=&quot;highlighter-rouge&quot;&gt;EAGAIN&lt;/code&gt;，再等待 I/O 事件。&lt;/li&gt;
+  &lt;li&gt;直到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt; 返回 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EAGAIN&lt;/code&gt;，再等待 I/O 事件。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;一般来说，边缘触发的性能更好，但是编写也更费劲一些。&lt;/p&gt;
 
-&lt;h3 id=&quot;epoll_event-结构中可用的事件类型&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_event&lt;/code&gt; 结构中可用的事件类型&lt;/h3&gt;
+&lt;h3 id=&quot;epoll_event-结构中可用的事件类型&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_event&lt;/code&gt; 结构中可用的事件类型&lt;/h3&gt;
 
-&lt;p&gt;以下根据 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 的文档整理，可能会有错误，所以我尽量附上了参考的链接。&lt;/p&gt;
+&lt;p&gt;以下根据 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 的文档整理，可能会有错误，所以我尽量附上了参考的链接。&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt;: 输入 (&lt;code class=&quot;highlighter-rouge&quot;&gt;read&lt;/code&gt;) 事件。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLOUT&lt;/code&gt;: 输出 (&lt;code class=&quot;highlighter-rouge&quot;&gt;write&lt;/code&gt;) 事件。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLRDHUP&lt;/code&gt;: 对方关闭连接，或者 shutdown 了写入端的事件。
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt;: 输入 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read&lt;/code&gt;) 事件。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLOUT&lt;/code&gt;: 输出 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write&lt;/code&gt;) 事件。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLRDHUP&lt;/code&gt;: 对方关闭连接，或者 shutdown 了写入端的事件。
     &lt;ul&gt;
-      &lt;li&gt;「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt; 之后跑一次 &lt;code class=&quot;highlighter-rouge&quot;&gt;read()&lt;/code&gt;，返回 0 后判断对方已经 shutdown 了写入端&lt;sup id=&quot;fnref:5&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+      &lt;li&gt;「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt; 之后跑一次 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt;，返回 0 后判断对方已经 shutdown 了写入端&lt;sup id=&quot;fnref:5&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLPRI&lt;/code&gt;: 文件描述符异常（接收紧急数据&lt;sup id=&quot;fnref:6&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;）。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLERR&lt;/code&gt;: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLHUP&lt;/code&gt;: 文件描述符被「挂断」，对方 shutdown 或关闭了连接&lt;sup id=&quot;fnref:7&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLET&lt;/code&gt;: 边缘触发。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt;: 当文件描述符从 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 中被拿出来后，就不会再被其他对 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的调用中拿出来了。例如，多个线程使用同一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLWAKEUP&lt;/code&gt;: 保证事件在等待/处理的时候，系统不会进入休眠状态。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt;: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 也能达到类似的效果，只是每次都额外多出了一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 系统调用&lt;sup id=&quot;fnref:8&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLPRI&lt;/code&gt;: 文件描述符异常（接收紧急数据&lt;sup id=&quot;fnref:6&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;）。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLERR&lt;/code&gt;: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLHUP&lt;/code&gt;: 文件描述符被「挂断」，对方 shutdown 或关闭了连接&lt;sup id=&quot;fnref:7&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLET&lt;/code&gt;: 边缘触发。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt;: 当文件描述符从 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 中被拿出来后，就不会再被其他对 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的调用中拿出来了。例如，多个线程使用同一个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLWAKEUP&lt;/code&gt;: 保证事件在等待/处理的时候，系统不会进入休眠状态。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt;: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 也能达到类似的效果，只是每次都额外多出了一个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 系统调用&lt;sup id=&quot;fnref:8&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;实现网页服务器的思路与一些问题&quot;&gt;实现网页服务器的思路与一些问题&lt;/h2&gt;
@@ -292,55 +292,55 @@
   &lt;li&gt;网络并不可靠：用户可能不会一次性把数据发送过来，我们有时也没有办法一次性给用户发送所有需要的数据。如果单纯在一个状态中处理完所有的输入或输出，那么当数据很大，或者丢包率很高的情况下，单个进程/线程会花大量的时间在一个连接上，无法为其他用户提供服务了。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;这样的话，我们就不得不在每次切回 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 时维护每个连接已有的状态（比如说接收到了哪些数据、发送了哪些数据），编程的复杂度也大大提高了。&lt;/p&gt;
+&lt;p&gt;这样的话，我们就不得不在每次切回 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 时维护每个连接已有的状态（比如说接收到了哪些数据、发送了哪些数据），编程的复杂度也大大提高了。&lt;/p&gt;
 
 &lt;h3 id=&quot;惊群-thundering-herd&quot;&gt;惊群 (thundering herd)&lt;/h3&gt;
 
 &lt;p&gt;理论上，假设我们的 CPU 有 n 个核心，我们的网页服务器在启用 n 个进程/线程的时候性能是最好的。但我们服务器的 socket 只有一个，那么很自然的想法就是把这个 socket 分享给所有进程/线程。&lt;/p&gt;
 
-&lt;p&gt;这没什么问题，但是比如说我们把服务器的 socket 放在了 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中，在 &lt;code class=&quot;highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 的时候，一个连接可能会唤起多个进程，但是最后只有一个进程会成功，其他被唤醒的进程徒劳无功。这就是惊群现象。&lt;/p&gt;
+&lt;p&gt;这没什么问题，但是比如说我们把服务器的 socket 放在了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例中，在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;accept()&lt;/code&gt; 的时候，一个连接可能会唤起多个进程，但是最后只有一个进程会成功，其他被唤醒的进程徒劳无功。这就是惊群现象。&lt;/p&gt;
 
-&lt;p&gt;以上提到的 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; 可以部分解决这样的惊群问题，除此之外，使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;SO_REUSEPORT&lt;/code&gt; 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：&lt;/p&gt;
+&lt;p&gt;以上提到的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; 可以部分解决这样的惊群问题，除此之外，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SO_REUSEPORT&lt;/code&gt; 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with &lt;code class=&quot;highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.&lt;sup id=&quot;fnref:8:1&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+  &lt;p&gt;The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.&lt;sup id=&quot;fnref:8:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;或许真的拿 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……&lt;/p&gt;
+&lt;p&gt;或许真的拿 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;这篇是当初写完网页服务器的实验之后想写的，当初写实验的时候就花了好几天查 &lt;code class=&quot;highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 的资料，迷迷糊糊的；这几天又查了一些资料，实话讲比原来清楚了一些，但我还是无法保证这里的每句话都是正确的。&lt;/p&gt;
+&lt;p&gt;这篇是当初写完网页服务器的实验之后想写的，当初写实验的时候就花了好几天查 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 的资料，迷迷糊糊的；这几天又查了一些资料，实话讲比原来清楚了一些，但我还是无法保证这里的每句话都是正确的。&lt;/p&gt;
 
 &lt;p&gt;就这样吧……&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;div class=&quot;footnotes&quot;&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Epoll&quot;&gt;https://en.wikipedia.org/wiki/Epoll&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Epoll&quot;&gt;https://en.wikipedia.org/wiki/Epoll&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/C10k_problem&quot;&gt;https://en.wikipedia.org/wiki/C10k_problem&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/C10k_problem&quot;&gt;https://en.wikipedia.org/wiki/C10k_problem&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:3&quot;&gt;
-      &lt;p&gt;参考了 CSAPP 的 13.2 节。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;参考了 CSAPP 的 13.2 节。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:4&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&quot;&gt;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&quot;&gt;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:5&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;amp;pg=PA1343&amp;amp;lpg=PA1343&amp;amp;dq=EPOLLRDHUP+edge+trigger&amp;amp;source=bl&amp;amp;ots=kMHdB9wVu3&amp;amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;amp;hl=zh-CN&amp;amp;sa=X&amp;amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;amp;q=EPOLLRDHUP edge trigger&amp;amp;f=false&quot;&gt;The Linux Programming Interface: A Linux and UNIX System Programming Handbook&lt;/a&gt; &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:5&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;amp;pg=PA1343&amp;amp;lpg=PA1343&amp;amp;dq=EPOLLRDHUP+edge+trigger&amp;amp;source=bl&amp;amp;ots=kMHdB9wVu3&amp;amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;amp;hl=zh-CN&amp;amp;sa=X&amp;amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;amp;q=EPOLLRDHUP edge trigger&amp;amp;f=false&quot;&gt;The Linux Programming Interface: A Linux and UNIX System Programming Handbook&lt;/a&gt; &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:6&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&quot;&gt;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&lt;/a&gt; &lt;a href=&quot;#fnref:6&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:6&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&quot;&gt;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&lt;/a&gt; &lt;a href=&quot;#fnref:6&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:7&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&quot;&gt;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&lt;/a&gt; &lt;a href=&quot;#fnref:7&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:7&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&quot;&gt;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&lt;/a&gt; &lt;a href=&quot;#fnref:7&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:8&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&quot;&gt;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&lt;/a&gt; &lt;a href=&quot;#fnref:8&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:8:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:8&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&quot;&gt;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&lt;/a&gt; &lt;a href=&quot;#fnref:8&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:8:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
@@ -399,7 +399,7 @@
 
 &lt;ul&gt;
   &lt;li&gt;虚拟机软件。可以使用 Parallels Desktop, VMware Fusion 或 VirtualBox。其中前两者是商业、收费的软件，后者是免费开源的。以下将以后两者为例。&lt;/li&gt;
-  &lt;li&gt;需要安装的操作系统的镜像文件，一般为 &lt;code class=&quot;highlighter-rouge&quot;&gt;*.iso&lt;/code&gt; 格式。
+  &lt;li&gt;需要安装的操作系统的镜像文件，一般为 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.iso&lt;/code&gt; 格式。
     &lt;ul&gt;
       &lt;li&gt;如果需要安装 Windows，镜像文件可以在一些网站找到，微软也会提供最新的 Windows 10 镜像的下载。&lt;/li&gt;
       &lt;li&gt;一般来说，大部分 Linux 发行版的镜像是很容易下载到的。如果遇到了网络障碍，可以至&lt;a href=&quot;https://mirrors.ustc.edu.cn/&quot;&gt;&lt;del&gt;肥科&lt;/del&gt;科大开源镜像站&lt;/a&gt;下载。&lt;/li&gt;
@@ -428,7 +428,7 @@
 
 &lt;p&gt;由于使用了比较长的时间，我的虚拟机比较多。&lt;/p&gt;
 
-&lt;p&gt;点按 + 号，新建虚拟机。将你的 &lt;code class=&quot;highlighter-rouge&quot;&gt;.iso&lt;/code&gt; 文件拖进去。&lt;/p&gt;
+&lt;p&gt;点按 + 号，新建虚拟机。将你的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.iso&lt;/code&gt; 文件拖进去。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/vm/install-1.png&quot; alt=&quot;Installing Ubuntu - 1&quot; /&gt;&lt;/p&gt;
 
@@ -465,15 +465,15 @@
 
 &lt;p&gt;本文&lt;strong&gt;不会&lt;/strong&gt;介绍 Linux 的基本使用方法。仅就 Linux 配置中与虚拟机有关的内容进行介绍。&lt;/p&gt;
 
-&lt;p&gt;一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt;。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。&lt;/p&gt;
+&lt;p&gt;一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt;。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。&lt;/p&gt;
 
-&lt;p&gt;如果发现 &lt;code class=&quot;highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt; 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。&lt;/p&gt;
+&lt;p&gt;如果发现 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open-vm-tools&lt;/code&gt; 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。&lt;/p&gt;
 
 &lt;p&gt;另外，如果需要连接 USB 设备，可能需要将 USB 兼容性设置为 USB 3.0。&lt;/p&gt;
 
 &lt;h4 id=&quot;文件共享&quot;&gt;文件共享&lt;/h4&gt;
 
-&lt;p&gt;在设置中选择共享文件夹后，共享的文件夹放置在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/mnt/hgfs&lt;/code&gt; 下。如果没有，需要手动挂载。&lt;/p&gt;
+&lt;p&gt;在设置中选择共享文件夹后，共享的文件夹放置在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/mnt/hgfs&lt;/code&gt; 下。如果没有，需要手动挂载。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mount &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; fuse.vmhgfs-fuse .host:/ /mnt/hgfs &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; allow_other
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -504,7 +504,7 @@
 
 &lt;h3 id=&quot;有关虚拟机的配置-1&quot;&gt;有关虚拟机的配置&lt;/h3&gt;
 
-&lt;p&gt;虚拟机需要安装 Guest Additions。在安装之前，需要先安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;build-essential&lt;/code&gt; 软件包，以编译内核模块。&lt;/p&gt;
+&lt;p&gt;虚拟机需要安装 Guest Additions。在安装之前，需要先安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build-essential&lt;/code&gt; 软件包，以编译内核模块。&lt;/p&gt;
 
 &lt;p&gt;选择 Devices =&amp;gt; Insert Guest Additions CD Image…，运行光盘中的软件。结束后重启。安装后，也可以支持拖放、剪贴板共享等。（不过，似乎有些功能还有点问题）&lt;/p&gt;
 
@@ -517,7 +517,7 @@
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;nv&quot;&gt;$USER&lt;/span&gt; vboxsf
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;将自己加入 &lt;code class=&quot;highlighter-rouge&quot;&gt;vboxsf&lt;/code&gt; 用户组。重启即可。默认目录会被挂载在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/media&lt;/code&gt; 下。&lt;/p&gt;
+&lt;p&gt;将自己加入 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vboxsf&lt;/code&gt; 用户组。重启即可。默认目录会被挂载在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/media&lt;/code&gt; 下。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/vm/vb-shared-folder.png&quot; alt=&quot;VirtualBox Shared Folder&quot; /&gt;&lt;/p&gt;</content>
 
@@ -565,7 +565,7 @@
       <published>2019-02-19T05:53:00+00:00</published>
       <updated>2019-02-19T05:53:00+00:00</updated>
       <id>https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
+      <content type="html" xml:base="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
 
 &lt;p&gt;（PS：Linux 上的 Docker 未见此问题）&lt;/p&gt;
 
@@ -573,7 +573,7 @@
 
 &lt;p&gt;版本：Docker Desktop 2.0.0.2 (30215)，Engine: 18.09.1&lt;/p&gt;
 
-&lt;p&gt;跑一个 Ubuntu 的容器。设置 &lt;code class=&quot;highlighter-rouge&quot;&gt;--privileged=true&lt;/code&gt; 以使 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 成功执行。&lt;/p&gt;
+&lt;p&gt;跑一个 Ubuntu 的容器。设置 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--privileged=true&lt;/code&gt; 以使 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 成功执行。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker container run &lt;span class=&quot;nt&quot;&gt;--privileged&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; ubuntu bash
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -605,13 +605,13 @@ CONTAINER ID        IMAGE                COMMAND                  CREATED       
 Error response from daemon: container 1865cedf0ef0e58303a0361b8e19cd3a882a1bc741990603fb446e153656589f: driver &lt;span class=&quot;s2&quot;&gt;&quot;overlay2&quot;&lt;/span&gt; failed to remove root filesystem: remove /var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff/test: operation not permitted
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;同样，加上 &lt;code class=&quot;highlighter-rouge&quot;&gt;-f&lt;/code&gt; 也没有任何作用。可以注意到，我们创建的文件阻止了容器的正常删除。&lt;/p&gt;
+&lt;p&gt;同样，加上 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-f&lt;/code&gt; 也没有任何作用。可以注意到，我们创建的文件阻止了容器的正常删除。&lt;/p&gt;
 
 &lt;h2 id=&quot;workaround&quot;&gt;Workaround&lt;/h2&gt;
 
 &lt;p&gt;那么，返回中指向的路径在哪里呢？很明显这不是我们主机上的路径。&lt;/p&gt;
 
-&lt;p&gt;由 Docker 的工作原理我们知道，Docker for Mac 需要虚拟一个 Linux 内核才能够在 macOS 上正常运行，而这个最外层的虚拟机就是我们的目标：我们需要在其上把 &lt;code class=&quot;highlighter-rouge&quot;&gt;test&lt;/code&gt; 文件删掉。&lt;/p&gt;
+&lt;p&gt;由 Docker 的工作原理我们知道，Docker for Mac 需要虚拟一个 Linux 内核才能够在 macOS 上正常运行，而这个最外层的虚拟机就是我们的目标：我们需要在其上把 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;test&lt;/code&gt; 文件删掉。&lt;/p&gt;
 
 &lt;p&gt;Docker for Mac 选择的虚拟机环境是 Xhyve VM。根据&lt;a href=&quot;https://forums.docker.com/t/is-it-possible-to-ssh-to-the-xhyve-machine/17426&quot;&gt;这条链接&lt;/a&gt;的内容，我们可以进入这个虚拟机环境。&lt;/p&gt;
 
@@ -627,14 +627,14 @@ test
 linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e7ec4f3114bad897a2235cf922bba972/diff#
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;这个环境没有 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt;……虽然有个包管理器 &lt;code class=&quot;highlighter-rouge&quot;&gt;apk&lt;/code&gt;，但是……&lt;/p&gt;
+&lt;p&gt;这个环境没有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt;……虽然有个包管理器 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apk&lt;/code&gt;，但是……&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;linuxkit-025000000001:/var/lib# apk update
 ERROR: Unable to lock database: Read-only file system
 ERROR: Failed to open apk database: Read-only file system
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt;，但是一些基础的东西还是比较齐的——甚至有 &lt;code class=&quot;highlighter-rouge&quot;&gt;wget&lt;/code&gt;。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 的啊&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt;，但是一些基础的东西还是比较齐的——甚至有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wget&lt;/code&gt;。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 的啊&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;p&gt;这就尴尬了。&lt;/p&gt;
 
@@ -652,7 +652,7 @@ linuxkit-025000000001:/var/lib/docker/overlay2/e000b8a86824f48cb824ab643ce7d035e
 
 &lt;p&gt;之后退出虚拟机环境，再删一次就行了。&lt;/p&gt;
 
-&lt;h2 id=&quot;附录-1-能不能直接从其他-linux-机器上复制一份-chattr-过来&quot;&gt;附录 1: 能不能直接从其他 Linux 机器上复制一份 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 过来？&lt;/h2&gt;
+&lt;h2 id=&quot;附录-1-能不能直接从其他-linux-机器上复制一份-chattr-过来&quot;&gt;附录 1: 能不能直接从其他 Linux 机器上复制一份 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 过来？&lt;/h2&gt;
 
 &lt;p&gt;答案是：（大部分情况下）不行。&lt;/p&gt;
 
@@ -671,9 +671,9 @@ root@tao-kali:~# ldd /usr/bin/chattr
 	libuuid.so.1 &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; /lib/x86_64-linux-gnu/libuuid.so.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x00007ff779b08000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;可以注意到，这份 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 依赖于 7 个动态链接库。而这个精简的虚拟环境很难满足这些需求。&lt;/p&gt;
+&lt;p&gt;可以注意到，这份 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 依赖于 7 个动态链接库。而这个精简的虚拟环境很难满足这些需求。&lt;/p&gt;
 
-&lt;p&gt;而下载得到的 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是静态链接的。&lt;/p&gt;
+&lt;p&gt;而下载得到的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是静态链接的。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  Downloads file busybox_CHATTR
 busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SYSV&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, statically linked, stripped
@@ -681,21 +681,21 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
 
 &lt;p&gt;所以说……用于 rescue 的程序最好还是静态链接。&lt;/p&gt;
 
-&lt;h2 id=&quot;附录-2-chattr-i-到底做了什么&quot;&gt;附录 2: &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 到底做了什么？&lt;/h2&gt;
+&lt;h2 id=&quot;附录-2-chattr-i-到底做了什么&quot;&gt;附录 2: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 到底做了什么？&lt;/h2&gt;
 
-&lt;p&gt;简单地说，”immutable” 等实际是文件系统提供的一种特性。所以要对不支持此特性的文件系统（比如 FAT32）上的文件运行 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是行不通的。&lt;/p&gt;
+&lt;p&gt;简单地说，”immutable” 等实际是文件系统提供的一种特性。所以要对不支持此特性的文件系统（比如 FAT32）上的文件运行 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 是行不通的。&lt;/p&gt;
 
-&lt;p&gt;从 BusyBox 的源码中可以找到 &lt;code class=&quot;highlighter-rouge&quot;&gt;chattr.c&lt;/code&gt;，该文件属于 &lt;code class=&quot;highlighter-rouge&quot;&gt;e2fsprogs&lt;/code&gt;。分析代码可以发现在解码完参数之后，调用了宏 &lt;code class=&quot;highlighter-rouge&quot;&gt;fsetflags(name, flags)&lt;/code&gt;（实际指向函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;fgetsetflags(name, NULL, flags)&lt;/code&gt;），通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;ioctl&lt;/code&gt; 对文件的 &lt;code class=&quot;highlighter-rouge&quot;&gt;flags&lt;/code&gt; 进行了修改。&lt;/p&gt;
+&lt;p&gt;从 BusyBox 的源码中可以找到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr.c&lt;/code&gt;，该文件属于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;e2fsprogs&lt;/code&gt;。分析代码可以发现在解码完参数之后，调用了宏 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fsetflags(name, flags)&lt;/code&gt;（实际指向函数 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fgetsetflags(name, NULL, flags)&lt;/code&gt;），通过 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ioctl&lt;/code&gt; 对文件的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flags&lt;/code&gt; 进行了修改。&lt;/p&gt;
 
-&lt;p&gt;目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。而在虚拟环境中 &lt;code class=&quot;highlighter-rouge&quot;&gt;df -hT&lt;/code&gt; 可以看到，&lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;（虚拟磁盘）是以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ext4&lt;/code&gt; 挂在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/lib&lt;/code&gt; 上的。&lt;/p&gt;
+&lt;p&gt;目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。而在虚拟环境中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df -hT&lt;/code&gt; 可以看到，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;（虚拟磁盘）是以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ext4&lt;/code&gt; 挂在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib&lt;/code&gt; 上的。&lt;/p&gt;
 
-&lt;div class=&quot;footnotes&quot;&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://busybox.net/downloads/BusyBox.html&quot;&gt;https://busybox.net/downloads/BusyBox.html&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://busybox.net/downloads/BusyBox.html&quot;&gt;https://busybox.net/downloads/BusyBox.html&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&quot;&gt;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&quot;&gt;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
@@ -744,7 +744,7 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
       <published>2019-02-12T12:01:00+00:00</published>
       <updated>2019-02-12T12:01:00+00:00</updated>
       <id>https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
+      <content type="html" xml:base="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ ssh root@192.168.0.109
 root@192.168.0.109&lt;span class=&quot;s1&quot;&gt;'s password: # password is '&lt;/span&gt;alpine&lt;span class=&quot;s1&quot;&gt;' by default
@@ -752,17 +752,17 @@ Kud:~ root# uname -a
 Darwin Kud 13.0.0 Darwin Kernel Version 13.0.0: Wed Feb 13 21:37:47 PST 2013; root:xnu-2107.7.55.2.2~1/RELEASE_ARM_S5L8942X iPad2,5 arm P105AP Darwin
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;但是系统内置的命令很少，基本干不了什么事情（当然要想 &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get&lt;/code&gt;——所以我们在 Cydia 中安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;APT 0.6 Transitional&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;APT 0.7 Strict&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;，然后就可以抛弃掉这个缓慢的前端界面了。&lt;/p&gt;
+&lt;p&gt;但是系统内置的命令很少，基本干不了什么事情（当然要想 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt-get&lt;/code&gt;——所以我们在 Cydia 中安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.6 Transitional&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.7 Strict&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;，然后就可以抛弃掉这个缓慢的前端界面了。&lt;/p&gt;
 
-&lt;p&gt;默认的 APT 源（在 &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/&lt;/code&gt; 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。&lt;/p&gt;
+&lt;p&gt;默认的 APT 源（在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/&lt;/code&gt; 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。&lt;/p&gt;
 
-&lt;p&gt;当然，这是可以做到的。至于为什么选择 &lt;code class=&quot;highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 作为我们的目标？那是因为这个程序足够小，同时舍友 @iBug 也成功在 Android 上编译了这个工具。&lt;/p&gt;
+&lt;p&gt;当然，这是可以做到的。至于为什么选择 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 作为我们的目标？那是因为这个程序足够小，同时舍友 @iBug 也成功在 Android 上编译了这个工具。&lt;/p&gt;
 
 &lt;p&gt;有什么用吗？emmmmmm，&lt;strong&gt;其实没什么用&lt;/strong&gt;，至少我相信不会有人去拿这玩意去完成自己的 ICS 作业。&lt;/p&gt;
 
 &lt;h2 id=&quot;准备工具链&quot;&gt;准备工具链&lt;/h2&gt;
 
-&lt;p&gt;默认源里可以找到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;默认源里可以找到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clang&lt;/code&gt;。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# apt-cache search gcc
 iphone-gcc - a native c compiler _on_ the phone
@@ -777,7 +777,7 @@ org.coolstar.llvm-clang64 - LLVM, Clang, and LLD 5.0.1 for iOS/arm64
 # 以下省略
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;但如果你去尝试安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，会发现缺少 &lt;code class=&quot;highlighter-rouge&quot;&gt;libgcc&lt;/code&gt; 的依赖。所以还是去安装 &lt;code class=&quot;highlighter-rouge&quot;&gt;org.coolstar.iostoolchain&lt;/code&gt; 吧（据说&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 的版本比 &lt;code class=&quot;highlighter-rouge&quot;&gt;LLVM+Clang&lt;/code&gt; 工具链要老得多）。&lt;/p&gt;
+&lt;p&gt;但如果你去尝试安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，会发现缺少 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libgcc&lt;/code&gt; 的依赖。所以还是去安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.coolstar.iostoolchain&lt;/code&gt; 吧（据说&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 的版本比 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LLVM+Clang&lt;/code&gt; 工具链要老得多）。&lt;/p&gt;
 
 &lt;p&gt;好，安装完这一套工具链，写个 Hello, world! 编译看看。&lt;/p&gt;
 
@@ -795,7 +795,7 @@ helloworld.c:1:10: fatal error: &lt;span class=&quot;s1&quot;&gt;'stdio.h'&lt;/s
 1 error generated.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;最后你会绝望得发现，就算去掉 &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt;，自己动手声明函数，也会在链接的时候遇到问题。&lt;/p&gt;
+&lt;p&gt;最后你会绝望得发现，就算去掉 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;include&lt;/code&gt;，自己动手声明函数，也会在链接的时候遇到问题。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# &lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;test.c
 int &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;const char &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; restrict format, ...&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -811,11 +811,11 @@ clang-3.7: error: linker &lt;span class=&quot;nb&quot;&gt;command &lt;/span&gt;f
 
 &lt;h2 id=&quot;关于-sdk&quot;&gt;关于 SDK&lt;/h2&gt;
 
-&lt;p&gt;为了解决这个问题，我们需要 iOS 对应的 SDK。在下载&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;对应版本的 SDK 之后，我们可以看看里面有什么东西。&lt;/p&gt;
+&lt;p&gt;为了解决这个问题，我们需要 iOS 对应的 SDK。在下载&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;对应版本的 SDK 之后，我们可以看看里面有什么东西。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/ios-compile/sdk.png&quot; alt=&quot;The structure of iOS SDK&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;我们看到了熟悉的 &lt;code class=&quot;highlighter-rouge&quot;&gt;usr/lib&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;usr/include&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;我们看到了熟悉的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;usr/lib&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;usr/include&lt;/code&gt;。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  iPhoneOS6.1.sdk &lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;usr/include/stdio.h 
 usr/include/stdio.h
@@ -827,7 +827,7 @@ usr/lib/crt1.3.1.o
 
 &lt;p&gt;可以理解为什么 iOS 不自带这些文件，作为移动端的操作系统，头文件和运行库的目标文件对于终端用户而言没有任何意义。&lt;/p&gt;
 
-&lt;p&gt;用 &lt;code class=&quot;highlighter-rouge&quot;&gt;scp&lt;/code&gt; 传过去，然后怎么让 &lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt; 知道 SDK 的位置呢？&lt;code class=&quot;highlighter-rouge&quot;&gt;clang&lt;/code&gt; 有一个参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;-isysroot&lt;/code&gt;，可以指定系统根目录的位置。正常情况下，这个目录就是 &lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;，但是很明显 &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/&lt;/code&gt; 下面没有我们想要的东西。&lt;/p&gt;
+&lt;p&gt;用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scp&lt;/code&gt; 传过去，然后怎么让 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clang&lt;/code&gt; 知道 SDK 的位置呢？&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clang&lt;/code&gt; 有一个参数 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-isysroot&lt;/code&gt;，可以指定系统根目录的位置。正常情况下，这个目录就是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/&lt;/code&gt;，但是很明显 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/&lt;/code&gt; 下面没有我们想要的东西。&lt;/p&gt;
 
 &lt;p&gt;所以我们来试一下：&lt;/p&gt;
 
@@ -838,36 +838,36 @@ Hello, world!
 
 &lt;p&gt;可以了。&lt;/p&gt;
 
-&lt;p&gt;如果手头有一台 Linux 机器，那么也可以看到类似于 &lt;code class=&quot;highlighter-rouge&quot;&gt;crt1.3.1.o&lt;/code&gt; 的文件。&lt;/p&gt;
+&lt;p&gt;如果手头有一台 Linux 机器，那么也可以看到类似于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;crt1.3.1.o&lt;/code&gt; 的文件。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;taoky@linux-cloud:/usr/lib/x86_64-linux-gnu&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.o &lt;span class=&quot;c&quot;&gt;# on a Ubuntu 18.04.2 machine&lt;/span&gt;
 Mcrt1.o  crt1.o  crtn.o   grcrt1.o           rcrt1.o
 Scrt1.o  crti.o  gcrt1.o  libtsan_preinit.o
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;crt&lt;/code&gt; 是 C Runtime 的缩写。我们知道 Linux 一般而言 C 运行库是 &lt;code class=&quot;highlighter-rouge&quot;&gt;glibc&lt;/code&gt;，那么 macOS/iOS 下是什么？&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;crt&lt;/code&gt; 是 C Runtime 的缩写。我们知道 Linux 一般而言 C 运行库是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;glibc&lt;/code&gt;，那么 macOS/iOS 下是什么？&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~ root# otool &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt; a.out
 a.out:
 	/usr/lib/libSystem.B.dylib &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;compatibility version 1.0.0, current version 173.8.0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dylib&lt;/code&gt; 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 &lt;code class=&quot;highlighter-rouge&quot;&gt;*.so&lt;/code&gt;。而 &lt;code class=&quot;highlighter-rouge&quot;&gt;libSystem&lt;/code&gt; 库提供了 &lt;code class=&quot;highlighter-rouge&quot;&gt;libc&lt;/code&gt; 的功能&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dylib&lt;/code&gt; 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.so&lt;/code&gt;。而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libSystem&lt;/code&gt; 库提供了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libc&lt;/code&gt; 的功能&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;h2 id=&quot;开始编译&quot;&gt;开始编译&lt;/h2&gt;
 
-&lt;p&gt;下载一份 &lt;code class=&quot;highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 源代码，丢过去。（这里的 OpenSSL 版本太老了，连 GitHub 都连不上，所以只能电脑上下载好之后传过去）&lt;/p&gt;
+&lt;p&gt;下载一份 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lc3tools&lt;/code&gt; 源代码，丢过去。（这里的 OpenSSL 版本太老了，连 GitHub 都连不上，所以只能电脑上下载好之后传过去）&lt;/p&gt;
 
-&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;./configure&lt;/code&gt; 中缺失的 &lt;code class=&quot;highlighter-rouge&quot;&gt;flex&lt;/code&gt; 依赖（用于汇编器的词法分析）可以在源里找到。但 &lt;code class=&quot;highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是什么？&lt;/p&gt;
+&lt;p&gt;在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./configure&lt;/code&gt; 中缺失的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flex&lt;/code&gt; 依赖（用于汇编器的词法分析）可以在源里找到。但 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是什么？&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是 Tcl/Tk 的解释器，可以用来创建 GUI 界面。显然我们这里不需要 GUI（也显示不了），所以可以直接删掉。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wish&lt;/code&gt; 是 Tcl/Tk 的解释器，可以用来创建 GUI 界面。显然我们这里不需要 GUI（也显示不了），所以可以直接删掉。&lt;/p&gt;
 
-&lt;p&gt;另外会报告找不到 &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，一个简单粗暴的解决方法是创建软链接。&lt;/p&gt;
+&lt;p&gt;另外会报告找不到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，一个简单粗暴的解决方法是创建软链接。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Kud:~/lc3tools root# &lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /usr/bin/clang /usr/bin/gcc
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;由于我们先前提到的原因，我们还要修改 &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile.def&lt;/code&gt;，以使 &lt;code class=&quot;highlighter-rouge&quot;&gt;configure&lt;/code&gt; 生成正确的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Makefile&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;由于我们先前提到的原因，我们还要修改 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Makefile.def&lt;/code&gt;，以使 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;configure&lt;/code&gt; 生成正确的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Makefile&lt;/code&gt;。&lt;/p&gt;
 
 &lt;p&gt;将&lt;/p&gt;
 
@@ -881,25 +881,25 @@ a.out:
 &lt;span class=&quot;nv&quot;&gt;LDFLAGS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-g&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-isysroot&lt;/span&gt; ~/sdk
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;再运行 &lt;code class=&quot;highlighter-rouge&quot;&gt;./configure&lt;/code&gt;，之后就可以顺利编译了。&lt;/p&gt;
+&lt;p&gt;再运行 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./configure&lt;/code&gt;，之后就可以顺利编译了。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/ios-compile/success.png&quot; alt=&quot;Success&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;成功～&lt;/p&gt;
 
-&lt;div class=&quot;footnotes&quot;&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&quot;&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&quot;&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;http://iphonedevwiki.net/index.php/On-device_toolchains&quot;&gt;http://iphonedevwiki.net/index.php/On-device_toolchains&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://iphonedevwiki.net/index.php/On-device_toolchains&quot;&gt;http://iphonedevwiki.net/index.php/On-device_toolchains&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:3&quot;&gt;
-      &lt;p&gt;见 &lt;a href=&quot;http://resources.airnativeextensions.com/ios/&quot;&gt;http://resources.airnativeextensions.com/ios/&lt;/a&gt;，&lt;a href=&quot;https://github.com/theos/sdks&quot;&gt;https://github.com/theos/sdks&lt;/a&gt; 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;见 &lt;a href=&quot;http://resources.airnativeextensions.com/ios/&quot;&gt;http://resources.airnativeextensions.com/ios/&lt;/a&gt;，&lt;a href=&quot;https://github.com/theos/sdks&quot;&gt;https://github.com/theos/sdks&lt;/a&gt; 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:4&quot;&gt;
-      &lt;p&gt;&lt;a href=&quot;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&quot;&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&quot;&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
@@ -950,7 +950,7 @@ a.out:
       <id>https://taoky.github.io/2019-02-12/migration-to-jekyll-again</id>
       <content type="html" xml:base="https://taoky.github.io/2019-02-12/migration-to-jekyll-again.html">&lt;p&gt;再次迁移回了 Jekyll。&lt;/p&gt;
 
-&lt;p&gt;从 Hexo 迁移回去的很大一个原因是 &lt;code class=&quot;highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给人带来的无力感：我只想简简单单做一件事情，但是 &lt;code class=&quot;highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给我带来了无穷无尽的依赖，还有 GitHub 时不时给我发送的安全警告。&lt;/p&gt;
+&lt;p&gt;从 Hexo 迁移回去的很大一个原因是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给人带来的无力感：我只想简简单单做一件事情，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给我带来了无穷无尽的依赖，还有 GitHub 时不时给我发送的安全警告。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/migration/1.png&quot; alt=&quot;Security Alert by GitHub&quot; /&gt;&lt;/p&gt;
 
@@ -1425,9 +1425,9 @@ a.out:
 &lt;p&gt;（下文可能会有错误，并且不会处理「特殊的」BMP 文件。等我高考完之后如果还有兴趣，可能会再去做其他情况下的 BMP 文件读取。）
 &lt;!--more--&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;文件头-1bitmapfileheader&quot;&gt;文件头 1：&lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPFILEHEADER&lt;/code&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;文件头-1bitmapfileheader&quot;&gt;文件头 1：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPFILEHEADER&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPFILEHEADER&lt;/code&gt; 有四小块。如下表：&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPFILEHEADER&lt;/code&gt; 有四小块。如下表：&lt;/p&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
@@ -1439,40 +1439,40 @@ a.out:
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bfType&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfType&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;2&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;Windows 格式的 BMP 文件为「BM」。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bfSize&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfSize&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;BMP 文件的大小。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bfReserved1&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfReserved1&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;2&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;保留值。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bfReserved2&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfReserved2&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;2&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;保留值。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bfOffBits&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfOffBits&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;位图像素内容的偏移量（起始地址）。&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;可能没有什么特别的地方，&lt;code class=&quot;highlighter-rouge&quot;&gt;bfType&lt;/code&gt; 中检查是不是 &lt;code class=&quot;highlighter-rouge&quot;&gt;BM&lt;/code&gt; 就行了，OS/2 有其他类型的 BMP 格式，可是也不想想它死了多少年了……&lt;/p&gt;
+&lt;p&gt;可能没有什么特别的地方，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bfType&lt;/code&gt; 中检查是不是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BM&lt;/code&gt; 就行了，OS/2 有其他类型的 BMP 格式，可是也不想想它死了多少年了……&lt;/p&gt;
 
 &lt;p&gt;注意，文件头中的所有数据均以&lt;strong&gt;小端序&lt;/strong&gt;存放。（简单而很不严谨地说，就是字节倒着读）&lt;/p&gt;
 
-&lt;h2 id=&quot;文件头-2bitmapinfoheader&quot;&gt;文件头 2：&lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;文件头-2bitmapinfoheader&quot;&gt;文件头 2：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;&lt;/h2&gt;
 
-&lt;p&gt;其实在这个位置是有其他版本的不同的文件头的，但是一般的 BMP 文件都是 &lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;其实在这个位置是有其他版本的不同的文件头的，但是一般的 BMP 文件都是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;。&lt;/p&gt;
 
 &lt;p&gt;它有十一小块，如下表：&lt;/p&gt;
 
@@ -1486,78 +1486,78 @@ a.out:
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biSize&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biSize&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;此文件头（&lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;）的大小。&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;此文件头（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt;）的大小。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biWidth&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biWidth&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像的宽度，以像素为单位。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biHeight&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biHeight&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像的高度，以像素为单位。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biPlanes&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biPlanes&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;2&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像的色彩平面，正常情况下均为 1。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biBitCount&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biBitCount&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;2&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;每个像素的位数。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biCompression&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biCompression&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;BMP 文件的压缩种类，0 为无压缩。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biSizeImage&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biSizeImage&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;位图像素内容的大小，无压缩时可以填 0。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biXPelsPerMeter&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biXPelsPerMeter&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像横向每米存放的像素。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biYPelsPerMeter&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biYPelsPerMeter&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像纵向每米存放的像素。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biClrUsed&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biClrUsed&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像使用的色彩数，可以为 0。&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;biClrImportant&lt;/code&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biClrImportant&lt;/code&gt;&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;4&lt;/td&gt;
       &lt;td style=&quot;text-align: left&quot;&gt;图像使用的「重要」的色彩数，0 时均重要。&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;因为我们不想写解压算法，所以需要保证处理的 BMP 文件的 &lt;code class=&quot;highlighter-rouge&quot;&gt;biCompression&lt;/code&gt; 为 0。我们之后也不想处理调色板（Color Table, Palette），而是直接读取像素内容，所以需要保证 &lt;code class=&quot;highlighter-rouge&quot;&gt;biBitCount&lt;/code&gt; 为 24 或者 32（即 24 或 32 位的位图），因为它们一般是不含调色板的。&lt;/p&gt;
+&lt;p&gt;因为我们不想写解压算法，所以需要保证处理的 BMP 文件的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biCompression&lt;/code&gt; 为 0。我们之后也不想处理调色板（Color Table, Palette），而是直接读取像素内容，所以需要保证 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biBitCount&lt;/code&gt; 为 24 或者 32（即 24 或 32 位的位图），因为它们一般是不含调色板的。&lt;/p&gt;
 
 &lt;p&gt;注意，图像的高度&lt;strong&gt;可以为负&lt;/strong&gt;。负数值表示接下来的像素内容将从左上角从左到右、从上到下读取；而正数值表示接下来的像素内容将从右下角从左到右、从下到上读取。必要的时候请记得取绝对值。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/bmp-cpp/1.png&quot; alt=&quot;对高度取相反数后的结果&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;（对 &lt;code class=&quot;highlighter-rouge&quot;&gt;biHeight&lt;/code&gt; 取相反数后的结果，改了四个字节，图像就反过来了～）&lt;/p&gt;
+&lt;p&gt;（对 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;biHeight&lt;/code&gt; 取相反数后的结果，改了四个字节，图像就反过来了～）&lt;/p&gt;
 
 &lt;h2 id=&quot;像素内容&quot;&gt;像素内容&lt;/h2&gt;
 
-&lt;p&gt;接下来就是我们期待的位图像素内容了。我们之前说过&lt;strong&gt;忽略&lt;/strong&gt;了调色板等其他的东西，所以在 &lt;code class=&quot;highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt; 之后便直接是像素内容了。&lt;/p&gt;
+&lt;p&gt;接下来就是我们期待的位图像素内容了。我们之前说过&lt;strong&gt;忽略&lt;/strong&gt;了调色板等其他的东西，所以在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BITMAPINFOHEADER&lt;/code&gt; 之后便直接是像素内容了。&lt;/p&gt;
 
 &lt;p&gt;标题中只写了 24 位和 32 位的图像，所以更低的位数不考虑。（毕竟你现在，除了在 gif 动图之外，还能见到 8 位色的图像吗？）&lt;/p&gt;
 
-&lt;p&gt;在 24 位（3 字节）的位图中，每个像素按&lt;strong&gt;顺序&lt;/strong&gt;由三部分组成：蓝色值、绿色值、红色值。32 位（4 字节）的图像添加了 Alpha 透明度部分，在红色值后添加了一字节的 Alpha 值（不透明的 32 位 BMP 图像，每个像素的 Alpha 值字节十六进制均为 &lt;code class=&quot;highlighter-rouge&quot;&gt;FF&lt;/code&gt;）。&lt;/p&gt;
+&lt;p&gt;在 24 位（3 字节）的位图中，每个像素按&lt;strong&gt;顺序&lt;/strong&gt;由三部分组成：蓝色值、绿色值、红色值。32 位（4 字节）的图像添加了 Alpha 透明度部分，在红色值后添加了一字节的 Alpha 值（不透明的 32 位 BMP 图像，每个像素的 Alpha 值字节十六进制均为 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FF&lt;/code&gt;）。&lt;/p&gt;
 
 &lt;p&gt;然后我们只需要一个一个读就行了吗？&lt;/p&gt;
 
@@ -1571,7 +1571,7 @@ a.out:
 
 &lt;p&gt;（这个实现比较草率，因为我确实时间不多了。）&lt;/p&gt;
 
-&lt;p&gt;首先把两个文件头，加上表示像素的结构，包在 &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; 里面：&lt;/p&gt;
+&lt;p&gt;首先把两个文件头，加上表示像素的结构，包在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;struct&lt;/code&gt; 里面：&lt;/p&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BITMAPFILEHEADER&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -1664,7 +1664,7 @@ a.out:
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;其中的 &lt;code class=&quot;highlighter-rouge&quot;&gt;vector&lt;/code&gt; 是用来储存像素内容的，Output 部分输出 BMP 文件头内容，使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;ReadBitmap()&lt;/code&gt; 读入后等待用户输入坐标，显示对应像素的 RGB 值。&lt;/p&gt;
+&lt;p&gt;其中的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vector&lt;/code&gt; 是用来储存像素内容的，Output 部分输出 BMP 文件头内容，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ReadBitmap()&lt;/code&gt; 读入后等待用户输入坐标，显示对应像素的 RGB 值。&lt;/p&gt;
 
 &lt;p&gt;Output 部分：&lt;/p&gt;
 
@@ -1743,7 +1743,7 @@ a.out:
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;drop_alpha()&lt;/code&gt; 是为了把 32 位位图中的 Alpha 信息丢掉，方便处理，当然你也可以把它们留着……&lt;code class=&quot;highlighter-rouge&quot;&gt;ReadBitmap()&lt;/code&gt; 部分先计算 &lt;code class=&quot;highlighter-rouge&quot;&gt;offset&lt;/code&gt;（每行需要补齐的字节），再根据高度的正负值分类读取数据。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;drop_alpha()&lt;/code&gt; 是为了把 32 位位图中的 Alpha 信息丢掉，方便处理，当然你也可以把它们留着……&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ReadBitmap()&lt;/code&gt; 部分先计算 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offset&lt;/code&gt;（每行需要补齐的字节），再根据高度的正负值分类读取数据。&lt;/p&gt;
 
 &lt;p&gt;最后一个部分，输出 RGB 值：&lt;/p&gt;
 
@@ -1911,15 +1911,15 @@ a.out:
 &lt;!--more--&gt;
 空窗口。标题栏写着「Untitled」，窗口的左上角是红绿灯式的窗口控制按钮——分别是红色的关闭、黄色的最小化、绿色的全屏。但他暂时还不想去碰它们中的任何一个。他只将窗口拉到中央，看着右上角的「0 Words」，又看着闪烁着的光标。发呆。&lt;/p&gt;
 
-&lt;p&gt;他是怎么新建这个文档的呢？文件管理器里右键只有「新建文件夹」。他当然不会把文件夹当作文档的啊，因为它们不是文件——等一下，他想起来，在 Unix 的「哲学」体系中，没有什么东西不是文件啊，显示器是，打印机是，他自己应该也是的吧。文件是「绳结」啊，所以文件夹是文件，所以自己错了。他连忙下意识按了几下 &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt; 键，可屏幕上什么反应都没有。他只能听到细小的模拟打字机音效的声音。&lt;/p&gt;
+&lt;p&gt;他是怎么新建这个文档的呢？文件管理器里右键只有「新建文件夹」。他当然不会把文件夹当作文档的啊，因为它们不是文件——等一下，他想起来，在 Unix 的「哲学」体系中，没有什么东西不是文件啊，显示器是，打印机是，他自己应该也是的吧。文件是「绳结」啊，所以文件夹是文件，所以自己错了。他连忙下意识按了几下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete&lt;/code&gt; 键，可屏幕上什么反应都没有。他只能听到细小的模拟打字机音效的声音。&lt;/p&gt;
 
 &lt;p&gt;而这细小的「嚓嚓」声把他拉回了现实。他望了望那张纸，上面写着他所需要遵循的各类要求。于是，他脑海中出现了一个中心主题结点，在它的周围围绕着各种各样稀奇古怪的名词，但他，用了不知多少个五分钟，却找不到一条与结点相连的边。那些名词一点一点散去，最终一切消失殆尽，除了那个中心主题结点。这张图（如果在数学上还算是的话）只有结点，还只有一个，而且没有边。真是无聊。&lt;/p&gt;
 
 &lt;p&gt;他瞪大眼睛看着屏幕，看着最顶上的菜单栏，嘴唇轻微颤动着：「File. Edit. Paragraph. Format. View. Themes. Window. Help. Help. Help…」他最终在「Help」选单处陷入了一个死循环。他还真的去点了点。他渴望帮助，但这里的帮助，却不是他想要的。&lt;/p&gt;
 
-&lt;p&gt;他要疯了。他想撕掉那张纸，可没法撕掉。他想关闭这个空荡荡的文本界面，于是大拇指按下 &lt;code class=&quot;highlighter-rouge&quot;&gt;Command (⌘)&lt;/code&gt; ，食指碰到了 &lt;code class=&quot;highlighter-rouge&quot;&gt;Q&lt;/code&gt; 键，却停了下来。他冷静了一些。他瞄了眼时间，距离他新建文档，已经有一个小时过去了。也许他应该选择一个更加「心无杂念」的界面。因此，他移动指针到「全屏」按钮，手指在触控板上一点。一个看烦了的动画效果。全屏了。这是真正的空白，除却那个依旧在原位闪烁的光标之外。&lt;/p&gt;
+&lt;p&gt;他要疯了。他想撕掉那张纸，可没法撕掉。他想关闭这个空荡荡的文本界面，于是大拇指按下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Command (⌘)&lt;/code&gt; ，食指碰到了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Q&lt;/code&gt; 键，却停了下来。他冷静了一些。他瞄了眼时间，距离他新建文档，已经有一个小时过去了。也许他应该选择一个更加「心无杂念」的界面。因此，他移动指针到「全屏」按钮，手指在触控板上一点。一个看烦了的动画效果。全屏了。这是真正的空白，除却那个依旧在原位闪烁的光标之外。&lt;/p&gt;
 
-&lt;p&gt;可那个结点，那个中心主题结点，又出现了，好像是印在电脑屏幕上一样。他不想再去看那个结点了。他手指在触控板上用力回旋着，想甩掉那个点，可他只获得了一个放大了的指针。或许他应该听一会儿音乐吧，他想。轻拍了一下 &lt;code class=&quot;highlighter-rouge&quot;&gt;F8&lt;/code&gt; 键，音乐就开始播放了。那个按键上面是一个等边三角形，和两个矩形，以特定的方式排列，就拥有了播放与暂停的隐喻。他听着音乐，继续发呆。他现在能且仅能做这件事情了。&lt;/p&gt;
+&lt;p&gt;可那个结点，那个中心主题结点，又出现了，好像是印在电脑屏幕上一样。他不想再去看那个结点了。他手指在触控板上用力回旋着，想甩掉那个点，可他只获得了一个放大了的指针。或许他应该听一会儿音乐吧，他想。轻拍了一下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;F8&lt;/code&gt; 键，音乐就开始播放了。那个按键上面是一个等边三角形，和两个矩形，以特定的方式排列，就拥有了播放与暂停的隐喻。他听着音乐，继续发呆。他现在能且仅能做这件事情了。&lt;/p&gt;
 
 &lt;p&gt;所以已经过去了三个小时，他什么都没——好像这么说有失偏颇，毕竟他还是在电脑以为无人操作，将屏幕变暗的时候，蹭了蹭触控板的。死线要到了，他不能再这么下去了。他关闭了全屏。开始真正郑重其事地把手放在键盘上。&lt;/p&gt;
 
@@ -2089,7 +2089,7 @@ a.out:
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello world&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;相当于一个包含字符 &lt;code class=&quot;highlighter-rouge&quot;&gt;\n&lt;/code&gt; 的字符串，它表示新行符号。&lt;/p&gt;
+&lt;p&gt;相当于一个包含字符 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\n&lt;/code&gt; 的字符串，它表示新行符号。&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
@@ -2123,7 +2123,7 @@ a.out:
 
 &lt;p&gt;&lt;em&gt;插图 3&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;假设我们希望改变 C 编译器来包括序列 &lt;code class=&quot;highlighter-rouge&quot;&gt;\v&lt;/code&gt; 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 &lt;code class=&quot;highlighter-rouge&quot;&gt;\v&lt;/code&gt;，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 &lt;code class=&quot;highlighter-rouge&quot;&gt;\v&lt;/code&gt; 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。&lt;/p&gt;
+&lt;p&gt;假设我们希望改变 C 编译器来包括序列 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt; 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt;，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt; 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
@@ -2264,9 +2264,9 @@ a.out:
 
 &lt;p&gt;“不对啊，那 Gatekeeper 也应该检测出有问题的 Xcode 并阻止它运行啊。”&lt;/p&gt;
 
-&lt;p&gt;Gatekeeper 是通过 com.apple.quarantine 标记来判断文件是否从互联网上下载的。标记可以用 &lt;code class=&quot;highlighter-rouge&quot;&gt;xattr&lt;/code&gt; 来查看。&lt;/p&gt;
+&lt;p&gt;Gatekeeper 是通过 com.apple.quarantine 标记来判断文件是否从互联网上下载的。标记可以用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xattr&lt;/code&gt; 来查看。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  Downloads  xattr -l *.app             
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  Downloads  xattr -l *.app             
 CheatSheet.app: com.apple.quarantine: 0023;00000000;The\x20Unarchiver;8F22E217-7ED8-44D7-B11F-88B319E5B82E
 Retinizer.app: com.apple.quarantine: 0043;00000000;The\x20Unarchiver;5E278371-834C-4C31-BC70-58E89F7CD0AF
 diumoo.app: com.apple.quarantine: 0003;00000000;The Unarchiver;C91583C2-3D0B-4639-A2D7-41C37AEF5650
@@ -2280,40 +2280,40 @@ diumoo.app: com.apple.quarantine: 0003;00000000;The Unarchiver;C91583C2-3D0B-463
 
 &lt;h3 id=&quot;检查数字签名&quot;&gt;检查数字签名&lt;/h3&gt;
 
-&lt;p&gt;要检查应用的数字签名似乎只能在终端下。&lt;code class=&quot;highlighter-rouge&quot;&gt;codesign&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;spctl&lt;/code&gt; 可以用来检查应用的数字签名。&lt;/p&gt;
+&lt;p&gt;要检查应用的数字签名似乎只能在终端下。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codesign&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spctl&lt;/code&gt; 可以用来检查应用的数字签名。&lt;/p&gt;
 
-&lt;h4 id=&quot;codesign&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;codesign&lt;/code&gt;&lt;/h4&gt;
+&lt;h4 id=&quot;codesign&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codesign&lt;/code&gt;&lt;/h4&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;codesign&lt;/code&gt; 可以来检查应用是否签名以及签名后是否被篡改。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codesign&lt;/code&gt; 可以来检查应用是否签名以及签名后是否被篡改。&lt;/p&gt;
 
 &lt;p&gt;如果一切正常，显示如下：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv iTunes.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv iTunes.app 
 iTunes.app: valid on disk
 iTunes.app: satisfies its Designated Requirement
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;如果应用被篡改过，显示如下：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv VLC.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv VLC.app 
 VLC.app: a sealed resource is missing or invalid
 file added: /Applications/VLC.app/Contents/MacOS/plugins/plugins.dat
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;如果应用压根没有签名，显示如下：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv OnyX.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  codesign -vv OnyX.app 
 OnyX.app: code object is not signed at all
 In architecture: x86_64
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h4 id=&quot;spctl&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;spctl&lt;/code&gt;&lt;/h4&gt;
+&lt;h4 id=&quot;spctl&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spctl&lt;/code&gt;&lt;/h4&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;spctl&lt;/code&gt; 可以用来看是谁给应用签名，当然也可以同时检查签名是否正常。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spctl&lt;/code&gt; 可以用来看是谁给应用签名，当然也可以同时检查签名是否正常。&lt;/p&gt;
 
 &lt;p&gt;系统应用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv iTunes.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv iTunes.app 
 iTunes.app: accepted
 source=Apple System
 origin=Software Signing
@@ -2321,7 +2321,7 @@ origin=Software Signing
 
 &lt;p&gt;Mac App Store 上下载的应用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv GeoGebra\ 5.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv GeoGebra\ 5.app 
 GeoGebra 5.app: accepted
 source=Mac App Store
 origin=Apple Mac OS Application Signing
@@ -2329,7 +2329,7 @@ origin=Apple Mac OS Application Signing
 
 &lt;p&gt;其它开发者（就是 Gatekeeper 里面的「被认可的开发者」）授权获得的证书签名的应用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv NeteaseMusic.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv NeteaseMusic.app 
 NeteaseMusic.app: accepted
 source=Developer ID
 origin=Developer ID Application: NetEase (Hangzhou) Network Co., Ltd. (J669Y64Z9Y)
@@ -2337,13 +2337,13 @@ origin=Developer ID Application: NetEase (Hangzhou) Network Co., Ltd. (J669Y64Z9
 
 &lt;p&gt;被篡改过的应用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv VLC.app 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv VLC.app 
 VLC.app: a sealed resource is missing or invalid
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;没有签名的应用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv OnyX.app        
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  /Applications  spctl -avv OnyX.app        
 OnyX.app: rejected
 source=no usable signature
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -2442,13 +2442,13 @@ source=no usable signature
 
 &lt;p&gt;集训主要内容就是刷题，这个没有什么好说的。坐在我右边的是钱逗，他这几天就是刷一会儿题目再浪一会儿。他用 Windows API 写了一个屏幕彩色闪烁的程序，后来这个程序的功能越来越多，我也「帮」他找出了不少 bug，比如说输入字母会无法返回选择菜单（他不准备修），输入 -1 会越界访问其它内存的内容然后崩溃掉之类。当然我们还开发了一种名为「256 色」的娱乐项目。&lt;/p&gt;
 
-&lt;p&gt;其实只用机房里的电脑娱乐是有很多方法的，比如说一直输出 &lt;code class=&quot;highlighter-rouge&quot;&gt;\a&lt;/code&gt;（这会让电脑一直发出滴滴声，而且窗口会关不掉），用 Windows API 的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Beep()&lt;/code&gt; 发出不同旋律的声音。只是后来我们玩得太过头，结果老师把声卡驱动直接删掉（电脑不能直接连外网，每次启动自动恢复硬盘），顺带禁用了很多东西（似乎是用组策略干的）：任务管理器、控制面板、MMC……&lt;/p&gt;
+&lt;p&gt;其实只用机房里的电脑娱乐是有很多方法的，比如说一直输出 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\a&lt;/code&gt;（这会让电脑一直发出滴滴声，而且窗口会关不掉），用 Windows API 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Beep()&lt;/code&gt; 发出不同旋律的声音。只是后来我们玩得太过头，结果老师把声卡驱动直接删掉（电脑不能直接连外网，每次启动自动恢复硬盘），顺带禁用了很多东西（似乎是用组策略干的）：任务管理器、控制面板、MMC……&lt;/p&gt;
 
 &lt;p&gt;但是你要知道，只要想玩，总是可以找到玩的方法的。钱逗一开始把「开始菜单」的样式切换了一下，然后就发现了 Outlook Express，顺带给自己起了个英文名：John Smith（这是 Outlook Express 的示例名称）。不久后他在某程序上点了右键属性，发现了「兼容模式」，又发现点击「用 256 色运行」后会有复古效果出现，于是我们就开始玩了。&lt;/p&gt;
 
 &lt;p&gt;首先我发现在 explorer.exe 上加选项，然后到「网上邻居」里面让资源管理器卡死重启就能有很长时间的效果了；之后我又想到在 Dev-C++（这是我们用的 IDE）的 ConsolePauser.exe 或者是 g++.exe 上加选项可以有「暂时」而烦人的效果；最后，他发现控制台程序加选项后 Alt + Enter 全屏之后退出会有永久的 256 色效果……&lt;/p&gt;
 
-&lt;p&gt;我们真是一群无聊的人。我还用了一种捉弄钱逗的极好方法：在 iostream.h 里面加 &lt;code class=&quot;highlighter-rouge&quot;&gt;#include &amp;lt;con&amp;gt;&lt;/code&gt;，然后……hhh（仅限 Windows）。&lt;/p&gt;
+&lt;p&gt;我们真是一群无聊的人。我还用了一种捉弄钱逗的极好方法：在 iostream.h 里面加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#include &amp;lt;con&amp;gt;&lt;/code&gt;，然后……hhh（仅限 Windows）。&lt;/p&gt;
 
 &lt;p&gt;隔壁的机房在空闲的时候也是可以去的。那儿有 4 台 Mac，虽然一台坏了，只会在开机的时候嘟嘟叫，还有很多 PC 台式机。有一台 Mac 上面装了游戏「地狱边界」（LIMBO），于是我们都围在一起玩出主意。&lt;/p&gt;
 
@@ -2536,17 +2536,17 @@ source=no usable signature
 &lt;!--more--&gt;
 初次使用时注意一个特点：段与段之间需要空一行。不然下面的文档：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;First line
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;First line
 Second line
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;会变成以下 HTML 代码：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;p&amp;gt;First line
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;p&amp;gt;First line
 Second line&amp;lt;/p&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;p&amp;gt;&lt;/code&gt; 标签中有空行，然而这并没有什么用，显示结果是：&lt;/p&gt;
+&lt;p&gt;在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;p&amp;gt;&lt;/code&gt; 标签中有空行，然而这并没有什么用，显示结果是：&lt;/p&gt;
 
 &lt;hr /&gt;
 &lt;p&gt;First line
@@ -2559,7 +2559,7 @@ Second line&lt;/p&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Heading 1
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Heading 1
 ## Heading 2
 ### Heading 3
 #### Heading 4
@@ -2567,13 +2567,13 @@ Second line&lt;/p&gt;
 ###### Heading 6
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Markdown 将根据 # 的个数，分别使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; 到 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; 的标签显示标题。&lt;/p&gt;
+&lt;p&gt;Markdown 将根据 # 的个数，分别使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; 到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; 的标签显示标题。&lt;/p&gt;
 
 &lt;h3 id=&quot;引用&quot;&gt;引用&lt;/h3&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; 640 K ought to be enough for anybody.
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; 640 K ought to be enough for anybody.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;显示为：&lt;/p&gt;
@@ -2591,12 +2591,12 @@ Second line&lt;/p&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* Review lessons
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* Review lessons
 * Update software
 * Write an article
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;（&lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt; 也可以用 &lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;）&lt;/p&gt;
+&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt; 也可以用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt;）&lt;/p&gt;
 
 &lt;p&gt;显示为：&lt;/p&gt;
 
@@ -2613,7 +2613,7 @@ Second line&lt;/p&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Install OS X 10.10
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Install OS X 10.10
 2. Open 'Terminal.app'
 3. Input 'ls'
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -2633,7 +2633,7 @@ Second line&lt;/p&gt;
 
 &lt;p&gt;注意：列表包含多个段落时需要缩进（四个空格或一个制表符），像这样：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Today is a nice day.
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Today is a nice day.
 
 	I hope you will think so.
 	
@@ -2646,7 +2646,7 @@ Second line&lt;/p&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;```
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;```
 #include &amp;lt;stdio.h&amp;gt;
 
 int main(void)
@@ -2662,7 +2662,7 @@ int main(void)
 &lt;p&gt;显示为：&lt;/p&gt;
 
 &lt;hr /&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;
 
 int main(void)
 {
@@ -2677,23 +2677,23 @@ int main(void)
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;The first line of the code of a HTML5 web page is ``&amp;lt;!DOCTYPE html&amp;gt;``.
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;The first line of the code of a HTML5 web page is ``&amp;lt;!DOCTYPE html&amp;gt;``.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;显示为：&lt;/p&gt;
 
 &lt;hr /&gt;
-&lt;p&gt;The first line of the code of a HTML5 web page is &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The first line of the code of a HTML5 web page is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/code&gt;.&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;如果代码内无 &lt;code class=&quot;highlighter-rouge&quot;&gt;`&lt;/code&gt;，也可以使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;`Code Inside...`&lt;/code&gt; 单个包裹。&lt;/p&gt;
+&lt;p&gt;如果代码内无 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;`&lt;/code&gt;，也可以使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;`Code Inside...`&lt;/code&gt; 单个包裹。&lt;/p&gt;
 
 &lt;h3 id=&quot;分隔符&quot;&gt;分隔符&lt;/h3&gt;
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
 ***
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -2703,7 +2703,7 @@ int main(void)
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;**Attention!**: System will close all connections in 30 minutes!
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;**Attention!**: System will close all connections in 30 minutes!
 
 *Isn't it amazing?*
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -2723,7 +2723,7 @@ int main(void)
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~~What I said is wrong.~~
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~~What I said is wrong.~~
 
 &amp;lt;http://www.github.com&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -2741,7 +2741,7 @@ int main(void)
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)](/pictures/md/test.png &quot;Photo in markdown&quot;)
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)](/pictures/md/test.png &quot;Photo in markdown&quot;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;显示为：&lt;/p&gt;
@@ -2755,7 +2755,7 @@ int main(void)
 
 &lt;p&gt;或者是「参考式」：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)][2536]
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)][2536]
 [2536]: /pictures/md/test.png &quot;Photo in markdown&quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -2763,7 +2763,7 @@ int main(void)
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Fork this repo: [website](&quot;http://www.github.com&quot; &quot;GitHub&quot;)
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Fork this repo: [website](&quot;http://www.github.com&quot; &quot;GitHub&quot;)
 
 Wikipedia: [English][wiki]
 
@@ -2787,7 +2787,7 @@ Wikipedia: [English][wiki]
 
 &lt;p&gt;使用：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Name  | Class
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Name  | Class
 ------------- | -------------
 Alice  | 1
 Bob  | 2
@@ -2820,7 +2820,7 @@ Bob  | 2
 
 &lt;p&gt;可以设置对齐：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| Application  | Operating System  | Latest Version |
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| Application  | Operating System  | Latest Version |
 |:------------- |:---------------:| -------------:|
 | Microsoft Office | Windows, OS X | 2013 |
 | iTunes      | Windows, OS X | 12 |
@@ -2943,7 +2943,7 @@ Bob  | 2
 
 &lt;p&gt;嗯，估计是由于使用虚拟机的缘故，KDE 5 的表现并不好。速度不快，但一般也不怎么卡，如果开的程序太多分配的内存不太够的话 Plasma 或者其它的 KDE 进程就会崩溃，也有可能死机。&lt;/p&gt;
 
-&lt;p&gt;至于放在真机上 KDE 5 的表现会如何就不清楚了。小内存的机器运行会~~略~~有较大压力。&lt;/p&gt;
+&lt;p&gt;至于放在真机上 KDE 5 的表现会如何就不清楚了。小内存的机器运行会&lt;del&gt;略&lt;/del&gt;有较大压力。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/crash-kde.png&quot; alt=&quot;KDE 的崩溃&quot; /&gt;&lt;/p&gt;
 
@@ -3049,7 +3049,7 @@ Bob  | 2
 
 &lt;p&gt;当然高中有很多地方都不错。例如社团、选修课（像我当然滚去信息社编程去了）、研究性学习（我和成员这次弄 STL）、还有竞赛（信息竞赛），当然学习压力也加大了，我还记得当初学匀加速、牛二、时的各种纠结，那真是痛苦的经历。&lt;/p&gt;
 
-&lt;p&gt;信息竞赛用的是 C++，我以前只写过 C，不过竞赛用的 C++ 范围连「C with classes」都达不到，只是用 C 的语法，加上一些 STL 的内容——比如 &lt;code class=&quot;highlighter-rouge&quot;&gt;sort()&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;swap()&lt;/code&gt; 之类罢了。社团没有共同的活动，选修课教 VB6（我其实更想用 Qt 写图形程序，但没那个能力），但到学期末连数组、&lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; 都没学到（我对 VB 没多大兴趣，所以只是这样弄弄）。其中乐趣也是有的，比如说我们报信息的不用上音乐课啊，ASCII 里的 &lt;code class=&quot;highlighter-rouge&quot;&gt;\a&lt;/code&gt; 和 Windows API 里的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Beep()&lt;/code&gt;，被我们用来编歌之类。&lt;/p&gt;
+&lt;p&gt;信息竞赛用的是 C++，我以前只写过 C，不过竞赛用的 C++ 范围连「C with classes」都达不到，只是用 C 的语法，加上一些 STL 的内容——比如 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort()&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;swap()&lt;/code&gt; 之类罢了。社团没有共同的活动，选修课教 VB6（我其实更想用 Qt 写图形程序，但没那个能力），但到学期末连数组、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;for&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;while&lt;/code&gt; 都没学到（我对 VB 没多大兴趣，所以只是这样弄弄）。其中乐趣也是有的，比如说我们报信息的不用上音乐课啊，ASCII 里的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\a&lt;/code&gt; 和 Windows API 里的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Beep()&lt;/code&gt;，被我们用来编歌之类。&lt;/p&gt;
 
 &lt;p&gt;住宿就没那么幸福了。当舍长需要承受老师和舍员带来的压力，并不是那么好当的。先写这么多吧。&lt;/p&gt;
 

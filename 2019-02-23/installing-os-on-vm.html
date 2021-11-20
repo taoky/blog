@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -572,7 +574,7 @@
   
   <div class="user-toc">
     <h3>TOC | 目录</h3>
-    <ul class="section-nav">
+    <ul id="toc" class="section-nav">
 <li class="toc-entry toc-h2"><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">准备工作</a></li>
 <li class="toc-entry toc-h2">
 <a href="#vmware-fusion-%E7%AF%87">VMware Fusion 篇</a>
@@ -612,7 +614,7 @@
 
 <ul>
   <li>虚拟机软件。可以使用 Parallels Desktop, VMware Fusion 或 VirtualBox。其中前两者是商业、收费的软件，后者是免费开源的。以下将以后两者为例。</li>
-  <li>需要安装的操作系统的镜像文件，一般为 <code class="highlighter-rouge">*.iso</code> 格式。
+  <li>需要安装的操作系统的镜像文件，一般为 <code class="language-plaintext highlighter-rouge">*.iso</code> 格式。
     <ul>
       <li>如果需要安装 Windows，镜像文件可以在一些网站找到，微软也会提供最新的 Windows 10 镜像的下载。</li>
       <li>一般来说，大部分 Linux 发行版的镜像是很容易下载到的。如果遇到了网络障碍，可以至<a href="https://mirrors.ustc.edu.cn/"><del>肥科</del>科大开源镜像站</a>下载。</li>
@@ -641,7 +643,7 @@
 
 <p>由于使用了比较长的时间，我的虚拟机比较多。</p>
 
-<p>点按 + 号，新建虚拟机。将你的 <code class="highlighter-rouge">.iso</code> 文件拖进去。</p>
+<p>点按 + 号，新建虚拟机。将你的 <code class="language-plaintext highlighter-rouge">.iso</code> 文件拖进去。</p>
 
 <p><img src="/pictures/vm/install-1.png" alt="Installing Ubuntu - 1"></p>
 
@@ -678,15 +680,15 @@
 
 <p>本文<strong>不会</strong>介绍 Linux 的基本使用方法。仅就 Linux 配置中与虚拟机有关的内容进行介绍。</p>
 
-<p>一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 <code class="highlighter-rouge">open-vm-tools</code>。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。</p>
+<p>一般来说，与 VMware 有关的工具在虚拟机中已经安装完成，如果没有，你可能需要手动安装 <code class="language-plaintext highlighter-rouge">open-vm-tools</code>。该工具允许虚拟机与宿主机更好地互动：例如拖放、共享剪贴板、分辨率根据窗口大小变化等。</p>
 
-<p>如果发现 <code class="highlighter-rouge">open-vm-tools</code> 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。</p>
+<p>如果发现 <code class="language-plaintext highlighter-rouge">open-vm-tools</code> 出现了严重的问题且无法解决，可以尝试安装 VMware 附带的 VMware Tools，此处不再赘述。</p>
 
 <p>另外，如果需要连接 USB 设备，可能需要将 USB 兼容性设置为 USB 3.0。</p>
 
 <h4 id="文件共享">文件共享</h4>
 
-<p>在设置中选择共享文件夹后，共享的文件夹放置在 <code class="highlighter-rouge">/mnt/hgfs</code> 下。如果没有，需要手动挂载。</p>
+<p>在设置中选择共享文件夹后，共享的文件夹放置在 <code class="language-plaintext highlighter-rouge">/mnt/hgfs</code> 下。如果没有，需要手动挂载。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount <span class="nt">-t</span> fuse.vmhgfs-fuse .host:/ /mnt/hgfs <span class="nt">-o</span> allow_other
 </code></pre></div></div>
@@ -717,7 +719,7 @@
 
 <h3 id="有关虚拟机的配置-1">有关虚拟机的配置</h3>
 
-<p>虚拟机需要安装 Guest Additions。在安装之前，需要先安装 <code class="highlighter-rouge">build-essential</code> 软件包，以编译内核模块。</p>
+<p>虚拟机需要安装 Guest Additions。在安装之前，需要先安装 <code class="language-plaintext highlighter-rouge">build-essential</code> 软件包，以编译内核模块。</p>
 
 <p>选择 Devices =&gt; Insert Guest Additions CD Image…，运行光盘中的软件。结束后重启。安装后，也可以支持拖放、剪贴板共享等。（不过，似乎有些功能还有点问题）</p>
 
@@ -730,7 +732,7 @@
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>adduser <span class="nv">$USER</span> vboxsf
 </code></pre></div></div>
 
-<p>将自己加入 <code class="highlighter-rouge">vboxsf</code> 用户组。重启即可。默认目录会被挂载在 <code class="highlighter-rouge">/media</code> 下。</p>
+<p>将自己加入 <code class="language-plaintext highlighter-rouge">vboxsf</code> 用户组。重启即可。默认目录会被挂载在 <code class="language-plaintext highlighter-rouge">/media</code> 下。</p>
 
 <p><img src="/pictures/vm/vb-shared-folder.png" alt="VirtualBox Shared Folder"></p>
 

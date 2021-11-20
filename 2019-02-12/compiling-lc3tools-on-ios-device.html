@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -572,7 +574,7 @@
   
   <div class="user-toc">
     <h3>TOC | 目录</h3>
-    <ul class="section-nav">
+    <ul id="toc" class="section-nav">
 <li class="toc-entry toc-h2"><a href="#%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7%E9%93%BE">准备工具链</a></li>
 <li class="toc-entry toc-h2"><a href="#%E5%85%B3%E4%BA%8E-sdk">关于 SDK</a></li>
 <li class="toc-entry toc-h2"><a href="#%E5%BC%80%E5%A7%8B%E7%BC%96%E8%AF%91">开始编译</a></li>
@@ -581,7 +583,7 @@
   
 
   <div class="post-content" itemprop="articleBody">
-    <p>这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 <a href="https://coolbooter.com/">CoolBooter</a> 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 <code class="highlighter-rouge">ssh</code> 到我们的设备上搞事啦。</p>
+    <p>这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 <a href="https://coolbooter.com/">CoolBooter</a> 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 <code class="language-plaintext highlighter-rouge">ssh</code> 到我们的设备上搞事啦。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>base<span class="o">)</span> ➜  ~ ssh root@192.168.0.109
 root@192.168.0.109<span class="s1">'s password: # password is '</span>alpine<span class="s1">' by default
@@ -589,17 +591,17 @@ Kud:~ root# uname -a
 Darwin Kud 13.0.0 Darwin Kernel Version 13.0.0: Wed Feb 13 21:37:47 PST 2013; root:xnu-2107.7.55.2.2~1/RELEASE_ARM_S5L8942X iPad2,5 arm P105AP Darwin
 </span></code></pre></div></div>
 
-<p>但是系统内置的命令很少，基本干不了什么事情（当然要想 <code class="highlighter-rouge">rm -rf /</code> 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 <code class="highlighter-rouge">apt-get</code>——所以我们在 Cydia 中安装 <code class="highlighter-rouge">APT 0.6 Transitional</code> 或者 <code class="highlighter-rouge">APT 0.7 Strict</code><sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>，然后就可以抛弃掉这个缓慢的前端界面了。</p>
+<p>但是系统内置的命令很少，基本干不了什么事情（当然要想 <code class="language-plaintext highlighter-rouge">rm -rf /</code> 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 <code class="language-plaintext highlighter-rouge">apt-get</code>——所以我们在 Cydia 中安装 <code class="language-plaintext highlighter-rouge">APT 0.6 Transitional</code> 或者 <code class="language-plaintext highlighter-rouge">APT 0.7 Strict</code><sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>，然后就可以抛弃掉这个缓慢的前端界面了。</p>
 
-<p>默认的 APT 源（在 <code class="highlighter-rouge">/etc/apt/sources.list.d/</code> 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。</p>
+<p>默认的 APT 源（在 <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list.d/</code> 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。</p>
 
-<p>当然，这是可以做到的。至于为什么选择 <code class="highlighter-rouge">lc3tools</code> 作为我们的目标？那是因为这个程序足够小，同时舍友 <a href="https://github.com/iBug" class="user-mention">@iBug</a> 也成功在 Android 上编译了这个工具。</p>
+<p>当然，这是可以做到的。至于为什么选择 <code class="language-plaintext highlighter-rouge">lc3tools</code> 作为我们的目标？那是因为这个程序足够小，同时舍友 <a href="https://github.com/iBug" class="user-mention">@iBug</a> 也成功在 Android 上编译了这个工具。</p>
 
 <p>有什么用吗？emmmmmm，<strong>其实没什么用</strong>，至少我相信不会有人去拿这玩意去完成自己的 ICS 作业。</p>
 
 <h2 id="准备工具链">准备工具链</h2>
 
-<p>默认源里可以找到 <code class="highlighter-rouge">gcc</code> 和 <code class="highlighter-rouge">clang</code>。</p>
+<p>默认源里可以找到 <code class="language-plaintext highlighter-rouge">gcc</code> 和 <code class="language-plaintext highlighter-rouge">clang</code>。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Kud:~ root# apt-cache search gcc
 iphone-gcc - a native c compiler _on_ the phone
@@ -614,7 +616,7 @@ org.coolstar.llvm-clang64 - LLVM, Clang, and LLD 5.0.1 for iOS/arm64
 # 以下省略
 </span></code></pre></div></div>
 
-<p>但如果你去尝试安装 <code class="highlighter-rouge">gcc</code>，会发现缺少 <code class="highlighter-rouge">libgcc</code> 的依赖。所以还是去安装 <code class="highlighter-rouge">org.coolstar.iostoolchain</code> 吧（据说<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup> <code class="highlighter-rouge">gcc</code> 的版本比 <code class="highlighter-rouge">LLVM+Clang</code> 工具链要老得多）。</p>
+<p>但如果你去尝试安装 <code class="language-plaintext highlighter-rouge">gcc</code>，会发现缺少 <code class="language-plaintext highlighter-rouge">libgcc</code> 的依赖。所以还是去安装 <code class="language-plaintext highlighter-rouge">org.coolstar.iostoolchain</code> 吧（据说<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> <code class="language-plaintext highlighter-rouge">gcc</code> 的版本比 <code class="language-plaintext highlighter-rouge">LLVM+Clang</code> 工具链要老得多）。</p>
 
 <p>好，安装完这一套工具链，写个 Hello, world! 编译看看。</p>
 
@@ -632,7 +634,7 @@ helloworld.c:1:10: fatal error: <span class="s1">'stdio.h'</span> file not found
 1 error generated.
 </code></pre></div></div>
 
-<p>最后你会绝望得发现，就算去掉 <code class="highlighter-rouge">include</code>，自己动手声明函数，也会在链接的时候遇到问题。</p>
+<p>最后你会绝望得发现，就算去掉 <code class="language-plaintext highlighter-rouge">include</code>，自己动手声明函数，也会在链接的时候遇到问题。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Kud:~ root# <span class="nb">cat </span>test.c
 int <span class="nb">printf</span><span class="o">(</span>const char <span class="k">*</span> restrict format, ...<span class="o">)</span><span class="p">;</span>
@@ -648,11 +650,11 @@ clang-3.7: error: linker <span class="nb">command </span>failed with <span class
 
 <h2 id="关于-sdk">关于 SDK</h2>
 
-<p>为了解决这个问题，我们需要 iOS 对应的 SDK。在下载<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup>对应版本的 SDK 之后，我们可以看看里面有什么东西。</p>
+<p>为了解决这个问题，我们需要 iOS 对应的 SDK。在下载<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>对应版本的 SDK 之后，我们可以看看里面有什么东西。</p>
 
 <p><img src="/pictures/ios-compile/sdk.png" alt="The structure of iOS SDK"></p>
 
-<p>我们看到了熟悉的 <code class="highlighter-rouge">usr/lib</code> 和 <code class="highlighter-rouge">usr/include</code>。</p>
+<p>我们看到了熟悉的 <code class="language-plaintext highlighter-rouge">usr/lib</code> 和 <code class="language-plaintext highlighter-rouge">usr/include</code>。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span>base<span class="o">)</span> ➜  iPhoneOS6.1.sdk <span class="nb">ls </span>usr/include/stdio.h 
 usr/include/stdio.h
@@ -664,7 +666,7 @@ usr/lib/crt1.3.1.o
 
 <p>可以理解为什么 iOS 不自带这些文件，作为移动端的操作系统，头文件和运行库的目标文件对于终端用户而言没有任何意义。</p>
 
-<p>用 <code class="highlighter-rouge">scp</code> 传过去，然后怎么让 <code class="highlighter-rouge">clang</code> 知道 SDK 的位置呢？<code class="highlighter-rouge">clang</code> 有一个参数 <code class="highlighter-rouge">-isysroot</code>，可以指定系统根目录的位置。正常情况下，这个目录就是 <code class="highlighter-rouge">/</code>，但是很明显 <code class="highlighter-rouge">/usr/</code> 下面没有我们想要的东西。</p>
+<p>用 <code class="language-plaintext highlighter-rouge">scp</code> 传过去，然后怎么让 <code class="language-plaintext highlighter-rouge">clang</code> 知道 SDK 的位置呢？<code class="language-plaintext highlighter-rouge">clang</code> 有一个参数 <code class="language-plaintext highlighter-rouge">-isysroot</code>，可以指定系统根目录的位置。正常情况下，这个目录就是 <code class="language-plaintext highlighter-rouge">/</code>，但是很明显 <code class="language-plaintext highlighter-rouge">/usr/</code> 下面没有我们想要的东西。</p>
 
 <p>所以我们来试一下：</p>
 
@@ -675,36 +677,36 @@ Hello, world!
 
 <p>可以了。</p>
 
-<p>如果手头有一台 Linux 机器，那么也可以看到类似于 <code class="highlighter-rouge">crt1.3.1.o</code> 的文件。</p>
+<p>如果手头有一台 Linux 机器，那么也可以看到类似于 <code class="language-plaintext highlighter-rouge">crt1.3.1.o</code> 的文件。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>taoky@linux-cloud:/usr/lib/x86_64-linux-gnu<span class="nv">$ </span><span class="nb">ls</span> <span class="k">*</span>.o <span class="c"># on a Ubuntu 18.04.2 machine</span>
 Mcrt1.o  crt1.o  crtn.o   grcrt1.o           rcrt1.o
 Scrt1.o  crti.o  gcrt1.o  libtsan_preinit.o
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">crt</code> 是 C Runtime 的缩写。我们知道 Linux 一般而言 C 运行库是 <code class="highlighter-rouge">glibc</code>，那么 macOS/iOS 下是什么？</p>
+<p><code class="language-plaintext highlighter-rouge">crt</code> 是 C Runtime 的缩写。我们知道 Linux 一般而言 C 运行库是 <code class="language-plaintext highlighter-rouge">glibc</code>，那么 macOS/iOS 下是什么？</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Kud:~ root# otool <span class="nt">-L</span> a.out
 a.out:
 	/usr/lib/libSystem.B.dylib <span class="o">(</span>compatibility version 1.0.0, current version 173.8.0<span class="o">)</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">dylib</code> 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 <code class="highlighter-rouge">*.so</code>。而 <code class="highlighter-rouge">libSystem</code> 库提供了 <code class="highlighter-rouge">libc</code> 的功能<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>。</p>
+<p><code class="language-plaintext highlighter-rouge">dylib</code> 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 <code class="language-plaintext highlighter-rouge">*.so</code>。而 <code class="language-plaintext highlighter-rouge">libSystem</code> 库提供了 <code class="language-plaintext highlighter-rouge">libc</code> 的功能<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup>。</p>
 
 <h2 id="开始编译">开始编译</h2>
 
-<p>下载一份 <code class="highlighter-rouge">lc3tools</code> 源代码，丢过去。（这里的 OpenSSL 版本太老了，连 GitHub 都连不上，所以只能电脑上下载好之后传过去）</p>
+<p>下载一份 <code class="language-plaintext highlighter-rouge">lc3tools</code> 源代码，丢过去。（这里的 OpenSSL 版本太老了，连 GitHub 都连不上，所以只能电脑上下载好之后传过去）</p>
 
-<p>在 <code class="highlighter-rouge">./configure</code> 中缺失的 <code class="highlighter-rouge">flex</code> 依赖（用于汇编器的词法分析）可以在源里找到。但 <code class="highlighter-rouge">wish</code> 是什么？</p>
+<p>在 <code class="language-plaintext highlighter-rouge">./configure</code> 中缺失的 <code class="language-plaintext highlighter-rouge">flex</code> 依赖（用于汇编器的词法分析）可以在源里找到。但 <code class="language-plaintext highlighter-rouge">wish</code> 是什么？</p>
 
-<p><code class="highlighter-rouge">wish</code> 是 Tcl/Tk 的解释器，可以用来创建 GUI 界面。显然我们这里不需要 GUI（也显示不了），所以可以直接删掉。</p>
+<p><code class="language-plaintext highlighter-rouge">wish</code> 是 Tcl/Tk 的解释器，可以用来创建 GUI 界面。显然我们这里不需要 GUI（也显示不了），所以可以直接删掉。</p>
 
-<p>另外会报告找不到 <code class="highlighter-rouge">gcc</code>，一个简单粗暴的解决方法是创建软链接。</p>
+<p>另外会报告找不到 <code class="language-plaintext highlighter-rouge">gcc</code>，一个简单粗暴的解决方法是创建软链接。</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Kud:~/lc3tools root# <span class="nb">ln</span> <span class="nt">-s</span> /usr/bin/clang /usr/bin/gcc
 </code></pre></div></div>
 
-<p>由于我们先前提到的原因，我们还要修改 <code class="highlighter-rouge">Makefile.def</code>，以使 <code class="highlighter-rouge">configure</code> 生成正确的 <code class="highlighter-rouge">Makefile</code>。</p>
+<p>由于我们先前提到的原因，我们还要修改 <code class="language-plaintext highlighter-rouge">Makefile.def</code>，以使 <code class="language-plaintext highlighter-rouge">configure</code> 生成正确的 <code class="language-plaintext highlighter-rouge">Makefile</code>。</p>
 
 <p>将</p>
 
@@ -718,25 +720,25 @@ a.out:
 <span class="nv">LDFLAGS</span> <span class="o">=</span> <span class="nt">-g</span> <span class="nt">-isysroot</span> ~/sdk
 </code></pre></div></div>
 
-<p>再运行 <code class="highlighter-rouge">./configure</code>，之后就可以顺利编译了。</p>
+<p>再运行 <code class="language-plaintext highlighter-rouge">./configure</code>，之后就可以顺利编译了。</p>
 
 <p><img src="/pictures/ios-compile/success.png" alt="Success"></p>
 
 <p>成功～</p>
 
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1">
-      <p><a href="https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/">https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/</a> <a href="#fnref:1" class="reversefootnote">↩</a></p>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/">https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:2">
-      <p><a href="http://iphonedevwiki.net/index.php/On-device_toolchains">http://iphonedevwiki.net/index.php/On-device_toolchains</a> <a href="#fnref:2" class="reversefootnote">↩</a></p>
+    <li id="fn:2" role="doc-endnote">
+      <p><a href="http://iphonedevwiki.net/index.php/On-device_toolchains">http://iphonedevwiki.net/index.php/On-device_toolchains</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:3">
-      <p>见 <a href="http://resources.airnativeextensions.com/ios/">http://resources.airnativeextensions.com/ios/</a>，<a href="https://github.com/theos/sdks">https://github.com/theos/sdks</a> 上也有几个不同的版本。 <a href="#fnref:3" class="reversefootnote">↩</a></p>
+    <li id="fn:3" role="doc-endnote">
+      <p>见 <a href="http://resources.airnativeextensions.com/ios/">http://resources.airnativeextensions.com/ios/</a>，<a href="https://github.com/theos/sdks">https://github.com/theos/sdks</a> 上也有几个不同的版本。 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:4">
-      <p><a href="https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html">https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html</a> <a href="#fnref:4" class="reversefootnote">↩</a></p>
+    <li id="fn:4" role="doc-endnote">
+      <p><a href="https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html">https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html</a> <a href="#fnref:4" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>
 </div>

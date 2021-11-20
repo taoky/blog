@@ -25,17 +25,19 @@
   
 
   
-  <!-- Google Analytics -->
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-44647340-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
 
 
 </head>
@@ -748,9 +750,9 @@
 
 <p>“不对啊，那 Gatekeeper 也应该检测出有问题的 Xcode 并阻止它运行啊。”</p>
 
-<p>Gatekeeper 是通过 com.apple.quarantine 标记来判断文件是否从互联网上下载的。标记可以用 <code class="highlighter-rouge">xattr</code> 来查看。</p>
+<p>Gatekeeper 是通过 com.apple.quarantine 标记来判断文件是否从互联网上下载的。标记可以用 <code class="language-plaintext highlighter-rouge">xattr</code> 来查看。</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  Downloads  xattr -l *.app             
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  Downloads  xattr -l *.app             
 CheatSheet.app: com.apple.quarantine: 0023;00000000;The\x20Unarchiver;8F22E217-7ED8-44D7-B11F-88B319E5B82E
 Retinizer.app: com.apple.quarantine: 0043;00000000;The\x20Unarchiver;5E278371-834C-4C31-BC70-58E89F7CD0AF
 diumoo.app: com.apple.quarantine: 0003;00000000;The Unarchiver;C91583C2-3D0B-4639-A2D7-41C37AEF5650
@@ -764,40 +766,40 @@ diumoo.app: com.apple.quarantine: 0003;00000000;The Unarchiver;C91583C2-3D0B-463
 
 <h3 id="检查数字签名">检查数字签名</h3>
 
-<p>要检查应用的数字签名似乎只能在终端下。<code class="highlighter-rouge">codesign</code> 和 <code class="highlighter-rouge">spctl</code> 可以用来检查应用的数字签名。</p>
+<p>要检查应用的数字签名似乎只能在终端下。<code class="language-plaintext highlighter-rouge">codesign</code> 和 <code class="language-plaintext highlighter-rouge">spctl</code> 可以用来检查应用的数字签名。</p>
 
-<h4 id="codesign"><code class="highlighter-rouge">codesign</code></h4>
+<h4 id="codesign"><code class="language-plaintext highlighter-rouge">codesign</code></h4>
 
-<p><code class="highlighter-rouge">codesign</code> 可以来检查应用是否签名以及签名后是否被篡改。</p>
+<p><code class="language-plaintext highlighter-rouge">codesign</code> 可以来检查应用是否签名以及签名后是否被篡改。</p>
 
 <p>如果一切正常，显示如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv iTunes.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv iTunes.app 
 iTunes.app: valid on disk
 iTunes.app: satisfies its Designated Requirement
 </code></pre></div></div>
 
 <p>如果应用被篡改过，显示如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv VLC.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv VLC.app 
 VLC.app: a sealed resource is missing or invalid
 file added: /Applications/VLC.app/Contents/MacOS/plugins/plugins.dat
 </code></pre></div></div>
 
 <p>如果应用压根没有签名，显示如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv OnyX.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  codesign -vv OnyX.app 
 OnyX.app: code object is not signed at all
 In architecture: x86_64
 </code></pre></div></div>
 
-<h4 id="spctl"><code class="highlighter-rouge">spctl</code></h4>
+<h4 id="spctl"><code class="language-plaintext highlighter-rouge">spctl</code></h4>
 
-<p><code class="highlighter-rouge">spctl</code> 可以用来看是谁给应用签名，当然也可以同时检查签名是否正常。</p>
+<p><code class="language-plaintext highlighter-rouge">spctl</code> 可以用来看是谁给应用签名，当然也可以同时检查签名是否正常。</p>
 
 <p>系统应用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv iTunes.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv iTunes.app 
 iTunes.app: accepted
 source=Apple System
 origin=Software Signing
@@ -805,7 +807,7 @@ origin=Software Signing
 
 <p>Mac App Store 上下载的应用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv GeoGebra\ 5.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv GeoGebra\ 5.app 
 GeoGebra 5.app: accepted
 source=Mac App Store
 origin=Apple Mac OS Application Signing
@@ -813,7 +815,7 @@ origin=Apple Mac OS Application Signing
 
 <p>其它开发者（就是 Gatekeeper 里面的「被认可的开发者」）授权获得的证书签名的应用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv NeteaseMusic.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv NeteaseMusic.app 
 NeteaseMusic.app: accepted
 source=Developer ID
 origin=Developer ID Application: NetEase (Hangzhou) Network Co., Ltd. (J669Y64Z9Y)
@@ -821,13 +823,13 @@ origin=Developer ID Application: NetEase (Hangzhou) Network Co., Ltd. (J669Y64Z9
 
 <p>被篡改过的应用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv VLC.app 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv VLC.app 
 VLC.app: a sealed resource is missing or invalid
 </code></pre></div></div>
 
 <p>没有签名的应用：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv OnyX.app        
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv OnyX.app        
 OnyX.app: rejected
 source=no usable signature
 </code></pre></div></div>
