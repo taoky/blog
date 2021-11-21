@@ -5,7 +5,7 @@
   
   <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2021-11-21T14:06:02+00:00</updated>
+  <updated>2021-11-21T17:31:58+00:00</updated>
   <id>https://taoky.github.io//</id>
 
   
@@ -39,6 +39,8 @@
       <content type="html" xml:base="https://taoky.github.io/2021-11-21/geekgame-v1-wp.html">&lt;p&gt;作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。&lt;/p&gt;
 
 &lt;p&gt;我的用户名是「taoky # 好吃就是高兴」（与 hackergame staff 名单里我的昵称呼应，本来以为用户名有 tag 支持的，但是发现没有，也懒得改名字了），最后总榜第 6 名。&lt;/p&gt;
+
+&lt;p&gt;Update 1: 出题人与选手 writeups 官方汇总: &lt;a href=&quot;https://github.com/PKU-GeekGame/geekgame-1st/tree/master/writeups&quot;&gt;https://github.com/PKU-GeekGame/geekgame-1st/tree/master/writeups&lt;/a&gt;&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -115,6 +117,8 @@ Page 1
     &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2021-07-11T08:49:53+08:00&lt;/code&gt; &lt;del&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2021-07-10T16:49:53+08:00&lt;/code&gt;&lt;/del&gt;&lt;/p&gt;
 
     &lt;p&gt;注意时区转换的时候别脑子一抽弄成了 UTC -8（因为我就搞错了）。&lt;/p&gt;
+
+    &lt;p&gt;Update 1: Google Transparency Report 虽然不显示精确的过期时间，但是实际上请求接口的返回里有过期时间的 Unix timestamp。&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;2020 年 DEFCON CTF 资格赛签到题的 flag 是？&lt;/p&gt;
@@ -537,7 +541,11 @@ http://lab.maxxsoft.net/ctf/legacy.tbz2
 
 &lt;p class=&quot;center&quot;&gt;&lt;em&gt;图 3. VirtuaNES 启动魔改版超级玛丽&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;没有玩过红白机，所以开着金手指玩了一个多小时玩到凌晨四点多，还是没有看到 flag（可能是因为开了跳关之后的问题？我不确定）。最终的解决方案是，网上找到 SMB NES ROM Text Editor 可以加载 ROM 中的文本，然后一加载：&lt;/p&gt;
+&lt;p&gt;没有玩过红白机，所以开着金手指玩了一个多小时玩到凌晨四点多，还是没有看到 flag（可能是因为开了跳关之后的问题？我不确定）。&lt;/p&gt;
+
+&lt;p&gt;Update 1: 群聊讨论之后才知道超级玛丽的最后一关就是无限循环的，要正确钻水管才能到终点。果然只有我小时候没有玩过红白机了。&lt;/p&gt;
+
+&lt;p&gt;最终的解决方案是，网上找到 SMB NES ROM Text Editor 可以加载 ROM 中的文本，然后一加载：&lt;/p&gt;
 
 &lt;p class=&quot;center&quot;&gt;&lt;img src=&quot;/pictures/geekgame-wp/leafsnewsong/3.png&quot; alt=&quot;SMB NES ROM Text Editor&quot; /&gt;&lt;/p&gt;
 
