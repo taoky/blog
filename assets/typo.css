@@ -62,6 +62,7 @@ blockquote {
   border-left: 1px solid #1abc9c;
   padding-left: 1em;
   margin: 1em 3em 1em 2em;
+  letter-spacing: 0;
 }
 
 @media only screen and ( max-width: 640px ) {
@@ -169,7 +170,8 @@ mark {
 
 /* 代码片断 */
 pre, code, pre tt {
-  font-family: Courier, 'Courier New', monospace;
+  font-family: 'JetBrains Mono', 'SF Mono', Courier, 'Courier New', monospace;
+  font-variant-ligatures: none;
 }
 
 pre {

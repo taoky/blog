@@ -287,4 +287,10 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 .user-toc { background-color: #fff; margin: 5px 0; padding: 10px 30px; border: 1px solid #e8e8e8; border-radius: 3px; }
 
+@font-face { font-family: HanEm; font-style: italic; src: local("STFangsong"), local("FangSong"), local("FangSong_GB2312"), local("CWTEX-F"), local("Kaiti SC"), local("STKaiti"), local("AR PL UKai CN"), local("KaiTi"), local("KaiTi_GB2312"), local("DFKai-SB"), local("PingFang SC"), local("Microsoft YaHei"), local("Source Han Sans CN"); }
+
+em { font-family: Baskerville, "Times New Roman", "Liberation Serif", HanEm, serif; font-style: italic; }
+
+.center { text-align: center; }
+
 /*# sourceMappingURL=main.css.map */
