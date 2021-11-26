@@ -80,7 +80,7 @@
 # oooooooooooooooooooooo+/+/+oo+/:    ```````                           ```.....``````     ```````````...-:////////::::::::::::::---::----...````````````-/++ooooooooooooooooooooooooooooooo+/:..--:::::::
 # ```````````````````````````````                                                                         `````` `                  `                     ````````````````````````````````````
 
-Sitemap: https://taoky.github.io/sitemap.xml
+Sitemap: https://blog.taoky.moe/sitemap.xml
 
 User-agent: *
 Disallow: /Class/*

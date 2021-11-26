@@ -3,10 +3,10 @@
   <generator uri="http://jekyllrb.com" version="4.2.1">Jekyll</generator>
   
   
-  <link href="https://taoky.github.io/feed.xml" rel="self" type="application/atom+xml" />
-  <link href="https://taoky.github.io/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2021-11-26T10:11:59+00:00</updated>
-  <id>https://taoky.github.io//</id>
+  <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
+  <updated>2021-11-26T10:13:31+00:00</updated>
+  <id>https://blog.taoky.moe//</id>
 
   
     <title type="html">taoky’s blog</title>
@@ -31,12 +31,12 @@
       <title type="html">taoky’s GeekGame v1 (2021) writeups</title>
       
       
-      <link href="https://taoky.github.io/2021-11-21/geekgame-v1-wp.html" rel="alternate" type="text/html" title="taoky's GeekGame v1 (2021) writeups" />
+      <link href="https://blog.taoky.moe/2021-11-21/geekgame-v1-wp.html" rel="alternate" type="text/html" title="taoky's GeekGame v1 (2021) writeups" />
       
       <published>2021-11-21T14:00:00+00:00</published>
       <updated>2021-11-21T14:00:00+00:00</updated>
-      <id>https://taoky.github.io/2021-11-21/geekgame-v1-wp</id>
-      <content type="html" xml:base="https://taoky.github.io/2021-11-21/geekgame-v1-wp.html">&lt;p&gt;作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2021-11-21/geekgame-v1-wp</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2021-11-21/geekgame-v1-wp.html">&lt;p&gt;作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。&lt;/p&gt;
 
 &lt;p&gt;我的用户名是「taoky # 好吃就是高兴」（与 hackergame staff 名单里我的昵称呼应，本来以为用户名有 tag 支持的，但是发现没有，也懒得改名字了），最后总榜第 6 名。&lt;/p&gt;
 
@@ -1790,12 +1790,12 @@ undefined
       <title type="html">THU 半日游：参加 tunight 杂记</title>
       
       
-      <link href="https://taoky.github.io/2021-04-18/tunight.html" rel="alternate" type="text/html" title="THU 半日游：参加 tunight 杂记" />
+      <link href="https://blog.taoky.moe/2021-04-18/tunight.html" rel="alternate" type="text/html" title="THU 半日游：参加 tunight 杂记" />
       
       <published>2021-04-18T08:10:00+00:00</published>
       <updated>2021-04-18T08:10:00+00:00</updated>
-      <id>https://taoky.github.io/2021-04-18/tunight</id>
-      <content type="html" xml:base="https://taoky.github.io/2021-04-18/tunight.html">&lt;p&gt;博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2021-04-18/tunight</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2021-04-18/tunight.html">&lt;p&gt;博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -1912,12 +1912,12 @@ undefined
       <title type="html">epoll 的故事</title>
       
       
-      <link href="https://taoky.github.io/2019-07-08/epoll-101.html" rel="alternate" type="text/html" title="epoll 的故事" />
+      <link href="https://blog.taoky.moe/2019-07-08/epoll-101.html" rel="alternate" type="text/html" title="epoll 的故事" />
       
       <published>2019-07-08T04:33:00+00:00</published>
       <updated>2019-07-08T04:33:00+00:00</updated>
-      <id>https://taoky.github.io/2019-07-08/epoll-101</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2019-07-08/epoll-101</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
 
 &lt;p&gt;在介绍 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 之前，不如让我们来看看，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 到底是怎么出现的。&lt;/p&gt;
 
@@ -2143,12 +2143,12 @@ undefined
       <title type="html">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</title>
       
       
-      <link href="https://taoky.github.io/2019-02-23/installing-os-on-vm.html" rel="alternate" type="text/html" title="水文 | 在 macOS 下配置虚拟机，安装其他操作系统" />
+      <link href="https://blog.taoky.moe/2019-02-23/installing-os-on-vm.html" rel="alternate" type="text/html" title="水文 | 在 macOS 下配置虚拟机，安装其他操作系统" />
       
       <published>2019-02-23T12:00:00+00:00</published>
       <updated>2019-02-23T12:00:00+00:00</updated>
-      <id>https://taoky.github.io/2019-02-23/installing-os-on-vm</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（&lt;a href=&quot;https://ibugone.com/p/15&quot;&gt;English&lt;/a&gt;，&lt;a href=&quot;https://ibugone.com/p/15-cn&quot;&gt;中文&lt;/a&gt;）。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2019-02-23/installing-os-on-vm</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（&lt;a href=&quot;https://ibugone.com/p/15&quot;&gt;English&lt;/a&gt;，&lt;a href=&quot;https://ibugone.com/p/15-cn&quot;&gt;中文&lt;/a&gt;）。&lt;/p&gt;
 
 &lt;p&gt;主要目的是帮助使用 Mac 的同学简单配置虚拟机，以应对本学期的 操作系统原理与设计 课程（还有日常可能需要的 Windows 需求）。&lt;/p&gt;
 
@@ -2319,12 +2319,12 @@ undefined
       <title type="html">在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround</title>
       
       
-      <link href="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html" rel="alternate" type="text/html" title="在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround" />
+      <link href="https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem.html" rel="alternate" type="text/html" title="在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround" />
       
       <published>2019-02-19T05:53:00+00:00</published>
       <updated>2019-02-19T05:53:00+00:00</updated>
-      <id>https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
 
 &lt;p&gt;（PS：Linux 上的 Docker 未见此问题）&lt;/p&gt;
 
@@ -2498,12 +2498,12 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
       <title type="html">在 iOS 设备上编译原生 lc3tools</title>
       
       
-      <link href="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html" rel="alternate" type="text/html" title="在 iOS 设备上编译原生 lc3tools" />
+      <link href="https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device.html" rel="alternate" type="text/html" title="在 iOS 设备上编译原生 lc3tools" />
       
       <published>2019-02-12T12:01:00+00:00</published>
       <updated>2019-02-12T12:01:00+00:00</updated>
-      <id>https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ ssh root@192.168.0.109
 root@192.168.0.109&lt;span class=&quot;s1&quot;&gt;'s password: # password is '&lt;/span&gt;alpine&lt;span class=&quot;s1&quot;&gt;' by default
@@ -2702,12 +2702,12 @@ a.out:
       <title type="html">重新迁移：回到 Jekyll</title>
       
       
-      <link href="https://taoky.github.io/2019-02-12/migration-to-jekyll-again.html" rel="alternate" type="text/html" title="重新迁移：回到 Jekyll" />
+      <link href="https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again.html" rel="alternate" type="text/html" title="重新迁移：回到 Jekyll" />
       
       <published>2019-02-12T09:17:00+00:00</published>
       <updated>2019-02-12T09:17:00+00:00</updated>
-      <id>https://taoky.github.io/2019-02-12/migration-to-jekyll-again</id>
-      <content type="html" xml:base="https://taoky.github.io/2019-02-12/migration-to-jekyll-again.html">&lt;p&gt;再次迁移回了 Jekyll。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again.html">&lt;p&gt;再次迁移回了 Jekyll。&lt;/p&gt;
 
 &lt;p&gt;从 Hexo 迁移回去的很大一个原因是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给人带来的无力感：我只想简简单单做一件事情，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给我带来了无穷无尽的依赖，还有 GitHub 时不时给我发送的安全警告。&lt;/p&gt;
 
@@ -2756,12 +2756,12 @@ a.out:
       <title type="html">瞎写的大一一年总结</title>
       
       
-      <link href="https://taoky.github.io/2018-08-29/freshman-year.html" rel="alternate" type="text/html" title="瞎写的大一一年总结" />
+      <link href="https://blog.taoky.moe/2018-08-29/freshman-year.html" rel="alternate" type="text/html" title="瞎写的大一一年总结" />
       
       <published>2018-08-29T16:36:12+00:00</published>
       <updated>2018-08-29T16:36:12+00:00</updated>
-      <id>https://taoky.github.io/2018-08-29/freshman-year</id>
-      <content type="html" xml:base="https://taoky.github.io/2018-08-29/freshman-year.html">&lt;p&gt;我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2018-08-29/freshman-year</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2018-08-29/freshman-year.html">&lt;p&gt;我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -2866,12 +2866,12 @@ a.out:
       <title type="html">语言学家</title>
       
       
-      <link href="https://taoky.github.io/2018-07-14/language-gaokao-composition.html" rel="alternate" type="text/html" title="语言学家" />
+      <link href="https://blog.taoky.moe/2018-07-14/language-gaokao-composition.html" rel="alternate" type="text/html" title="语言学家" />
       
       <published>2018-07-14T10:09:29+00:00</published>
       <updated>2018-07-14T10:09:29+00:00</updated>
-      <id>https://taoky.github.io/2018-07-14/language-gaokao-composition</id>
-      <content type="html" xml:base="https://taoky.github.io/2018-07-14/language-gaokao-composition.html">&lt;p&gt;据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：&lt;/p&gt;
+      <id>https://blog.taoky.moe/2018-07-14/language-gaokao-composition</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2018-07-14/language-gaokao-composition.html">&lt;p&gt;据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;根据以下材料，选取角度，自拟题目，写一篇不少于800字的文章；文体不限，诗歌除外。&lt;/p&gt;
@@ -2976,12 +2976,12 @@ a.out:
       <title type="html">高考，与高考之后……</title>
       
       
-      <link href="https://taoky.github.io/2017-08-09/after-gaokao.html" rel="alternate" type="text/html" title="高考，与高考之后……" />
+      <link href="https://blog.taoky.moe/2017-08-09/after-gaokao.html" rel="alternate" type="text/html" title="高考，与高考之后……" />
       
       <published>2017-08-09T11:29:29+00:00</published>
       <updated>2017-08-09T11:29:29+00:00</updated>
-      <id>https://taoky.github.io/2017-08-09/after-gaokao</id>
-      <content type="html" xml:base="https://taoky.github.io/2017-08-09/after-gaokao.html">&lt;p&gt;其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2017-08-09/after-gaokao</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2017-08-09/after-gaokao.html">&lt;p&gt;其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。&lt;/p&gt;
 
 &lt;p&gt;在框架成功迁移到 Hexo 之后，我觉得是时候应该开始填坑了。（不过那篇关于 BMP 的文章我暂时不想填）&lt;/p&gt;
 
@@ -3116,12 +3116,12 @@ a.out:
       <title type="html">从 Jekyll 向 Hexo 迁移</title>
       
       
-      <link href="https://taoky.github.io/2017-08-08/migration-to-hexo.html" rel="alternate" type="text/html" title="从 Jekyll 向 Hexo 迁移" />
+      <link href="https://blog.taoky.moe/2017-08-08/migration-to-hexo.html" rel="alternate" type="text/html" title="从 Jekyll 向 Hexo 迁移" />
       
       <published>2017-08-08T20:26:46+00:00</published>
       <updated>2017-08-08T20:26:46+00:00</updated>
-      <id>https://taoky.github.io/2017-08-08/migration-to-hexo</id>
-      <content type="html" xml:base="https://taoky.github.io/2017-08-08/migration-to-hexo.html">&lt;p&gt;这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2017-08-08/migration-to-hexo</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2017-08-08/migration-to-hexo.html">&lt;p&gt;这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。&lt;/p&gt;
 
 &lt;p&gt;界面相比原来要更清晰一些。评论系统将会更换，因为使用 Disqus 的网络情况太过糟糕（不过还好的是，终于有人评论了我……可惜评论迁不过来）。另外将增加（并没有什么用的）站点统计。&lt;/p&gt;
 
@@ -3166,12 +3166,12 @@ a.out:
       <title type="html">使用 C++ 读取简单的 24、32 位 BMP 图像</title>
       
       
-      <link href="https://taoky.github.io/2017-02-06/read-bmp-with-cpp.html" rel="alternate" type="text/html" title="使用 C++ 读取简单的 24、32 位 BMP 图像" />
+      <link href="https://blog.taoky.moe/2017-02-06/read-bmp-with-cpp.html" rel="alternate" type="text/html" title="使用 C++ 读取简单的 24、32 位 BMP 图像" />
       
       <published>2017-02-06T00:00:00+00:00</published>
       <updated>2017-02-06T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2017-02-06/read-bmp-with-cpp</id>
-      <content type="html" xml:base="https://taoky.github.io/2017-02-06/read-bmp-with-cpp.html">&lt;p&gt;BMP 是 Windows 下常见的一种位图格式。之所以我们选择直接读取 BMP 格式（即不使用其他的库）而非 JPG、PNG 等其他图像格式，是因为：&lt;/p&gt;
+      <id>https://blog.taoky.moe/2017-02-06/read-bmp-with-cpp</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2017-02-06/read-bmp-with-cpp.html">&lt;p&gt;BMP 是 Windows 下常见的一种位图格式。之所以我们选择直接读取 BMP 格式（即不使用其他的库）而非 JPG、PNG 等其他图像格式，是因为：&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;BMP 的文档是公开的。没有版权、专利问题。&lt;/li&gt;
@@ -3559,12 +3559,12 @@ a.out:
       <title type="html">《你的名字。》观后感——一个关于梦、改变和灾难的故事</title>
       
       
-      <link href="https://taoky.github.io/2017-02-02/yourname-my-review.html" rel="alternate" type="text/html" title="《你的名字。》观后感——一个关于梦、改变和灾难的故事" />
+      <link href="https://blog.taoky.moe/2017-02-02/yourname-my-review.html" rel="alternate" type="text/html" title="《你的名字。》观后感——一个关于梦、改变和灾难的故事" />
       
       <published>2017-02-02T00:00:00+00:00</published>
       <updated>2017-02-02T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2017-02-02/yourname-my-review</id>
-      <content type="html" xml:base="https://taoky.github.io/2017-02-02/yourname-my-review.html">&lt;p&gt;《你的名字。》（下简称「君名」）第一次是我在 12 月 2 日和爸妈去电影院看的。记得那天高三破天荒全校第一个放假。一开始是几周前看到一帮人在安利之后想去看的，然后在那天下午看了一遍预告片，感觉……不知道它到底想讲一个什么故事。我很担心君名的风格适不适合我，但最后还是因为好奇心拉着爸妈去看了（虽然我爸更想看《神奇动物在哪里》）。毕竟我没有女票，也没有住得近、一下子就能约出来的朋友，一个人去看也不太可能会被批准的啊 -_-。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2017-02-02/yourname-my-review</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2017-02-02/yourname-my-review.html">&lt;p&gt;《你的名字。》（下简称「君名」）第一次是我在 12 月 2 日和爸妈去电影院看的。记得那天高三破天荒全校第一个放假。一开始是几周前看到一帮人在安利之后想去看的，然后在那天下午看了一遍预告片，感觉……不知道它到底想讲一个什么故事。我很担心君名的风格适不适合我，但最后还是因为好奇心拉着爸妈去看了（虽然我爸更想看《神奇动物在哪里》）。毕竟我没有女票，也没有住得近、一下子就能约出来的朋友，一个人去看也不太可能会被批准的啊 -_-。&lt;/p&gt;
 
 &lt;p&gt;当然看完之后感觉很棒（不然我就不会写这篇观后感了），虽然第一次看之后感觉时间线有点混乱。记得上一次感觉「这部电影好棒啊」的时候是在小高考考完之后去看《疯狂动物城》的那次。&lt;/p&gt;
 
@@ -3653,12 +3653,12 @@ a.out:
       <title type="html">无标题</title>
       
       
-      <link href="https://taoky.github.io/2017-01-17/untitled.html" rel="alternate" type="text/html" title="无标题" />
+      <link href="https://blog.taoky.moe/2017-01-17/untitled.html" rel="alternate" type="text/html" title="无标题" />
       
       <published>2017-01-17T00:00:00+00:00</published>
       <updated>2017-01-17T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2017-01-17/untitled</id>
-      <content type="html" xml:base="https://taoky.github.io/2017-01-17/untitled.html">&lt;p&gt;/*&lt;/p&gt;
+      <id>https://blog.taoky.moe/2017-01-17/untitled</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2017-01-17/untitled.html">&lt;p&gt;/*&lt;/p&gt;
 
 &lt;p&gt;这是一篇风格随意的自编小说，灵感源于敝校期末作文讲义第一篇文章的标题。已经有 1 年没有在博客上写什么东西了。趁这个机会让它「苏醒」一下吧。&lt;/p&gt;
 
@@ -3729,12 +3729,12 @@ a.out:
       <title type="html">信任与不信任</title>
       
       
-      <link href="https://taoky.github.io/2015-09-27/trusting-or-not.html" rel="alternate" type="text/html" title="信任与不信任" />
+      <link href="https://blog.taoky.moe/2015-09-27/trusting-or-not.html" rel="alternate" type="text/html" title="信任与不信任" />
       
       <published>2015-09-27T00:00:00+00:00</published>
       <updated>2015-09-27T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2015-09-27/trusting-or-not</id>
-      <content type="html" xml:base="https://taoky.github.io/2015-09-27/trusting-or-not.html">&lt;p&gt;XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2015-09-27/trusting-or-not</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2015-09-27/trusting-or-not.html">&lt;p&gt;XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。&lt;/p&gt;
 
 &lt;p&gt;这件事情其实各方都有责任，Apple 的 Mac App Store 做得实在太差：经常连接不上，连接上了还很难下载：经常下载到一半就失败了；Apple Developer Program 没有提供 sha1 校验码；开发者作死关了 Gatekeeper，不了解 OS X 应用的数字证书……这件事闹得太大，很多著名应用被感染，以至于 Apple 发出了一个&lt;a href=&quot;http://www.apple.com/cn/xcodeghost/&quot;&gt;申明&lt;/a&gt;。
 &lt;!--more--&gt;&lt;/p&gt;
@@ -4002,12 +4002,12 @@ a.out:
       <title type="html">OS X 下的 App 数字证书和更多</title>
       
       
-      <link href="https://taoky.github.io/2015-09-26/the-codesign-in-osx.html" rel="alternate" type="text/html" title="OS X 下的 App 数字证书和更多" />
+      <link href="https://blog.taoky.moe/2015-09-26/the-codesign-in-osx.html" rel="alternate" type="text/html" title="OS X 下的 App 数字证书和更多" />
       
       <published>2015-09-26T00:00:00+00:00</published>
       <updated>2015-09-26T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2015-09-26/the-codesign-in-osx</id>
-      <content type="html" xml:base="https://taoky.github.io/2015-09-26/the-codesign-in-osx.html">&lt;p&gt;最近的 XcodeGhost 事情闹得沸沸扬扬，大家都被吓得不轻。假的 Xcode 这么长时间没有被发现，一方面可能是关掉了 Gatekeeper 的原因；另一方面，有时开了 Gatekeeper 还是没有被检测出来，并且表面上是看不出来程序有没有数字签名的，不像 Windows 里面右键属性就可以看到。
+      <id>https://blog.taoky.moe/2015-09-26/the-codesign-in-osx</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2015-09-26/the-codesign-in-osx.html">&lt;p&gt;最近的 XcodeGhost 事情闹得沸沸扬扬，大家都被吓得不轻。假的 Xcode 这么长时间没有被发现，一方面可能是关掉了 Gatekeeper 的原因；另一方面，有时开了 Gatekeeper 还是没有被检测出来，并且表面上是看不出来程序有没有数字签名的，不像 Windows 里面右键属性就可以看到。
 &lt;!--more--&gt;&lt;/p&gt;
 &lt;h3 id=&quot;gatekeeper-是什么它出了什么问题&quot;&gt;Gatekeeper 是什么？它出了什么问题？&lt;/h3&gt;
 
@@ -4152,12 +4152,12 @@ source=no usable signature
       <title type="html">杂记</title>
       
       
-      <link href="https://taoky.github.io/2015-09-03/somethink.html" rel="alternate" type="text/html" title="杂记" />
+      <link href="https://blog.taoky.moe/2015-09-03/somethink.html" rel="alternate" type="text/html" title="杂记" />
       
       <published>2015-09-03T00:00:00+00:00</published>
       <updated>2015-09-03T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2015-09-03/somethink</id>
-      <content type="html" xml:base="https://taoky.github.io/2015-09-03/somethink.html">&lt;p&gt;我发现似乎我在暑假里并没有在这里写过东西，或者说这里看上去已经「荒废」掉了。当然其中的主要原因是时间分配问题：当我想写点什么的时候发现没有时间，当我有时间的时候我什么都不想写了。而且我本来意图是想把这里变成一个共同记录下生活与技术的地方。结果现在我更想写生活，但又不想透露出所有的事情，总之内心的想法很复杂，但总也实现不了啦。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2015-09-03/somethink</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2015-09-03/somethink.html">&lt;p&gt;我发现似乎我在暑假里并没有在这里写过东西，或者说这里看上去已经「荒废」掉了。当然其中的主要原因是时间分配问题：当我想写点什么的时候发现没有时间，当我有时间的时候我什么都不想写了。而且我本来意图是想把这里变成一个共同记录下生活与技术的地方。结果现在我更想写生活，但又不想透露出所有的事情，总之内心的想法很复杂，但总也实现不了啦。&lt;/p&gt;
 
 &lt;p&gt;暑假里只是对网页的代码做了一点极小的「更新」。加引号是因为加的部分没啥用，只是使用 Javascript 做一下尝试罢了。&lt;/p&gt;
 
@@ -4286,12 +4286,12 @@ source=no usable signature
       <title type="html">Markdown 简要使用手册</title>
       
       
-      <link href="https://taoky.github.io/2015-06-20/introduction-to-markdown.html" rel="alternate" type="text/html" title="Markdown 简要使用手册" />
+      <link href="https://blog.taoky.moe/2015-06-20/introduction-to-markdown.html" rel="alternate" type="text/html" title="Markdown 简要使用手册" />
       
       <published>2015-06-20T00:00:00+00:00</published>
       <updated>2015-06-20T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2015-06-20/introduction-to-markdown</id>
-      <content type="html" xml:base="https://taoky.github.io/2015-06-20/introduction-to-markdown.html">&lt;p&gt;Markdown 是一种简单易用的标记语言。它被用来编写简单的多格式的文档，语法简单。纵使你不了解它的语法，你也非常容易看懂 Markdown 文档。它可以被转换为 HTML。它有助于编写结构化的文档，实现内容与结构的&lt;del&gt;有机统一&lt;/del&gt;分离。（简单的说，就是 Markdown 写的是结构，至于长什么样子是 CSS 的事）
+      <id>https://blog.taoky.moe/2015-06-20/introduction-to-markdown</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2015-06-20/introduction-to-markdown.html">&lt;p&gt;Markdown 是一种简单易用的标记语言。它被用来编写简单的多格式的文档，语法简单。纵使你不了解它的语法，你也非常容易看懂 Markdown 文档。它可以被转换为 HTML。它有助于编写结构化的文档，实现内容与结构的&lt;del&gt;有机统一&lt;/del&gt;分离。（简单的说，就是 Markdown 写的是结构，至于长什么样子是 CSS 的事）
 &lt;!--more--&gt;
 初次使用时注意一个特点：段与段之间需要空一行。不然下面的文档：&lt;/p&gt;
 
@@ -4659,12 +4659,12 @@ Bob  | 2
       <title type="html">KDE 5 体验：「一下拍扁」</title>
       
       
-      <link href="https://taoky.github.io/2015-02-14/flat-kde5-trial.html" rel="alternate" type="text/html" title="KDE 5 体验：「一下拍扁」" />
+      <link href="https://blog.taoky.moe/2015-02-14/flat-kde5-trial.html" rel="alternate" type="text/html" title="KDE 5 体验：「一下拍扁」" />
       
       <published>2015-02-14T00:00:00+00:00</published>
       <updated>2015-02-14T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2015-02-14/flat-kde5-trial</id>
-      <content type="html" xml:base="https://taoky.github.io/2015-02-14/flat-kde5-trial.html">&lt;p&gt;今天……嗯……是情人节暨世界癫痫日。我既没有女生喜欢，又没有癫痫，所以今天还是一个平常的日子。当我看到下载堆栈里的 KDE 5 的体验光盘文件的时候，我想，要不今天不写研究性学习报告了，放松一下，来看看 KDE 最近发展的情况吧。&lt;/p&gt;
+      <id>https://blog.taoky.moe/2015-02-14/flat-kde5-trial</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2015-02-14/flat-kde5-trial.html">&lt;p&gt;今天……嗯……是情人节暨世界癫痫日。我既没有女生喜欢，又没有癫痫，所以今天还是一个平常的日子。当我看到下载堆栈里的 KDE 5 的体验光盘文件的时候，我想，要不今天不写研究性学习报告了，放松一下，来看看 KDE 最近发展的情况吧。&lt;/p&gt;
 
 &lt;p&gt;在用 OS X 之前，我用的操作系统是 Linux，发行版是 Fedora，桌面环境是 KDE。这是一个不错的桌面环境，并且我也不太喜欢 GNOME、Unity 之类的，自然便投向了 Qt 系的桌面环境。只是换了 OS X 之后不再怎么用 Linux 了。那时的 KDE 应该是到了 4.11 吧，稳定性尚可，但有时还会崩溃，更多的是直接卡住。卡着的时候我便知道八成又是用了 swap，swap 一用太多就卡的很。
 &lt;!--more--&gt;
@@ -4676,27 +4676,27 @@ Bob  | 2
 
 &lt;h3 id=&quot;新的扁平风格看上去不错&quot;&gt;新的扁平风格：看上去不错&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/login-screen.png&quot; alt=&quot;登陆界面&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/login-screen.png&quot; alt=&quot;登陆界面&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;登陆的界面很现代化，进入之后可以明显注意到 KDE 5 正在尝试一步步抛弃 KDE 4 时代的毛玻璃、立体化（或者说叫拟物化）效果。进入 KDE 的 System Settings，可以明显发现默认的主题已不再是 Oxygen，而是一款新主题：Breeze。从桌面风格、鼠标指针、锁屏界面、KDE 程序风格都发生了较大的变化，除了窗口边框仍然是 Oxygen（但也可以换成 Breeze）以外，其它组件的外貌都变了。从中可以体现出 KDE 开发成员已经在抛弃拟物，尝试扁平。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/all-breeze.png&quot; alt=&quot;Breeze 风格&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/all-breeze.png&quot; alt=&quot;Breeze 风格&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;准确地说，KDE 有一点点 Windows 8 设计风格的感觉，但不是很明显。OS X 的影子还是可以体现出来的。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/KDE5-style.png&quot; alt=&quot;KDE 窗口效果&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/KDE5-style.png&quot; alt=&quot;KDE 窗口效果&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;下面放几张图，大家看看吧。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/appearance-1.png&quot; alt=&quot;Appearance 1&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/appearance-1.png&quot; alt=&quot;Appearance 1&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/appearance-2.png&quot; alt=&quot;Appearance 2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/appearance-2.png&quot; alt=&quot;Appearance 2&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/appearance-3.png&quot; alt=&quot;Appearance 3&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/appearance-3.png&quot; alt=&quot;Appearance 3&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/appearance-4.png&quot; alt=&quot;Appearance 4&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/appearance-4.png&quot; alt=&quot;Appearance 4&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/appearance-5.png&quot; alt=&quot;Appearance 5&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/appearance-5.png&quot; alt=&quot;Appearance 5&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;速度与稳定性&quot;&gt;速度与稳定性&lt;/h3&gt;
 
@@ -4704,19 +4704,19 @@ Bob  | 2
 
 &lt;p&gt;至于放在真机上 KDE 5 的表现会如何就不清楚了。小内存的机器运行会&lt;del&gt;略&lt;/del&gt;有较大压力。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/crash-kde.png&quot; alt=&quot;KDE 的崩溃&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/crash-kde.png&quot; alt=&quot;KDE 的崩溃&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;一些问题&quot;&gt;一些问题&lt;/h3&gt;
 
 &lt;p&gt;不少程序（Dolphin、Konqueror……几乎除了 System Settings 以外都是）仍然还是 KDE 4 的风格，似乎使用的是 QtCurve 的风格，与新风格非常不协调。并且似乎并没有准备好给 GTK 程序的主题。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/KDE5-and-4.png&quot; alt=&quot;KDE 5 与 KDE 4&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/KDE5-and-4.png&quot; alt=&quot;KDE 5 与 KDE 4&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;PS：KDE 5 关于窗口的左边的吉祥物很可爱啊。&lt;/p&gt;
 
 &lt;p&gt;同时也发现了一个 Bug：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://taoky.github.io/pictures/kde5/bug-1.png&quot; alt=&quot;一个小 Bug&quot; /&gt;&lt;/p&gt;</content>
+&lt;p&gt;&lt;img src=&quot;http://blog.taoky.moe/pictures/kde5/bug-1.png&quot; alt=&quot;一个小 Bug&quot; /&gt;&lt;/p&gt;</content>
 
       
       
@@ -4757,12 +4757,12 @@ Bob  | 2
       <title type="html">Hello, 2015!</title>
       
       
-      <link href="https://taoky.github.io/2014-12-31/hello-2015.html" rel="alternate" type="text/html" title="Hello, 2015!" />
+      <link href="https://blog.taoky.moe/2014-12-31/hello-2015.html" rel="alternate" type="text/html" title="Hello, 2015!" />
       
       <published>2014-12-31T00:00:00+00:00</published>
       <updated>2014-12-31T00:00:00+00:00</updated>
-      <id>https://taoky.github.io/2014-12-31/hello-2015</id>
-      <content type="html" xml:base="https://taoky.github.io/2014-12-31/hello-2015.html">&lt;p&gt;嗯，是的。好像时间过得很快，2014 年春节时候整理照片的事情还记得清清楚楚，这一年的尾声就到了。怎么说好呢？我不知道。
+      <id>https://blog.taoky.moe/2014-12-31/hello-2015</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2014-12-31/hello-2015.html">&lt;p&gt;嗯，是的。好像时间过得很快，2014 年春节时候整理照片的事情还记得清清楚楚，这一年的尾声就到了。怎么说好呢？我不知道。
 &lt;!--more--&gt;&lt;/p&gt;
 &lt;h2 id=&quot;look-back-on-2014&quot;&gt;Look back on 2014&lt;/h2&gt;
 
