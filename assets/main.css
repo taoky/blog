@@ -293,4 +293,6 @@ em { font-family: Baskerville, "Times New Roman", "Liberation Serif", HanEm, ser
 
 .center { text-align: center; }
 
+@media (prefers-color-scheme: dark) { :root { filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(100%); background: #fff; } iframe, img, image, video, [style*="background-image"] { filter: invert(95%) hue-rotate(180deg) brightness(105%) contrast(105%); } }
+
 /*# sourceMappingURL=main.css.map */
