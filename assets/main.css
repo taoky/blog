@@ -289,7 +289,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 @font-face { font-family: HanEm; font-style: italic; src: local("STFangsong"), local("FangSong"), local("FangSong_GB2312"), local("CWTEX-F"), local("Kaiti SC"), local("STKaiti"), local("AR PL UKai CN"), local("KaiTi"), local("KaiTi_GB2312"), local("DFKai-SB"), local("PingFang SC"), local("Microsoft YaHei"), local("Source Han Sans CN"); }
 
-em { font-family: Baskerville, "Times New Roman", "Liberation Serif", HanEm, serif; font-style: italic; }
+em { font-family: Baskerville, "Times New Roman", "Liberation Serif", HanEm, serif; font-style: italic; font-synthesis: none; }
 
 .center { text-align: center; }
 
