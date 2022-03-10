@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-03-10T04:47:07+00:00</updated>
+  <updated>2022-03-10T10:06:30+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -24,6 +24,178 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">偷懒（且不太正确）的暗黑模式配置</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-03-10/lazy-dark-mode.html" rel="alternate" type="text/html" title="偷懒（且不太正确）的暗黑模式配置" />
+      
+      <published>2022-03-10T07:42:00+00:00</published>
+      <updated>2022-03-10T07:42:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-03-10/lazy-dark-mode</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2022-03-10/lazy-dark-mode.html">&lt;p&gt;这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 &lt;a href=&quot;https://browser.kagi.com/&quot;&gt;Orion 浏览器&lt;/a&gt;的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个&lt;a href=&quot;https://github.com/OrionBrowser/DarkMode&quot;&gt;快速为页面配置暗黑模式的脚本&lt;/a&gt;（MIT License）：&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;odmcss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`
+:root {
+    filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(100%);
+    background: #fff;
+}
+iframe, img, image, video, [style*=&quot;background-image&quot;] {
+    filter: invert() hue-rotate(180deg) brightness(105%) contrast(105%);
+}
+`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;orion-browser-dark-theme&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;ee&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getElementById&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;parentNode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;removeChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;text/css&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;styleSheet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;styleSheet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cssText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;odmcss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;appendChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createTextNode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;odmcss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;appendChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;写 CSS 对我来说是一种折磨，到现在我都还只会用个 Bootstrap，然后在浏览器的开发者工具里瞎调直到样式看起来差不多为止（现在我的 CSS 水平和我高中时候基本一致）。在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@media (prefers-color-scheme: dark)&lt;/code&gt; 里面加这么几条样式就能有暗黑模式支持，天下居然有这样的好事。&lt;/p&gt;
+
+&lt;h2 id=&quot;工作原理&quot;&gt;工作原理&lt;/h2&gt;
+
+&lt;p&gt;这几行 CSS 的作用就是为网页添加「滤镜」，让它显示成协调的「暗黑模式」的效果。现代桌面操作系统的辅助功能里面一般都可以设置「反色」，但是直接开的话对于大多数人来说效果是没法看的，所以我们需要更复杂的东西。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prefers-color-scheme&lt;/code&gt; 需要相对比较新的浏览器，在实践中除非是 IE 用户、Windows XP 的现代浏览器用户，或者是安装之后从不升级浏览器的用户，否则兼容性上不会有问题。&lt;/p&gt;
+
+&lt;p&gt;其中的几条特效：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invert()&lt;/code&gt;：反色，完全反色（100%）的情况中对于 RGB 来说运算就是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r = 255 - r; g = 255 - g; b = 255 - b;&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate(180deg)&lt;/code&gt;：反色完之后颜色肯定不对，所以还需要一次色调（hue）的变换。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;想象一下这样一个取色器：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/darkmode/hue.png&quot; alt=&quot;A color picker example&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;右边的彩虹色条就是调节色调的。把这个条上下相接成一个 360 度的圆环，就能够解释 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;180deg&lt;/code&gt; 这个参数的意义了。&lt;strong&gt;我不是专门研究颜色管理的（本文写的东西不排除出现事实错误的可能性）&lt;/strong&gt;，所以下面举几个例子来看看，GIMP 可以点上面 HSV 按钮让取色器显示 HSV（色调、饱和度、亮度）。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;纯红 (rgb = 255, 0, 0)，反色之后是纯蓝 (rgb = 0, 255, 255)，此时色调从 0 变成了 180。色调偏转 180 度之后又变回了原来的颜色。&lt;/li&gt;
+  &lt;li&gt;纯白 (rgb = 255, 255, 255)，反色之后是纯黑 (rgb = 0, 0, 0)。对于纯白、纯黑的场景，饱和度为 0，所以色调的色带变成了单色（纯白/纯黑），怎么调都不会改变颜色。&lt;/li&gt;
+  &lt;li&gt;目前博客里用的未访问过链接颜色 (#1abc9c; rgb = 26, 188, 156; hue = 168.1)，反色之后大致是较深的粉色 (rgb = 229, 67, 99; hue = 348.1)，偏转 180 度后颜色大致是淡蓝色、淡绿色 (rgb = 67, 229, 196.9; hue = 168.1)。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;代码块&lt;/code&gt; 背景色 (#f8f8f8; rgb = 248, 248, 248; hue = 0)，反色之后变成 (rgb = 7, 7, 7; hue = 0)。因为饱和度为 0（似乎 RGB 值相同的颜色的饱和度都是 0），所以调色调也没有变化。&lt;/li&gt;
+  &lt;li&gt;代码字符串量的粉色 (#dd1144; rgb = 221, 17, 68; hue = 345)，反色之后变成浅蓝色 (rgb = 34, 238, 187; hue = 165)，色调偏转之后变成 (rgb = 238, 34, 85; hue = 345)。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;可以发现反色总是会把色调偏转 180 度，所以之后再次偏转可能是出于让色调和原来一致的考虑（但是偏转不会导致颜色恢复成和原来一样）。与此同时，偏白/黑的颜色在反色后调转色调不会导致它们恢复成接近原来的颜色，所以就实现了「暗黑模式」的效果。&lt;/p&gt;
+
+&lt;p&gt;但是对于图片等对象来说进行额外的颜色处理是不合适的：会导致颜色出现奇怪的变化。以这只&lt;a href=&quot;https://bugzilla.xfce.org/show_bug.cgi?id=12117&quot;&gt;捕捉 Xfce 老鼠的猫猫&lt;/a&gt;为例：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/darkmode/xfce_cat.jpg&quot; alt=&quot;xfce cat&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;（在 GIMP 中）经过完全反色（反相）+ 色调翻转（色相-饱和度）之后，就变成了这样：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/darkmode/xfce_darkcat.jpg&quot; alt=&quot;darkened xfce cat&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;所以有第二条规则：对于图片、视频之类的东西（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;iframe, img, image, video, [style*=&quot;background-image&quot;]&lt;/code&gt;），把颜色掰回来。理论上上面做的都是可逆变换：再来一次反色 + 色调翻转之后就能恢复到原来的颜色了。&lt;/p&gt;
+
+&lt;p&gt;但是实际操作中，浏览器实现的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate()&lt;/code&gt; 似乎没那么靠谱：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate(360deg)&lt;/code&gt; 可以保持颜色不变，但是两个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate(180deg)&lt;/code&gt; 叠加起来得到的颜色有一些怪异&lt;a href=&quot;/attachments/hue-example.html&quot;&gt;（例子）&lt;/a&gt;，不管在 Firefox、Chrome 还是 Safari 里面都是这样。&lt;/p&gt;
+
+&lt;p&gt;所以如同 &lt;a href=&quot;https://0.30000000000000004.com/&quot;&gt;0.1 + 0.2 != 0.3&lt;/a&gt; 一样，180 + 180 != 360？搜了一下，看到了 &lt;a href=&quot;https://stackoverflow.com/questions/19187905/why-doesnt-hue-rotation-by-180deg-and-180deg-yield-the-original-color&quot;&gt;https://stackoverflow.com/questions/19187905/why-doesnt-hue-rotation-by-180deg-and-180deg-yield-the-original-color&lt;/a&gt;：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In both CSS and SVG filters, there is no conversion into HSV or HSL - the hueRotation shorthands are using a linear matrix approximation in RGB space to perform the hue rotation. This doesn’t conserve saturation or brightness very well for small rotations and highly saturated colors - as you’re seeing.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;所以，&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@media (prefers-color-scheme: dark)&lt;/code&gt; 里面加这么几条样式就能有暗黑模式支持，天下居然有这样的好事。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;天下没有这样的好事（悲&lt;/p&gt;
+
+&lt;p&gt;emmm 在能容忍 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate&lt;/code&gt; 瞎搞的情况下继续吧（先凑合着用，写完这篇之后看看还是得重新写个不用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 的暗黑模式 CSS&lt;/p&gt;
+
+&lt;h2 id=&quot;disqus&quot;&gt;Disqus&lt;/h2&gt;
+
+&lt;p&gt;最开始部署之后发现 Disqus 评论仍然在用深色字体，结果看不清，然后发现这是个 iframe。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/darkmode/disqus_error1.png&quot; alt=&quot;Disqus problem in filter dark mode&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;一开始脑抽了，想那就不要让 Disqus 的 iframe 加把颜色弄回去的 iframe 就行了，结果：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/darkmode/disqus_error2.jpg&quot; alt=&quot;Disqus wrong appearance&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;emmmm 搜了一下发现 &lt;a href=&quot;https://help.disqus.com/en/articles/1717201-disqus-appearance-customizations#overriding-the-color-scheme&quot;&gt;Disqus 会去根据文本颜色判断用浅色还是深色主题&lt;/a&gt;，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 不会更改字体颜色。我尝试过给 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#disqus_thread&lt;/code&gt; 特别添加相关的 CSS 属性，没有成功。（我后来试了试，事实上 Disqus 就是在胡说八道，就算把整个页面字体都涂白，它还是会用浅色主题）&lt;/p&gt;
+
+&lt;p&gt;最后偷懒的办法就是……嗯……给 Disqus 的背景涂白（Disqus 的 iframe 有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;allowtransparency=&quot;true&quot;&lt;/code&gt; 属性，背景是透明的），然后上面加个「Disqus 不支持暗黑模式」这样的提示。上面不太正确的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hue-rotate&lt;/code&gt; 一个副作用似乎是让「恢复」之后的元素暗一些，所以应该也不会让在黑暗中开着暗黑模式阅读的人感到瞎眼。&lt;/p&gt;
+
+&lt;p&gt;实现很简单：&lt;/p&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;p&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;comment_darkmode_warning&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;display: none;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Note: Disqus 完整评论组件不以暗黑模式显示。&lt;span class=&quot;nt&quot;&gt;&amp;lt;/p&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-css highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;@media&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prefers-color-scheme&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;iframe&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&quot;disqus.com&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;background-color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;#fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;#comment_darkmode_warning&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;block&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;!important&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;所以结论是：如果你很懒，或者不在意图片的颜色有那么一些偏移，或者 1h 的 DDL 之后就必须要上线暗黑模式的话，可以试试这种方法。&lt;/p&gt;
+
+&lt;p&gt;另外顺便把博客的字体调了一下：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;给斜体用上了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;font-synthesis: none&lt;/code&gt;，这样的话就算在 Safari 里中文也能正常不倾斜了；&lt;/li&gt;
+  &lt;li&gt;加粗了正文字体，原来的正文字体太细了；&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;blockquote&lt;/code&gt; 改了英文字体，Baskerville 不知道为什么感觉看起来很怪；&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;body&lt;/code&gt; 的主字体首先使用 Web font &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Bitter&lt;/code&gt;，和原本的 Whiteglass 主题一致。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;希望之后自己能每个月都写点儿东西。&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="css" />
+      
+        <category term="darkmode" />
+      
+
+      
+        <summary type="html">这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 Orion 浏览器的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个快速为页面配置暗黑模式的脚本（MIT License）：</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -4744,122 +4916,6 @@ Bob  | 2
 
       
         <summary type="html">今天……嗯……是情人节暨世界癫痫日。我既没有女生喜欢，又没有癫痫，所以今天还是一个平常的日子。当我看到下载堆栈里的 KDE 5 的体验光盘文件的时候，我想，要不今天不写研究性学习报告了，放松一下，来看看 KDE 最近发展的情况吧。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">Hello, 2015!</title>
-      
-      
-      <link href="https://blog.taoky.moe/2014-12-31/hello-2015.html" rel="alternate" type="text/html" title="Hello, 2015!" />
-      
-      <published>2014-12-31T00:00:00+00:00</published>
-      <updated>2014-12-31T00:00:00+00:00</updated>
-      <id>https://blog.taoky.moe/2014-12-31/hello-2015</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2014-12-31/hello-2015.html">&lt;p&gt;嗯，是的。好像时间过得很快，2014 年春节时候整理照片的事情还记得清清楚楚，这一年的尾声就到了。怎么说好呢？我不知道。
-&lt;!--more--&gt;&lt;/p&gt;
-&lt;h2 id=&quot;look-back-on-2014&quot;&gt;Look back on 2014&lt;/h2&gt;
-
-&lt;h3 id=&quot;第一台-mac和第一次体验-os-x&quot;&gt;第一台 Mac，和第一次体验 OS X&lt;/h3&gt;
-
-&lt;p&gt;把这件事情写在最前面的原因很简单——OS X 给我留下了非常深刻的印象。事实上，你所看到的这段文字，正是在一台 Mac 上写下的。&lt;/p&gt;
-
-&lt;p&gt;说实话，OS X 上的生活比在 Linux 下的条件好的多——有 QQ，不再寄托于 WebQQ；有 M$Office，不用再困扰于 LibreOffice 的兼容性问题，WPS（Beta / Alpha）的稳定性与功能不足。相比于 Windows，它的界面足够漂亮好用，而且还有一个不错的 Terminal，跟 Windows 近乎残废的 cmd.exe 比实在好太多—— cmd.exe 甚至连全屏显示都不行。&lt;/p&gt;
-
-&lt;p&gt;从小细节上来说，OS X 也足够令人忘怀。Mac 有我用过的最好用的触摸板（所以我现在电脑旁边都没有鼠标），有全系统的字典，有特别棒的 Spotlight……&lt;/p&gt;
-
-&lt;p&gt;若要问其问题，当然也有。比如说其相当诡异的「最大化」绿色按钮——在 OS X 10.9 及以下版本中，你永远都不会知道这个按钮的行为会是什么，每次按下去都充满惊喜！当然在 10.10 中改成全屏了，但用着很不习惯。另外，如果你想看几个文件合起来的大小，然后选中它们之后按下了 Command + I 的话——如果你弄了十几个文件，那就会有&lt;strong&gt;十几个&lt;/strong&gt;窗口弹出来，这个「用户体验」太爽了……&lt;/p&gt;
-
-&lt;p&gt;当然，现在我用着还是蛮舒服的。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;It just works.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Isn’t it?&lt;/p&gt;
-
-&lt;h3 id=&quot;初中的黄金时代&quot;&gt;初中的「黄金时代」&lt;/h3&gt;
-
-&lt;p&gt;现在，假使我有一台 Time Machine（当然不是 Mac 那个文件备份用的），那么我会选择回到何时？&lt;/p&gt;
-
-&lt;p&gt;去掉一些对历史的好奇成分（比如说回到清朝看其如何灭亡之类），我会选择回到初三上半学期（事实上这很大一部分已经不属于 2014 了，但是我还是忍不住想说说）。&lt;/p&gt;
-
-&lt;p&gt;首先初二上半学期肯定排除了，那是我初中度过的最可怕的时光，我差点和徐娟大打起来，小冲突几乎天天都有。下半学期和老茶坐一起的时候也不错，只是感觉比不上初三上半学期。&lt;/p&gt;
-
-&lt;p&gt;记得初三上半学期一开始，忘了是谁想出来的主意，分了四个社（名字可能不叫「社」，记不清了）。那时我想，我语文不咋样，一直被阅读和作文坑（直到现在还是那样），于是我便最后选择了「文学社」。四个社，刚好分配成四个大组。于是我便分到了那一大组。同桌是老邓（当然不能在她面前这样叫她），后面二位是老温和爽爽，右边是老茶，前面是班长（初一时候是，初二初三时候就不是了，以下都是指她）。我那时应该想不到，我和老邓、老温、爽爽会形成一个固定的四人整体，在多次调换座位的时候固定住。当然，那时我只想到前面是班长，可以每天和她交流，这一点就够我高兴了。&lt;/p&gt;
-
-&lt;p&gt;在这样一个奇特的环境之下，我们之间的相处还是挺融洽的。当然有些事情的发生还是比较奇怪的，比如我不知不觉间变成「0.5 个男的」，而老邓变成了 2 个，于是我们这个四人团体便变成了「4.5 个男的」，后面二位各占一个；还有一开始的时候，我那一大组的周围一圈人都在问我我喜欢谁……我最后跟老邓招了，她虽然保证替我保守秘密，但两个月后，爽爽就知道了，进入下半学期之后，又多两个人知道这件事；那时班长的同桌还固执地认为我喜欢另外一个女生——当然这是后话了。&lt;/p&gt;
-
-&lt;p&gt;应该是期中考试之后的月考那次吧，座位换了。班长被调远了，但我们四个人还是没变（好像没什么事情发生，但我记得特别清楚）。&lt;/p&gt;
-
-&lt;p&gt;为什么说这段时间是「黄金时代」？因为周围的环境好，在这样的环境里心情好，成绩也不错。&lt;/p&gt;
-
-&lt;p&gt;就这样简单。&lt;/p&gt;
-
-&lt;h3 id=&quot;高中四月记&quot;&gt;高中四月记&lt;/h3&gt;
-
-&lt;p&gt;高中生活如果从九月开始计数的话，到现在已经四个月了。我来到了四班，一个人都不认识。我们四个人再也没法每天聚一块儿交流了，但我们到现在仍是一个整体。&lt;/p&gt;
-
-&lt;p&gt;当然高中有很多地方都不错。例如社团、选修课（像我当然滚去信息社编程去了）、研究性学习（我和成员这次弄 STL）、还有竞赛（信息竞赛），当然学习压力也加大了，我还记得当初学匀加速、牛二、时的各种纠结，那真是痛苦的经历。&lt;/p&gt;
-
-&lt;p&gt;信息竞赛用的是 C++，我以前只写过 C，不过竞赛用的 C++ 范围连「C with classes」都达不到，只是用 C 的语法，加上一些 STL 的内容——比如 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sort()&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;swap()&lt;/code&gt; 之类罢了。社团没有共同的活动，选修课教 VB6（我其实更想用 Qt 写图形程序，但没那个能力），但到学期末连数组、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;for&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;while&lt;/code&gt; 都没学到（我对 VB 没多大兴趣，所以只是这样弄弄）。其中乐趣也是有的，比如说我们报信息的不用上音乐课啊，ASCII 里的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\a&lt;/code&gt; 和 Windows API 里的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Beep()&lt;/code&gt;，被我们用来编歌之类。&lt;/p&gt;
-
-&lt;p&gt;住宿就没那么幸福了。当舍长需要承受老师和舍员带来的压力，并不是那么好当的。先写这么多吧。&lt;/p&gt;
-
-&lt;h2 id=&quot;going-to-2015--2015-目标&quot;&gt;Going to 2015 —— 2015 目标&lt;/h2&gt;
-
-&lt;p&gt;或许像这样的「目标」从某种意义上讲是一个特别虚的东西，你定下了它，在以后的时间里却被忘却。&lt;/p&gt;
-
-&lt;p&gt;但我还是想写写。&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;找时间把我旁边那堆书慢慢读完（或许这个任务一年以内完不成）&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;继续努力学算法&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;继续能够稳定地在四班呆着&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;还有吗？以后再说吧。新年快到了。&lt;/p&gt;
-
-&lt;p&gt;新年快乐。Hello, 2015!&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="生活" />
-      
-
-      
-        <category term="2015" />
-      
-        <category term="回忆" />
-      
-
-      
-        <summary type="html">嗯，是的。好像时间过得很快，2014 年春节时候整理照片的事情还记得清清楚楚，这一年的尾声就到了。怎么说好呢？我不知道。 Look back on 2014</summary>
       
 
       
