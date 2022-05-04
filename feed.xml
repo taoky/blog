@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-05-04T07:50:56+00:00</updated>
+  <updated>2022-05-04T08:05:05+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -57,7 +57,7 @@
 
 &lt;p&gt;按照官网教程来就行，如果有网络问题的话去换源。&lt;/p&gt;
 
-&lt;p&gt;我用的编辑器是 Vscode，几个重要的配置：&lt;/p&gt;
+&lt;p&gt;我用的编辑器是 VS Code，几个重要的配置：&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;配对的括号显示颜色（&lt;strong&gt;Editor › Bracket Pair Colorization: Enabled&lt;/strong&gt; 和 &lt;strong&gt;Editor › Guides: Bracket Pairs&lt;/strong&gt; 设置成 active）&lt;/li&gt;
@@ -65,7 +65,7 @@
   &lt;li&gt;GitHub Copilot（可选，补全 Rust 代码的质量也还行）&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Jetbrains 的 CLion + Rust 插件据说使用体验很好，但是需要收费（学生可以申请免费的教育版）。&lt;/p&gt;
+&lt;p&gt;JetBrains 的 CLion + Rust 插件据说使用体验很好，但是需要收费（学生可以申请免费的教育版）。&lt;/p&gt;
 
 &lt;h1 id=&quot;简单的例子&quot;&gt;简单的例子&lt;/h1&gt;
 
@@ -250,7 +250,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 &lt;h3 id=&quot;简单的错误处理&quot;&gt;简单的错误处理&lt;/h3&gt;
 
-&lt;p&gt;对于第一个问题，在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unwrap&lt;/code&gt; 的文档（如果在用 vscode，鼠标移到上面也能看到）中有直接的说明：&lt;/p&gt;
+&lt;p&gt;对于第一个问题，在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unwrap&lt;/code&gt; 的文档（如果在用 VS Code，鼠标移到上面也能看到）中有直接的说明：&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;Because this function may panic, its use is generally discouraged. Instead, prefer to use pattern matching and handle the Err case explicitly, or call [unwrap_or], [unwrap_or_else], or [unwrap_or_default].&lt;/p&gt;
@@ -3195,7 +3195,7 @@ Time: 2706 ms
 
 &lt;p&gt;一门语言只有真正去使用它才有机会掌握，不管是自然语言还是编程语言都是如此。多写、多搜索，尝试理解，完成项目之后别忘了用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cargo clippy&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cargo fmt&lt;/code&gt; 检查代码风格。&lt;/p&gt;
 
-&lt;p&gt;另外我的草稿是在 Notion 上写的，但是它的性能真的太拉垮了：文档一变长，拼音敲完之后按空格，要将近十秒才能上屏，我下次还是直接用 vscode 写 markdown 得了。&lt;/p&gt;
+&lt;p&gt;另外我的草稿是在 Notion 上写的，但是它的性能真的太拉垮了：文档一变长，拼音敲完之后按空格，要将近十秒才能上屏，我下次还是直接用 VS Code 写 markdown 得了。&lt;/p&gt;
 
 &lt;p&gt;最后，感谢 @myl7 和 @zzh1996 对本文初稿提供的建议。以上的内容由于我个人水平限制，可能存在一定的偏差，也欢迎指出其中的错误。&lt;/p&gt;
 
