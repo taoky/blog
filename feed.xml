@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-05-04T07:47:53+00:00</updated>
+  <updated>2022-05-04T07:50:56+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -36,9 +36,7 @@
       <published>2022-05-04T07:44:00+00:00</published>
       <updated>2022-05-04T07:44:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial.html">&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
-
-&lt;p&gt;尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 &lt;a href=&quot;https://github.com/rust-lang/rustlings/&quot;&gt;rustlings&lt;/a&gt; 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。&lt;/p&gt;
+      <content type="html" xml:base="https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial.html">&lt;p&gt;尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 &lt;a href=&quot;https://github.com/rust-lang/rustlings/&quot;&gt;rustlings&lt;/a&gt; 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。&lt;/p&gt;
 
 &lt;p&gt;最后发现，（至少对于我来说）入门一门语言最好的方式是把自己实际的需求用这门语言去试一遍：在写了几个实用的脚本程序，用 Rust 去做了一门课的课程实验之后，我发现使用 Rust &lt;strong&gt;根本没有那么难&lt;/strong&gt;。&lt;/p&gt;
 
@@ -3234,7 +3232,7 @@ Time: 2706 ms
       
 
       
-        <summary type="html">前言</summary>
+        <summary type="html">尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 rustlings 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。</summary>
       
 
       
