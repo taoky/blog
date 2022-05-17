@@ -684,6 +684,7 @@
 <li class="toc-entry toc-h3"><a href="#refcell-%E4%B8%8E-thread_local">RefCell 与 thread_local!</a></li>
 <li class="toc-entry toc-h3"><a href="#%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC%E5%9D%8F">惰性求值，坏</a></li>
 <li class="toc-entry toc-h3"><a href="#%E6%9C%AA%E5%AE%9A%E4%B9%89%E8%A1%8C%E4%B8%BA">未定义行为</a></li>
+<li class="toc-entry toc-h3"><a href="#%E6%9C%80%E5%90%8E%E7%9A%84%E4%BD%9C%E4%B8%9A">最后的作业</a></li>
 </ul>
 </li>
 </ul>
@@ -2709,6 +2710,10 @@ is known as <em>metaprogramming</em></p>
 <span class="p">);</span>
 </code></pre></div></div>
 
+<p class="center"><img src="/pictures/rust/macro_intro_background.png" alt='Background of "定义价格规则" macro'></p>
+
+<p class="center"><em>似乎是这个宏的<a href="https://twitter.com/toooooobug/status/1437252082264731649">故事背景</a>（2022/5/17 added）</em></p>
+
 <p>当然，我的水平有限，这里不介绍复杂的例子。</p>
 
 <h3 id="第一个宏">第一个宏</h3>
@@ -3902,6 +3907,86 @@ Time: 2706 ms
 </ol>
 
 <p><code class="language-plaintext highlighter-rouge">UnsafeCell</code> 是内部可变性的基础结构，但是这里也没法用它，因为它取消了 <code class="language-plaintext highlighter-rouge">Sync</code> trait 的实现，但是 <code class="language-plaintext highlighter-rouge">static</code> 要求内部元素可以跨线程。</p>
+
+<h3 id="最后的作业">最后的作业</h3>
+
+<p>（2022/5/17 added）</p>
+
+<p>前面提到的方法的问题是，<code class="language-plaintext highlighter-rouge">static mut</code> 赋的右值必须是 <code class="language-plaintext highlighter-rouge">const</code>，但是你想使用的结构不一定能在编译期就初始化好：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="nn">rngs</span><span class="p">::</span><span class="n">SmallRng</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="n">SeedableRng</span><span class="p">;</span>
+
+<span class="c">// 因为 seed_from_u64 不是 const fn</span>
+<span class="c">// 所以即使「看起来」这个随机数生成器能够在编译期推断出结构的值</span>
+<span class="c">// 那也不行</span>
+<span class="k">static</span> <span class="k">mut</span> <span class="n">RNG</span><span class="p">:</span> <span class="n">SmallRng</span> <span class="o">=</span> <span class="nn">SmallRng</span><span class="p">::</span><span class="nf">seed_from_u64</span><span class="p">(</span><span class="mi">20380119</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>我不想手写随机数生成器，所以得去找点别的办法。可以观察到，一个固定长度的数组是可以的：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="k">mut</span> <span class="n">ARRAY</span><span class="p">:</span> <span class="p">[</span><span class="nb">u8</span><span class="p">;</span> <span class="mi">23</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">;</span> <span class="mi">23</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>而且我们可以在编译期获得 <code class="language-plaintext highlighter-rouge">SmallRng</code> 结构体的大小：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="n">SMALLRNG_SIZE</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="nn">size_of</span><span class="p">::</span><span class="o">&lt;</span><span class="n">SmallRng</span><span class="o">&gt;</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>所以我交上去的作业就长这样：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="n">SMALLRNG_SIZE</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="nn">size_of</span><span class="p">::</span><span class="o">&lt;</span><span class="n">SmallRng</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="k">struct</span> <span class="n">Lrng</span> <span class="p">{</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="p">[</span><span class="nb">u8</span><span class="p">;</span> <span class="n">SMALLRNG_SIZE</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">Lrng</span> <span class="p">{</span>
+    <span class="c">// 把初始化的事情放 main() 最开始做</span>
+    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c">// 拿到 rng 可变指针，硬说它是 SmallRng 的可变指针</span>
+        <span class="k">let</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">self</span><span class="py">.rng</span><span class="nf">.as_mut_ptr</span><span class="p">()</span> <span class="k">as</span> <span class="o">*</span><span class="k">mut</span> <span class="n">SmallRng</span><span class="p">;</span>
+        <span class="k">unsafe</span> <span class="p">{</span>
+            <span class="c">// std::ptr::write 和直接 *ptr = xxx 应该都行</span>
+            <span class="nn">std</span><span class="p">::</span><span class="nn">ptr</span><span class="p">::</span><span class="nf">write</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="nn">SmallRng</span><span class="p">::</span><span class="nf">from_entropy</span><span class="p">());</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">gen_range</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">high</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">rng</span> <span class="o">=</span> <span class="k">unsafe</span> <span class="p">{</span>
+            <span class="c">// std::ptr::read 做的事情事实上是……bitwise copy</span>
+            <span class="c">// 因为每次生成随机数都需要修改 rng 的内部状态，所以不能这么写，</span>
+            <span class="c">// 否则每次返回的相同范围的「随机数」都是一样的（</span>
+            <span class="c">// std::ptr::read(&amp;self.rng as *const [u8; SMALLRNG_SIZE] as *const SmallRng)</span>
+            <span class="k">let</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">self</span><span class="py">.rng</span><span class="nf">.as_mut_ptr</span><span class="p">()</span> <span class="k">as</span> <span class="o">*</span><span class="k">mut</span> <span class="n">SmallRng</span><span class="p">;</span>
+            <span class="c">// 对指针解引用之后返回 "rng" 的可变引用</span>
+            <span class="o">&amp;</span><span class="k">mut</span> <span class="o">*</span><span class="n">ptr</span>
+        <span class="p">};</span>
+        <span class="n">rng</span><span class="nf">.gen_range</span><span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="n">high</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="k">mut</span> <span class="n">RNG</span><span class="p">:</span> <span class="n">Lrng</span> <span class="o">=</span> <span class="n">Lrng</span> <span class="p">{</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">;</span> <span class="n">SMALLRNG_SIZE</span><span class="p">],</span>
+<span class="p">};</span>
+
+<span class="nd">macro_rules!</span> <span class="n">gen_range</span> <span class="p">{</span>
+    <span class="p">(</span><span class="nv">$high:expr</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="k">unsafe</span> <span class="p">{</span> <span class="n">RNG</span><span class="nf">.gen_range</span><span class="p">(</span><span class="nv">$high</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c">// 初始化</span>
+    <span class="k">unsafe</span> <span class="p">{</span>
+        <span class="n">RNG</span><span class="nf">.init</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="c">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>于是搞定。（当然了，生产环境不要写出这种代码，我只是糊个作业才这么做的）</p>
 
 <h1 id="后记">后记</h1>
 
