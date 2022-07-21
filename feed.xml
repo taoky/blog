@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-07-21T09:53:42+00:00</updated>
+  <updated>2022-07-21T18:20:41+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -24,6 +24,495 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html" rel="alternate" type="text/html" title="调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作" />
+      
+      <published>2022-07-21T18:18:00+00:00</published>
+      <updated>2022-07-21T18:18:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">&lt;p&gt;最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。&lt;/p&gt;
+
+&lt;h2 id=&quot;出了什么问题&quot;&gt;出了什么问题？&lt;/h2&gt;
+
+&lt;p&gt;说到这台笔记本，我的测试是几乎所有硬件都是正常的——除了 Intel 的核显有时候会抽风：启动时候会在 dmesg 吐 call trace，休眠和睡眠恢复的时候也会在 dmesg 吐 call trace，睡眠几次之后 logout，i915 可能会让显示屏开开关关好几分钟才进 GDM 登录页（这时候登录也进不了 gnome-shell 了，只能重启），更重要的是：HDMI 口是坏的，插线完全没反应，也没有任何报错信息，就像这个接口完全不存在一样（虽然用 Type-C 转接头还是可以用上多显示器）。&lt;/p&gt;
+
+&lt;p&gt;目前 Arch Linux 最新的内核为 5.18.12.arch1-1。启动时候的 call trace 长成这个样子：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;------------[ cut here ]------------
+i915 0000:00:02.0: drm_WARN_ON(intel_dp-&amp;gt;pps.vdd_wakeref)
+WARNING: CPU: 4 PID: 391 at drivers/gpu/drm/i915/display/intel_pps.c:592 intel_pps_vdd_on_unlocked+0x29d/0x2b0 [i915]
+Modules linked in: cdc_mbim cdc_wdm cdc_ncm cdc_ether usbnet mii snd_sof_pci_intel_tgl snd_sof_intel_hda_common soundwire_intel soundwire_generic_allocation soundwire_cadence snd_sof_intel_hda snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_hdac_hda snd_hda_ext_core snd_soc_acpi_intel_match snd_soc_acpi soundwire_bus iwlmvm snd_soc_core snd_compress ac97_bus mac80211 snd_pcm_dmaengine libarc4 snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec iwlwifi snd_hda_core snd_hwdep e1000e snd_pcm i2c_i801 intel_lpss_pci spi_intel_pci spi_intel intel_lpss iwlmei i2c_smbus snd_timer mei_me idma64 cfg80211 mei i915(+) thunderbolt processor_thermal_device_pci drm_buddy processor_thermal_device ucsi_acpi ttm processor_thermal_rfim typec_ucsi intel_vsec drm_dp_helper processor_thermal_mbox typec processor_thermal_rapl roles intel_rapl_common intel_gtt igen6_edac wmi mac_hid thinkpad_acpi ledtrig_audio platform_profile snd i2c_hid_acpi i2c_hid soundcore
+ int3403_thermal int340x_thermal_zone tpm_crb tpm_tis tpm_tis_core tpm video rng_core intel_hid sparse_keymap int3400_thermal acpi_thermal_rel acpi_tad acpi_pad xt_conntrack xt_MASQUERADE nf_conntrack_netlink nfnetlink xt_addrtype iptable_filter iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp llc rfkill dm_multipath dm_mod sg crypto_user fuse acpi_call(OE) bpf_preload ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor raid6_pq serio_raw atkbd libps2 vivaldi_fmap nvme xhci_pci crc32c_intel nvme_core xhci_pci_renesas i8042 serio
+CPU: 4 PID: 391 Comm: systemd-udevd Tainted: G           OE     5.18.12-arch1-1 #1 96418c890ae0efcbf26c551e98cb3d72a56d7da8
+Hardware name: LENOVO 21AHA014CD/21AHA014CD, BIOS N3MET04W (1.01 ) 05/04/2022
+RIP: 0010:intel_pps_vdd_on_unlocked+0x29d/0x2b0 [i915]
+Code: 4c 8b 67 50 4d 85 e4 75 03 4c 8b 27 e8 4c 8d 4f d4 48 c7 c1 50 d2 d4 c0 4c 89 e2 48 c7 c7 79 2b d6 c0 48 89 c6 e8 ef 54 8b d4 &amp;lt;0f&amp;gt; 0b e9 f3 fd ff ff e8 87 d1 90 d4 0f 1f 80 00 00 00 00 66 0f 1f
+RSP: 0018:ffffac5c00e536c0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff9bcf65b2a170 RCX: 0000000000000027
+RDX: ffff9bda6f1216a8 RSI: 0000000000000001 RDI: ffff9bda6f1216a0
+RBP: ffff9bcf59d70000 R08: 0000000000000000 R09: ffffac5c00e534d0
+R10: 0000000000000003 R11: ffff9bda9f6fffe8 R12: ffff9bcf427345a0
+R13: 0000000000000005 R14: ffff9bcf59d707d8 R15: 0000000000000000
+FS:  00007fc45def2080(0000) GS:ffff9bda6f100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c86beaa018 CR3: 000000010587c002 CR4: 0000000000f70ee0
+PKRU: 55555554
+Call Trace:
+ &amp;lt;TASK&amp;gt;
+ ? intel_display_power_get+0x52/0x60 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_dp_aux_xfer+0x127/0x7a0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? hrtimer_try_to_cancel+0x19/0x100
+ intel_dp_aux_transfer+0x202/0x320 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ drm_dp_dpcd_access+0xaa/0x130 [drm_dp_helper feb423ecaa405180d8bd6147672ce2c99671a810]
+ drm_dp_dpcd_write+0x8a/0xd0 [drm_dp_helper feb423ecaa405180d8bd6147672ce2c99671a810]
+ intel_dp_set_power+0x67/0x190 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_ddi_post_disable+0x44b/0x4a0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_encoders_post_disable+0x7b/0x90 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_old_crtc_state_disables+0x38/0xa0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_atomic_commit_tail+0x3b8/0x18f0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? flush_workqueue+0x19d/0x420
+ intel_atomic_commit+0x33d/0x390 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_modeset_init+0x19d/0x280 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ i915_driver_probe+0x4af/0xda0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? intel_modeset_probe_defer+0x4c/0x60 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? i915_pci_probe+0x43/0x160 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ local_pci_probe+0x42/0x80
+ pci_device_probe+0xc1/0x220
+ ? sysfs_do_create_link_sd+0x6a/0xd0
+ really_probe+0x19e/0x370
+ __driver_probe_device+0xfc/0x170
+ driver_probe_device+0x1f/0x90
+ __driver_attach+0xbf/0x1a0
+ ? __device_attach_driver+0xe0/0xe0
+ bus_for_each_dev+0x84/0xd0
+ bus_add_driver+0x15d/0x200
+ driver_register+0x8d/0xe0
+ i915_init+0x23/0x80 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? 0xffffffffc0e8c000
+ do_one_initcall+0x5a/0x220
+ do_init_module+0x4a/0x240
+ __do_sys_init_module+0x138/0x1b0
+ do_syscall_64+0x5c/0x90
+ ? exc_page_fault+0x74/0x170
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fc45e89899e
+Code: 48 8b 0d fd a3 0e 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 af 00 00 00 0f 05 &amp;lt;48&amp;gt; 3d 01 f0 ff ff 73 01 c3 48 8b 0d ca a3 0e 00 f7 d8 64 89 01 48
+RSP: 002b:00007fff568057d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000af
+RAX: ffffffffffffffda RBX: 000055c86bc79b80 RCX: 00007fc45e89899e
+RDX: 00007fc45e9ff343 RSI: 000000000070502e RDI: 00007fc45c2b2010
+RBP: 00007fc45e9ff343 R08: 0000000000261000 R09: 85ebca77c2b2ae63
+R10: 0000000000015f91 R11: 0000000000000246 R12: 0000000000020000
+R13: 000055c86bc757f0 R14: 000055c86bc79b80 R15: 000055c86bc95eb0
+ &amp;lt;/TASK&amp;gt;
+---[ end trace 0000000000000000 ]---
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;而睡眠/休眠之后的 call trace：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;------------[ cut here ]------------
+i915 0000:00:02.0: i915 raw-wakerefs=1 wakelocks=1 on cleanup
+WARNING: CPU: 1 PID: 2859 at drivers/gpu/drm/i915/intel_runtime_pm.c:629 intel_runtime_pm_driver_release+0x4e/0x60 [i915]
+Modules linked in: uinput ccm rfcomm cmac algif_hash algif_skcipher af_alg snd_seq_dummy snd_hrtimer snd_seq snd_seq_device bnep btusb btrtl btbcm btintel btmtk bluetooth ecdh_generic snd_ctl_led crc16 snd_soc_skl_hda_dsp snd_soc_intel_hda_dsp_common snd_soc_hdac_hdmi snd_sof_probes joydev mousedev uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev snd_soc_dmic usbhid mc hid_multitouch iTCO_wdt spi_nor intel_pmc_bxt iTCO_vendor_support mtd mei_hdcp mei_pxp pmt_telemetry pmt_class intel_rapl_msr think_lmi firmware_attributes_class wmi_bmof intel_tcc_cooling x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd rapl intel_cstate intel_uncore pcspkr psmouse snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic cdc_mbim cdc_wdm cdc_ncm cdc_ether usbnet mii snd_sof_pci_intel_tgl snd_sof_intel_hda_common soundwire_intel
+ soundwire_generic_allocation soundwire_cadence snd_sof_intel_hda snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_hdac_hda snd_hda_ext_core snd_soc_acpi_intel_match snd_soc_acpi soundwire_bus iwlmvm snd_soc_core snd_compress ac97_bus mac80211 snd_pcm_dmaengine libarc4 snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec iwlwifi snd_hda_core snd_hwdep e1000e snd_pcm i2c_i801 intel_lpss_pci spi_intel_pci spi_intel intel_lpss iwlmei i2c_smbus snd_timer mei_me idma64 cfg80211 mei i915 thunderbolt processor_thermal_device_pci drm_buddy processor_thermal_device ucsi_acpi ttm processor_thermal_rfim typec_ucsi intel_vsec drm_dp_helper processor_thermal_mbox typec processor_thermal_rapl roles intel_rapl_common intel_gtt igen6_edac wmi mac_hid thinkpad_acpi ledtrig_audio platform_profile snd i2c_hid_acpi i2c_hid soundcore int3403_thermal int340x_thermal_zone tpm_crb tpm_tis tpm_tis_core tpm video rng_core intel_hid sparse_keymap int3400_thermal acpi_thermal_rel
+ acpi_tad acpi_pad xt_conntrack xt_MASQUERADE nf_conntrack_netlink nfnetlink xt_addrtype iptable_filter iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp llc rfkill dm_multipath dm_mod sg crypto_user fuse acpi_call(OE) bpf_preload ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor raid6_pq serio_raw atkbd libps2 vivaldi_fmap nvme xhci_pci crc32c_intel nvme_core xhci_pci_renesas i8042 serio
+CPU: 1 PID: 2859 Comm: kworker/u32:19 Tainted: G        W  OE     5.18.12-arch1-1 #1 96418c890ae0efcbf26c551e98cb3d72a56d7da8
+Hardware name: LENOVO 21AHA014CD/21AHA014CD, BIOS N3MET04W (1.01 ) 05/04/2022
+Workqueue: events_unbound async_run_entry_fn
+RIP: 0010:intel_runtime_pm_driver_release+0x4e/0x60 [i915]
+Code: b7 d9 48 8b 6f 50 48 85 ed 75 03 48 8b 2f e8 b9 2a 62 d4 45 89 e0 89 d9 48 89 ea 48 89 c6 48 c7 c7 20 93 d2 c0 e8 5e f2 9d d4 &amp;lt;0f&amp;gt; 0b 5b 5d 41 5c c3 cc 66 2e 0f 1f 84 00 00 00 00 00 66 0f 1f 00
+RSP: 0018:ffffac5c01857db8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000027
+RDX: ffff9bda6f0616a8 RSI: 0000000000000001 RDI: ffff9bda6f0616a0
+RBP: ffff9bcf427345a0 R08: ffffffff96ee31c0 R09: 0000000000000000
+R10: ffffffffffffffff R11: ffff9bda9f72510a R12: 0000000000000001
+R13: ffff9bcf59d764d0 R14: 0000000000000000 R15: ffff9bcf5d1edaa8
+FS:  0000000000000000(0000) GS:ffff9bda6f040000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005581377c6396 CR3: 0000000838a10002 CR4: 0000000000f70ee0
+PKRU: 55555554
+Call Trace:
+ &amp;lt;TASK&amp;gt;
+ i915_drm_suspend_late+0xed/0x110 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? pci_pm_poweroff_late+0x40/0x40
+ dpm_run_callback+0x47/0x150
+ __device_suspend_late+0xb4/0x230
+ async_suspend_late+0x1e/0x90
+ async_run_entry_fn+0x31/0x130
+ process_one_work+0x1c4/0x380
+ worker_thread+0x51/0x380
+ ? rescuer_thread+0x3a0/0x3a0
+ kthread+0xdb/0x110
+ ? kthread_complete_and_exit+0x20/0x20
+ ret_from_fork+0x1f/0x30
+ &amp;lt;/TASK&amp;gt;
+---[ end trace 0000000000000000 ]---
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;听朋友吐槽说 i915 驱动的代码质量很糟糕，可能确实如此。去网上搜了一圈，报告相关错误的贴不在少数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gitlab.freedesktop.org/drm/intel/-/issues/5531&quot;&gt;[ADL_P] Dual eDP support is missing, PPS state tracking gets confused, backlight does not work&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gitlab.freedesktop.org/drm/intel/-/issues/6401&quot;&gt;i915 - Oops during boot with i7-1270p&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://forums.lenovo.com/t5/ThinkPad-T400-T500-and-newer-T-series-Laptops/Thinkpad-T14-Gen-3-has-no-available-HDMI-ports-under-Linux/m-p/5147202&quot;&gt;Thinkpad T14 Gen 3 has no available HDMI ports under Linux.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;我也看过了 Arch Wiki 的 &lt;a href=&quot;https://wiki.archlinux.org/title/Intel_graphics&quot;&gt;Intel Graphics&lt;/a&gt; 页面，没啥帮助。&lt;/p&gt;
+
+&lt;h2 id=&quot;编译新内核&quot;&gt;编译新内核&lt;/h2&gt;
+
+&lt;p&gt;根据 i915 wiki 的提示，先尝试看看新版内核有没有把这个 bug 修复好。参考 &lt;a href=&quot;https://01.org/linuxgraphics/documentation/build-guide-0&quot;&gt;Build Guide&lt;/a&gt; 和 Arch Wiki 的 &lt;a href=&quot;https://wiki.archlinux.org/title/Kernel/Traditional_compilation&quot;&gt;Kernel/Traditional compilation&lt;/a&gt; 编译 &lt;a href=&quot;https://cgit.freedesktop.org/drm-tip&quot;&gt;drm-tip 内核&lt;/a&gt;，并且在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/default/grub&lt;/code&gt; 里面加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;drm.debug=0x1e log_buf_len=1M&lt;/code&gt; 参数来输出更多的调试信息，结果还是不行。&lt;/p&gt;
+
+&lt;p&gt;之后看了一下 “Dual eDP support is missing” 这个 issue，发现提 issue 的人给了一个简单粗暴的 workaround：&lt;/p&gt;
+
+&lt;div class=&quot;language-patch highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gd&quot;&gt;--- a/drivers/gpu/drm/i915/display/intel_display.c
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+++ b/drivers/gpu/drm/i915/display/intel_display.c
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@@ -8835,7 +8835,7 @@&lt;/span&gt; static void intel_setup_outputs(struct drm_i915_private *dev_priv)
+                intel_ddi_init(dev_priv, PORT_TC1);
+        } else if (IS_ALDERLAKE_P(dev_priv)) {
+                intel_ddi_init(dev_priv, PORT_A);
+&lt;span class=&quot;gd&quot;&gt;-               intel_ddi_init(dev_priv, PORT_B);
+&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+               // intel_ddi_init(dev_priv, PORT_B);
+&lt;/span&gt;                intel_ddi_init(dev_priv, PORT_TC1);
+                intel_ddi_init(dev_priv, PORT_TC2);
+                intel_ddi_init(dev_priv, PORT_TC3);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;并且在打开了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;drm.debug=0x1e&lt;/code&gt; 之后，有这样的提示：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;i915 0000:00:02.0: [drm:intel_dp_aux_xfer [i915]] AUX B/DDI B/PHY B: timeout (status 0x7d4003ff)
+i915 0000:00:02.0: [drm:intel_dp_aux_xfer [i915]] AUX B/DDI B/PHY B: timeout (status 0x7d4003ff)
+...
+i915 0000:00:02.0: [drm:drm_dp_dpcd_access [drm_dp_helper]] AUX B/DDI B/PHY B: Too many retries, giving up. First error: -110
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我的电脑显然没有内置两个显示屏，所以测试了一下把这行注释掉，然后重新编译，重启，发现 i915 不再吐 call trace 了，但是 HDMI 还是不太正常。和 @rtxux 聊时候他说「盲猜 VBT 有问题」，于是我接下来就往这个方向去调试。&lt;/p&gt;
+
+&lt;h2 id=&quot;vbt&quot;&gt;VBT&lt;/h2&gt;
+
+&lt;p&gt;VBT 是 Video BIOS Table，似乎是 Intel 自己的一套东西。VBT 包含了显示硬件相关的配置信息。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;intel-gpu-tools&lt;/code&gt; 这个包里面有解析 VBT 的工具 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;intel_vbt_decode&lt;/code&gt;，我们可以来看一下 VBT 里面到底记录了什么内容：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# cat /sys/kernel/debug/dri/0/i915_vbt &amp;gt; /tmp/i915_vbt
+# intel_vbt_decode --file=/tmp/i915_vbt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以观察到 VBT 大致的结构：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;VBT header，记录 VBT 的 signature、版本、checksum 等信息；&lt;/li&gt;
+  &lt;li&gt;BDB header，BDB = BIOS Data Block。BDB 是真正记录显示信息的地方；&lt;/li&gt;
+  &lt;li&gt;接下来是多个 BDB。对于我的设备来讲，block 2 是 general definitions，包含了各个 child device 的信息，也是后面关注的地方。其他的 block 不太重要，忽略。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;BDB block 2 的大致信息如下，只列出了最后用到的信息（其实看完下面的输出之后可能就能猜到是什么原因了，但是实际上 vbt decode 输出的项非常多，所以我当时没有发现某个重要的线索）：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;BDB block 2 - General definitions block:
+	// ...
+	Child device size: 39
+	Child device count: 10
+	Child device info:
+		Device handle: 0x0008 (LFP 1 (eDP))
+		Device type: 0x1806 (unknown)
+			Internal connector
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0a (DP-A)
+		// ...
+	Child device info:
+		Device handle: 0x0080 (LFP 2 (eDP))
+		Device type: 0x1806 (unknown)
+			Internal connector
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x07 (DP-B)
+		// ...
+	Child device info:
+		Device handle: 0x0004 (EFP 1 (HDMI/DVI/DP))
+		Device type: 0x60d2 (DVI-D)
+			Power management
+			Hotplug signaling
+			HDMI output
+			Content protection
+			High speed link
+			TMDS/DVI signaling
+			Digital output
+		// ...
+		DVO Port: 0x07 (DP-B)
+        // ...
+	Child device info:
+		Device handle: 0x0040 (EFP 2 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0d (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0020 (EFP 3 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0f (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0010 (EFP 4 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x11 (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0002 (unknown)
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x13 (unknown)
+		// ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;开启调试输出后对应启动时的输出：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port A VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:1 LSPCON:0 USB-Type-C:0 TBT:0 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port A VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port B VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:1 LSPCON:0 USB-Type-C:0 TBT:0 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port B VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] More than one child device for port B in VBT, using the first.
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT DP max link rate: 810000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;VBT info&lt;/code&gt; 在内核中的输出代码如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;is_dvi&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_dvi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;is_dp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;is_crt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_crt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;is_hdmi&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_hdmi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;is_edp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_edp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;supports_typec_usb&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_typec_usb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;supports_tbt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_tbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;drm_dbg_kms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;drm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Port %c VBT info: CRT:%d DVI:%d HDMI:%d DP:%d eDP:%d LSPCON:%d USB-Type-C:%d TBT:%d DSC:%d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;port_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_crt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_dvi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_hdmi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_edp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;HAS_LSPCON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lspcon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;supports_typec_usb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;supports_tbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dsc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是可以看到，所有的 Port 对应输出 HDMI 支持都是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HDMI:0&lt;/code&gt;，表明 i915 认为它们不支持 HDMI 编码。是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;intel_bios_encoder_supports_hdmi&lt;/code&gt; 的问题吗？我一开始是这么认为的，然后去看了一下它的实现：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;bool&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;intel_bios_encoder_supports_dvi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DEVICE_TYPE_TMDS_DVI_SIGNALING&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;bool&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;intel_bios_encoder_supports_hdmi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_dvi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DEVICE_TYPE_NOT_HDMI_OUTPUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DEVICE_TYPE_TMDS_DVI_SIGNALING&lt;/code&gt; 值为 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 &amp;lt;&amp;lt; 4&lt;/code&gt;，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DEVICE_TYPE_NOT_HDMI_OUTPUT&lt;/code&gt; 值为 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1 &amp;lt;&amp;lt; 11&lt;/code&gt;。如果识别到了正确的设备，那么：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Python 3.10.5 (main, Jun  6 2022, 18:49:26) [GCC 12.1.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&amp;gt;&amp;gt;&amp;gt; 0x60d2 &amp;amp; (1 &amp;lt;&amp;lt; 4)
+16
+&amp;gt;&amp;gt;&amp;gt; 0x60d2 &amp;amp; (1 &amp;lt;&amp;lt; 11)
+0
+&amp;gt;&amp;gt;&amp;gt; 0x1806 &amp;amp; (1 &amp;lt;&amp;lt; 4)
+0
+&amp;gt;&amp;gt;&amp;gt; 0x1806 &amp;amp; (1 &amp;lt;&amp;lt; 11)
+2048
+&amp;gt;&amp;gt;&amp;gt; 0x68c6 &amp;amp; (1 &amp;lt;&amp;lt; 4)
+0
+&amp;gt;&amp;gt;&amp;gt; 0x68c6 &amp;amp; (1 &amp;lt;&amp;lt; 11)
+2048
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对于上面 VBT dump 里面三类不同的子设备，如果 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;intel_bios_encoder_supports_hdmi&lt;/code&gt; 值不为 true，那么只有可能是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x1806&lt;/code&gt;（eDP）或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x68c6&lt;/code&gt;（DP）。为了验证，我添加了一下输出：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;drm_dbg_kms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;drm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Port %c Device type: %x&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;port_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;device_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;编译安装重启后的日志验证了猜测：HDMI 设备（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0x60d2&lt;/code&gt;）没有被 i915 识别到。一开始我在想：会不会是 i915 读 VBT 的时候出了问题？但是仔细读日志看到了这一行：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;More than one child device for port B in VBT, using the first.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;所以 port B 其实有不止一个设备？重新看 decode 的输出，发现那个不存在的第二个 eDP 和 HDMI 子设备占用了同一个 DVO Port（DVO = Digital Video Out）。去看了一下对应输出的内核源代码：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parse_ddi_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;drm_i915_private&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child_device_config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dvo_port_to_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dvo_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PORT_NONE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_port_valid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;drm_dbg_kms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;drm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+			    &lt;span class=&quot;s&quot;&gt;&quot;VBT reports port %c as supported, but that can't be true: skipping&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+			    &lt;span class=&quot;n&quot;&gt;port_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;drm_dbg_kms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;drm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+		 	    &lt;span class=&quot;s&quot;&gt;&quot;More than one child device for port %c in VBT, using the first.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+		 	    &lt;span class=&quot;n&quot;&gt;port_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;sanitize_device_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_dvi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;sanitize_ddc_pin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;intel_bios_encoder_supports_dp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;sanitize_aux_ch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;整个 i915 源代码只有这个会写入 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;i915-&amp;gt;vbt.ports[port]&lt;/code&gt;，而调用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parse_ddi_port()&lt;/code&gt; 的函数只有一个地方：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parse_ddi_ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;drm_i915_private&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;intel_bios_encoder_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;has_ddi_port_info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;list_for_each_entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;display_devices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;parse_ddi_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;devdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;for_each_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;print_ddi_port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对 VBT 里面每个显示设备循环 parse。所以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parse_ddi_port()&lt;/code&gt; 做的事情就是生成 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;i915-&amp;gt;vbt.ports&lt;/code&gt;（它的类型是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;struct intel_bios_encoder_data *ports[I915_MAX_PORTS];&lt;/code&gt;）。而如果 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ports&lt;/code&gt; 数组中对应的 port 已经有值了，那么说明之前已经有相同 port 的设备 parse 过了，i915 的行为就是跳过后面相同 ports 的设备。所以，对应这台笔记本的 VBT，i915 会去尝试初始化那个不存在的 eDP，而直接不去初始化 HDMI 子设备，而对于超时而无法初始化的 eDP，i915 的状态会被搞乱掉，从而导致了开头提到的一系列 bug。&lt;/p&gt;
+
+&lt;h2 id=&quot;怎么修&quot;&gt;怎么修？&lt;/h2&gt;
+
+&lt;p&gt;对于终端用户来说，目前除了自己编译内核以外别无他法。对 VBT 很熟悉的人可能可以去自己改 BIOS 的 VBT，但是至少我不太敢这么玩。要改的代码很简单，位于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;drivers/gpu/drm/i915/display/intel_bios.c&lt;/code&gt; 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parse_ddi_port()&lt;/code&gt; 函数：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vbt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// drm_dbg_kms(&amp;amp;i915-&amp;gt;drm,&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 	    &quot;More than one child device for port %c in VBT, using the first.\n&quot;,&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 	    port_name(port));&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// return;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;drm_dbg_kms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i915&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;drm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;I know that i915 stucks with an nonexisting eDP, &quot;&lt;/span&gt; 
+            &lt;span class=&quot;s&quot;&gt;&quot;thus although we have more than one child device for port %c in VBT, &quot;&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;I would like to use the latter one and ignore the first!&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;port_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其实只要把这个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;return;&lt;/code&gt; 去掉就行（让后面 HDMI 子设备的配置覆盖掉前面那个不对的 eDP 设备的配置）。另外别去注释掉 Port B 的加载（不然 HDMI 就没了）。这个解决方法也附在了对应的 issue 里面。我在 drm-tip 内核（5.19.0-rc7）上测试，目前还没有发现问题——我没有去看 5.18 和 5.15 LTS 的代码，但是应该也是类似的改法。&lt;/p&gt;
+
+&lt;p&gt;这个改法应该不能直接推到 i915 里面，因为说不准别的电脑会依赖于「对相同 port 的子设备使用首个设备」的逻辑。&lt;/p&gt;
+
+&lt;p&gt;同样，我也不太清楚联想这个 BIOS VBT 写得是否合理，说不准这个 VBT 是从别的型号的电脑上抄过来改的，然后没删掉第二个 eDP，然后 Intel 的 Windows 驱动能够正常处理这个情况呢。全局来讲最简单的办法恐怕是让联想推个新 BIOS 更新。如果让 i915 来处理，恐怕会变得更麻烦。&lt;/p&gt;
+
+&lt;p&gt;此外，尽管 UEFI 设置里可以开启 S3 睡眠，但是我只测试了修改后在 S0ix 下的情况，因为 S0ix——&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/i915/meme-notsobad.jpg&quot; alt=&quot;不也挺好吗&quot; /&gt;&lt;/p&gt;
+
+&lt;p class=&quot;center&quot;&gt;&lt;em&gt;不也挺好吗.jpg&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;我没有量化对比过 S3 和 S0ix 的耗电情况，只是 S0ix 睡眠恢复后似乎不会让任何东西坏掉，而 S3 睡眠会让触摸板一卡一卡的（好像可以通过重新加载 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psmouse&lt;/code&gt; 来恢复），休眠（Hibernate）会让 sof 音频固件出问题（可以通过重新加载 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;snd_sof_pci_intel_tgl&lt;/code&gt; 来恢复）。&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="linux" />
+      
+        <category term="kernel" />
+      
+        <category term="debug" />
+      
+        <category term="i915" />
+      
+
+      
+        <summary type="html">最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -7744,379 +8233,6 @@ source=no usable signature
 
       
         <summary type="html">我发现似乎我在暑假里并没有在这里写过东西，或者说这里看上去已经「荒废」掉了。当然其中的主要原因是时间分配问题：当我想写点什么的时候发现没有时间，当我有时间的时候我什么都不想写了。而且我本来意图是想把这里变成一个共同记录下生活与技术的地方。结果现在我更想写生活，但又不想透露出所有的事情，总之内心的想法很复杂，但总也实现不了啦。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">Markdown 简要使用手册</title>
-      
-      
-      <link href="https://blog.taoky.moe/2015-06-20/introduction-to-markdown.html" rel="alternate" type="text/html" title="Markdown 简要使用手册" />
-      
-      <published>2015-06-20T00:00:00+00:00</published>
-      <updated>2015-06-20T00:00:00+00:00</updated>
-      <id>https://blog.taoky.moe/2015-06-20/introduction-to-markdown</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2015-06-20/introduction-to-markdown.html">&lt;p&gt;Markdown 是一种简单易用的标记语言。它被用来编写简单的多格式的文档，语法简单。纵使你不了解它的语法，你也非常容易看懂 Markdown 文档。它可以被转换为 HTML。它有助于编写结构化的文档，实现内容与结构的&lt;del&gt;有机统一&lt;/del&gt;分离。（简单的说，就是 Markdown 写的是结构，至于长什么样子是 CSS 的事）
-&lt;!--more--&gt;
-初次使用时注意一个特点：段与段之间需要空一行。不然下面的文档：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;First line
-Second line
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;会变成以下 HTML 代码：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;p&amp;gt;First line
-Second line&amp;lt;/p&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;p&amp;gt;&lt;/code&gt; 标签中有空行，然而这并没有什么用，显示结果是：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;First line
-Second line&lt;/p&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;另外，当有一些「特殊的字符」时，需要在字符前加入「\」（反斜杠），不然 Markdown 会解析成别的东西。&lt;/p&gt;
-
-&lt;h3 id=&quot;标题&quot;&gt;标题&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Heading 1
-## Heading 2
-### Heading 3
-#### Heading 4
-##### Heading 5
-###### Heading 6
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Markdown 将根据 # 的个数，分别使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; 到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; 的标签显示标题。&lt;/p&gt;
-
-&lt;h3 id=&quot;引用&quot;&gt;引用&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; 640 K ought to be enough for anybody.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;640 K ought to be enough for anybody.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;列表&quot;&gt;列表&lt;/h3&gt;
-
-&lt;h4 id=&quot;无序列表&quot;&gt;无序列表&lt;/h4&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* Review lessons
-* Update software
-* Write an article
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt; 也可以用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt;）&lt;/p&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;ul&gt;
-  &lt;li&gt;Review lessons&lt;/li&gt;
-  &lt;li&gt;Update software&lt;/li&gt;
-  &lt;li&gt;Write an article&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&quot;有序列表&quot;&gt;有序列表&lt;/h4&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Install OS X 10.10
-2. Open 'Terminal.app'
-3. Input 'ls'
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;ol&gt;
-  &lt;li&gt;Install OS X 10.10&lt;/li&gt;
-  &lt;li&gt;Open ‘Terminal.app’&lt;/li&gt;
-  &lt;li&gt;Input ‘ls’&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;不管序号前面的数字是什么，这个列表都会按正整数顺序输出。&lt;/p&gt;
-
-&lt;p&gt;注意：列表包含多个段落时需要缩进（四个空格或一个制表符），像这样：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Today is a nice day.
-
-	I hope you will think so.
-	
-2. Sorry.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;代码&quot;&gt;代码&lt;/h3&gt;
-
-&lt;h4 id=&quot;区块代码&quot;&gt;区块代码&lt;/h4&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;```
-#include &amp;lt;stdio.h&amp;gt;
-
-int main(void)
-{
-	printf(&quot;Hello, world!\n&quot;);
-	return 0;
-}
-```
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;或者每行前加入缩进。&lt;/p&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#include &amp;lt;stdio.h&amp;gt;
-
-int main(void)
-{
-	printf(&quot;Hello, world!\n&quot;);
-	return 0;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&quot;行内代码&quot;&gt;行内代码&lt;/h4&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;The first line of the code of a HTML5 web page is ``&amp;lt;!DOCTYPE html&amp;gt;``.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;The first line of the code of a HTML5 web page is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/code&gt;.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;如果代码内无 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;`&lt;/code&gt;，也可以使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;`Code Inside...`&lt;/code&gt; 单个包裹。&lt;/p&gt;
-
-&lt;h3 id=&quot;分隔符&quot;&gt;分隔符&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
-***
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;都可以。&lt;/p&gt;
-
-&lt;h3 id=&quot;文本强调&quot;&gt;文本强调&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;**Attention!**: System will close all connections in 30 minutes!
-
-*Isn't it amazing?*
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;&lt;strong&gt;Attention!&lt;/strong&gt;: System will close all connections in 30 minutes!&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Isn’t it amazing?&lt;/em&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;其它文本行内样式部分&quot;&gt;其它文本行内样式（部分）&lt;/h3&gt;
-
-&lt;p&gt;注意：部分程序可能不支持。不同程序可能支持标准不同。&lt;/p&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;~~What I said is wrong.~~
-
-&amp;lt;http://www.github.com&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;&lt;del&gt;What I said is wrong.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.github.com&quot;&gt;http://www.github.com&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&quot;图片&quot;&gt;图片&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)](/pictures/md/test.png &quot;Photo in markdown&quot;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;&lt;img src=&quot;/pictures/md/test.png&quot; alt=&quot;Test (Alt Text)&quot; title=&quot;Photo in markdown&quot; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;其中引号内可选。&lt;/p&gt;
-
-&lt;p&gt;或者是「参考式」：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;![Test (Alt Text)][2536]
-[2536]: /pictures/md/test.png &quot;Photo in markdown&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;链接&quot;&gt;链接&lt;/h3&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Fork this repo: [website](&quot;http://www.github.com&quot; &quot;GitHub&quot;)
-
-Wikipedia: [English][wiki]
-
-[wiki]: http://en.wikipedia.org &quot;Wikipedia&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;Fork this repo: &lt;a href=&quot;&amp;quot;http://www.github.com&amp;quot;&quot; title=&quot;GitHub&quot;&gt;website&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Wikipedia: &lt;a href=&quot;http://en.wikipedia.org&quot; title=&quot;Wikipedia&quot;&gt;English&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;同样，引号可选。&lt;/p&gt;
-
-&lt;h3 id=&quot;表格&quot;&gt;表格&lt;/h3&gt;
-
-&lt;p&gt;注意：部分程序可能不支持&lt;/p&gt;
-
-&lt;p&gt;使用：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Name  | Class
-------------- | -------------
-Alice  | 1
-Bob  | 2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Name&lt;/th&gt;
-      &lt;th&gt;Class&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Alice&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Bob&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;可以设置对齐：&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;| Application  | Operating System  | Latest Version |
-|:------------- |:---------------:| -------------:|
-| Microsoft Office | Windows, OS X | 2013 |
-| iTunes      | Windows, OS X | 12 |
-| Google Chrome | Windows, Linux, OS X        | 43 |
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;显示为：&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th style=&quot;text-align: left&quot;&gt;Application&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;Operating System&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;Latest Version&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Microsoft Office&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;Windows, OS X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;2013&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;iTunes&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;Windows, OS X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;12&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td style=&quot;text-align: left&quot;&gt;Google Chrome&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;Windows, Linux, OS X&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;43&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;第一列左对齐，第二列居中对齐，第三列右对齐。&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="Markdown" />
-      
-
-      
-        <category term="Markdown" />
-      
-        <category term="手册" />
-      
-
-      
-        <summary type="html">Markdown 是一种简单易用的标记语言。它被用来编写简单的多格式的文档，语法简单。纵使你不了解它的语法，你也非常容易看懂 Markdown 文档。它可以被转换为 HTML。它有助于编写结构化的文档，实现内容与结构的有机统一分离。（简单的说，就是 Markdown 写的是结构，至于长什么样子是 CSS 的事） 初次使用时注意一个特点：段与段之间需要空一行。不然下面的文档：</summary>
       
 
       

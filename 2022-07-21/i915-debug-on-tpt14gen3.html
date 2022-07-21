@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</title>
+  <meta name="description" content="最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://blog.taoky.moe/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+
+  <link href="/assets/fonts/bitter.css" rel="stylesheet">
+  
+  
+  
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-44647340-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky's blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger">
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewbox="0 0 18 15" width="18px" height="15px">
+            <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="https://www.taoky.moe/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</h1>
+    
+    <p class="post-meta"><time datetime="2022-07-21T18:18:00+00:00" itemprop="datePublished">Jul 21, 2022</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/linux/">linux</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/kernel/">kernel</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/debug/">debug</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/i915/">i915</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#%E5%87%BA%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98">出了什么问题？</a></li>
+<li class="toc-entry toc-h2"><a href="#%E7%BC%96%E8%AF%91%E6%96%B0%E5%86%85%E6%A0%B8">编译新内核</a></li>
+<li class="toc-entry toc-h2"><a href="#vbt">VBT</a></li>
+<li class="toc-entry toc-h2"><a href="#%E6%80%8E%E4%B9%88%E4%BF%AE">怎么修？</a></li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p>最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。</p>
+
+<h2 id="出了什么问题">出了什么问题？</h2>
+
+<p>说到这台笔记本，我的测试是几乎所有硬件都是正常的——除了 Intel 的核显有时候会抽风：启动时候会在 dmesg 吐 call trace，休眠和睡眠恢复的时候也会在 dmesg 吐 call trace，睡眠几次之后 logout，i915 可能会让显示屏开开关关好几分钟才进 GDM 登录页（这时候登录也进不了 gnome-shell 了，只能重启），更重要的是：HDMI 口是坏的，插线完全没反应，也没有任何报错信息，就像这个接口完全不存在一样（虽然用 Type-C 转接头还是可以用上多显示器）。</p>
+
+<p>目前 Arch Linux 最新的内核为 5.18.12.arch1-1。启动时候的 call trace 长成这个样子：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>------------[ cut here ]------------
+i915 0000:00:02.0: drm_WARN_ON(intel_dp-&gt;pps.vdd_wakeref)
+WARNING: CPU: 4 PID: 391 at drivers/gpu/drm/i915/display/intel_pps.c:592 intel_pps_vdd_on_unlocked+0x29d/0x2b0 [i915]
+Modules linked in: cdc_mbim cdc_wdm cdc_ncm cdc_ether usbnet mii snd_sof_pci_intel_tgl snd_sof_intel_hda_common soundwire_intel soundwire_generic_allocation soundwire_cadence snd_sof_intel_hda snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_hdac_hda snd_hda_ext_core snd_soc_acpi_intel_match snd_soc_acpi soundwire_bus iwlmvm snd_soc_core snd_compress ac97_bus mac80211 snd_pcm_dmaengine libarc4 snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec iwlwifi snd_hda_core snd_hwdep e1000e snd_pcm i2c_i801 intel_lpss_pci spi_intel_pci spi_intel intel_lpss iwlmei i2c_smbus snd_timer mei_me idma64 cfg80211 mei i915(+) thunderbolt processor_thermal_device_pci drm_buddy processor_thermal_device ucsi_acpi ttm processor_thermal_rfim typec_ucsi intel_vsec drm_dp_helper processor_thermal_mbox typec processor_thermal_rapl roles intel_rapl_common intel_gtt igen6_edac wmi mac_hid thinkpad_acpi ledtrig_audio platform_profile snd i2c_hid_acpi i2c_hid soundcore
+ int3403_thermal int340x_thermal_zone tpm_crb tpm_tis tpm_tis_core tpm video rng_core intel_hid sparse_keymap int3400_thermal acpi_thermal_rel acpi_tad acpi_pad xt_conntrack xt_MASQUERADE nf_conntrack_netlink nfnetlink xt_addrtype iptable_filter iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp llc rfkill dm_multipath dm_mod sg crypto_user fuse acpi_call(OE) bpf_preload ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor raid6_pq serio_raw atkbd libps2 vivaldi_fmap nvme xhci_pci crc32c_intel nvme_core xhci_pci_renesas i8042 serio
+CPU: 4 PID: 391 Comm: systemd-udevd Tainted: G           OE     5.18.12-arch1-1 #1 96418c890ae0efcbf26c551e98cb3d72a56d7da8
+Hardware name: LENOVO 21AHA014CD/21AHA014CD, BIOS N3MET04W (1.01 ) 05/04/2022
+RIP: 0010:intel_pps_vdd_on_unlocked+0x29d/0x2b0 [i915]
+Code: 4c 8b 67 50 4d 85 e4 75 03 4c 8b 27 e8 4c 8d 4f d4 48 c7 c1 50 d2 d4 c0 4c 89 e2 48 c7 c7 79 2b d6 c0 48 89 c6 e8 ef 54 8b d4 &lt;0f&gt; 0b e9 f3 fd ff ff e8 87 d1 90 d4 0f 1f 80 00 00 00 00 66 0f 1f
+RSP: 0018:ffffac5c00e536c0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff9bcf65b2a170 RCX: 0000000000000027
+RDX: ffff9bda6f1216a8 RSI: 0000000000000001 RDI: ffff9bda6f1216a0
+RBP: ffff9bcf59d70000 R08: 0000000000000000 R09: ffffac5c00e534d0
+R10: 0000000000000003 R11: ffff9bda9f6fffe8 R12: ffff9bcf427345a0
+R13: 0000000000000005 R14: ffff9bcf59d707d8 R15: 0000000000000000
+FS:  00007fc45def2080(0000) GS:ffff9bda6f100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c86beaa018 CR3: 000000010587c002 CR4: 0000000000f70ee0
+PKRU: 55555554
+Call Trace:
+ &lt;TASK&gt;
+ ? intel_display_power_get+0x52/0x60 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_dp_aux_xfer+0x127/0x7a0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? hrtimer_try_to_cancel+0x19/0x100
+ intel_dp_aux_transfer+0x202/0x320 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ drm_dp_dpcd_access+0xaa/0x130 [drm_dp_helper feb423ecaa405180d8bd6147672ce2c99671a810]
+ drm_dp_dpcd_write+0x8a/0xd0 [drm_dp_helper feb423ecaa405180d8bd6147672ce2c99671a810]
+ intel_dp_set_power+0x67/0x190 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_ddi_post_disable+0x44b/0x4a0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_encoders_post_disable+0x7b/0x90 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_old_crtc_state_disables+0x38/0xa0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_atomic_commit_tail+0x3b8/0x18f0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? flush_workqueue+0x19d/0x420
+ intel_atomic_commit+0x33d/0x390 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ intel_modeset_init+0x19d/0x280 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ i915_driver_probe+0x4af/0xda0 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? intel_modeset_probe_defer+0x4c/0x60 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? i915_pci_probe+0x43/0x160 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ local_pci_probe+0x42/0x80
+ pci_device_probe+0xc1/0x220
+ ? sysfs_do_create_link_sd+0x6a/0xd0
+ really_probe+0x19e/0x370
+ __driver_probe_device+0xfc/0x170
+ driver_probe_device+0x1f/0x90
+ __driver_attach+0xbf/0x1a0
+ ? __device_attach_driver+0xe0/0xe0
+ bus_for_each_dev+0x84/0xd0
+ bus_add_driver+0x15d/0x200
+ driver_register+0x8d/0xe0
+ i915_init+0x23/0x80 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? 0xffffffffc0e8c000
+ do_one_initcall+0x5a/0x220
+ do_init_module+0x4a/0x240
+ __do_sys_init_module+0x138/0x1b0
+ do_syscall_64+0x5c/0x90
+ ? exc_page_fault+0x74/0x170
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fc45e89899e
+Code: 48 8b 0d fd a3 0e 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 af 00 00 00 0f 05 &lt;48&gt; 3d 01 f0 ff ff 73 01 c3 48 8b 0d ca a3 0e 00 f7 d8 64 89 01 48
+RSP: 002b:00007fff568057d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000af
+RAX: ffffffffffffffda RBX: 000055c86bc79b80 RCX: 00007fc45e89899e
+RDX: 00007fc45e9ff343 RSI: 000000000070502e RDI: 00007fc45c2b2010
+RBP: 00007fc45e9ff343 R08: 0000000000261000 R09: 85ebca77c2b2ae63
+R10: 0000000000015f91 R11: 0000000000000246 R12: 0000000000020000
+R13: 000055c86bc757f0 R14: 000055c86bc79b80 R15: 000055c86bc95eb0
+ &lt;/TASK&gt;
+---[ end trace 0000000000000000 ]---
+</code></pre></div></div>
+
+<p>而睡眠/休眠之后的 call trace：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>------------[ cut here ]------------
+i915 0000:00:02.0: i915 raw-wakerefs=1 wakelocks=1 on cleanup
+WARNING: CPU: 1 PID: 2859 at drivers/gpu/drm/i915/intel_runtime_pm.c:629 intel_runtime_pm_driver_release+0x4e/0x60 [i915]
+Modules linked in: uinput ccm rfcomm cmac algif_hash algif_skcipher af_alg snd_seq_dummy snd_hrtimer snd_seq snd_seq_device bnep btusb btrtl btbcm btintel btmtk bluetooth ecdh_generic snd_ctl_led crc16 snd_soc_skl_hda_dsp snd_soc_intel_hda_dsp_common snd_soc_hdac_hdmi snd_sof_probes joydev mousedev uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev snd_soc_dmic usbhid mc hid_multitouch iTCO_wdt spi_nor intel_pmc_bxt iTCO_vendor_support mtd mei_hdcp mei_pxp pmt_telemetry pmt_class intel_rapl_msr think_lmi firmware_attributes_class wmi_bmof intel_tcc_cooling x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd rapl intel_cstate intel_uncore pcspkr psmouse snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic cdc_mbim cdc_wdm cdc_ncm cdc_ether usbnet mii snd_sof_pci_intel_tgl snd_sof_intel_hda_common soundwire_intel
+ soundwire_generic_allocation soundwire_cadence snd_sof_intel_hda snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_hdac_hda snd_hda_ext_core snd_soc_acpi_intel_match snd_soc_acpi soundwire_bus iwlmvm snd_soc_core snd_compress ac97_bus mac80211 snd_pcm_dmaengine libarc4 snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec iwlwifi snd_hda_core snd_hwdep e1000e snd_pcm i2c_i801 intel_lpss_pci spi_intel_pci spi_intel intel_lpss iwlmei i2c_smbus snd_timer mei_me idma64 cfg80211 mei i915 thunderbolt processor_thermal_device_pci drm_buddy processor_thermal_device ucsi_acpi ttm processor_thermal_rfim typec_ucsi intel_vsec drm_dp_helper processor_thermal_mbox typec processor_thermal_rapl roles intel_rapl_common intel_gtt igen6_edac wmi mac_hid thinkpad_acpi ledtrig_audio platform_profile snd i2c_hid_acpi i2c_hid soundcore int3403_thermal int340x_thermal_zone tpm_crb tpm_tis tpm_tis_core tpm video rng_core intel_hid sparse_keymap int3400_thermal acpi_thermal_rel
+ acpi_tad acpi_pad xt_conntrack xt_MASQUERADE nf_conntrack_netlink nfnetlink xt_addrtype iptable_filter iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp llc rfkill dm_multipath dm_mod sg crypto_user fuse acpi_call(OE) bpf_preload ip_tables x_tables btrfs blake2b_generic libcrc32c crc32c_generic xor raid6_pq serio_raw atkbd libps2 vivaldi_fmap nvme xhci_pci crc32c_intel nvme_core xhci_pci_renesas i8042 serio
+CPU: 1 PID: 2859 Comm: kworker/u32:19 Tainted: G        W  OE     5.18.12-arch1-1 #1 96418c890ae0efcbf26c551e98cb3d72a56d7da8
+Hardware name: LENOVO 21AHA014CD/21AHA014CD, BIOS N3MET04W (1.01 ) 05/04/2022
+Workqueue: events_unbound async_run_entry_fn
+RIP: 0010:intel_runtime_pm_driver_release+0x4e/0x60 [i915]
+Code: b7 d9 48 8b 6f 50 48 85 ed 75 03 48 8b 2f e8 b9 2a 62 d4 45 89 e0 89 d9 48 89 ea 48 89 c6 48 c7 c7 20 93 d2 c0 e8 5e f2 9d d4 &lt;0f&gt; 0b 5b 5d 41 5c c3 cc 66 2e 0f 1f 84 00 00 00 00 00 66 0f 1f 00
+RSP: 0018:ffffac5c01857db8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000027
+RDX: ffff9bda6f0616a8 RSI: 0000000000000001 RDI: ffff9bda6f0616a0
+RBP: ffff9bcf427345a0 R08: ffffffff96ee31c0 R09: 0000000000000000
+R10: ffffffffffffffff R11: ffff9bda9f72510a R12: 0000000000000001
+R13: ffff9bcf59d764d0 R14: 0000000000000000 R15: ffff9bcf5d1edaa8
+FS:  0000000000000000(0000) GS:ffff9bda6f040000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005581377c6396 CR3: 0000000838a10002 CR4: 0000000000f70ee0
+PKRU: 55555554
+Call Trace:
+ &lt;TASK&gt;
+ i915_drm_suspend_late+0xed/0x110 [i915 c225ea1470c00163fb5e68b44bc6b2ae3d333a49]
+ ? pci_pm_poweroff_late+0x40/0x40
+ dpm_run_callback+0x47/0x150
+ __device_suspend_late+0xb4/0x230
+ async_suspend_late+0x1e/0x90
+ async_run_entry_fn+0x31/0x130
+ process_one_work+0x1c4/0x380
+ worker_thread+0x51/0x380
+ ? rescuer_thread+0x3a0/0x3a0
+ kthread+0xdb/0x110
+ ? kthread_complete_and_exit+0x20/0x20
+ ret_from_fork+0x1f/0x30
+ &lt;/TASK&gt;
+---[ end trace 0000000000000000 ]---
+</code></pre></div></div>
+
+<p>听朋友吐槽说 i915 驱动的代码质量很糟糕，可能确实如此。去网上搜了一圈，报告相关错误的贴不在少数：</p>
+
+<ul>
+  <li><a href="https://gitlab.freedesktop.org/drm/intel/-/issues/5531">[ADL_P] Dual eDP support is missing, PPS state tracking gets confused, backlight does not work</a></li>
+  <li><a href="https://gitlab.freedesktop.org/drm/intel/-/issues/6401">i915 - Oops during boot with i7-1270p</a></li>
+  <li><a href="https://forums.lenovo.com/t5/ThinkPad-T400-T500-and-newer-T-series-Laptops/Thinkpad-T14-Gen-3-has-no-available-HDMI-ports-under-Linux/m-p/5147202">Thinkpad T14 Gen 3 has no available HDMI ports under Linux.</a></li>
+</ul>
+
+<p>我也看过了 Arch Wiki 的 <a href="https://wiki.archlinux.org/title/Intel_graphics">Intel Graphics</a> 页面，没啥帮助。</p>
+
+<h2 id="编译新内核">编译新内核</h2>
+
+<p>根据 i915 wiki 的提示，先尝试看看新版内核有没有把这个 bug 修复好。参考 <a href="https://01.org/linuxgraphics/documentation/build-guide-0">Build Guide</a> 和 Arch Wiki 的 <a href="https://wiki.archlinux.org/title/Kernel/Traditional_compilation">Kernel/Traditional compilation</a> 编译 <a href="https://cgit.freedesktop.org/drm-tip">drm-tip 内核</a>，并且在 <code class="language-plaintext highlighter-rouge">/etc/default/grub</code> 里面加 <code class="language-plaintext highlighter-rouge">drm.debug=0x1e log_buf_len=1M</code> 参数来输出更多的调试信息，结果还是不行。</p>
+
+<p>之后看了一下 “Dual eDP support is missing” 这个 issue，发现提 issue 的人给了一个简单粗暴的 workaround：</p>
+
+<div class="language-patch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">--- a/drivers/gpu/drm/i915/display/intel_display.c
+</span><span class="gi">+++ b/drivers/gpu/drm/i915/display/intel_display.c
+</span><span class="p">@@ -8835,7 +8835,7 @@</span> static void intel_setup_outputs(struct drm_i915_private *dev_priv)
+                intel_ddi_init(dev_priv, PORT_TC1);
+        } else if (IS_ALDERLAKE_P(dev_priv)) {
+                intel_ddi_init(dev_priv, PORT_A);
+<span class="gd">-               intel_ddi_init(dev_priv, PORT_B);
+</span><span class="gi">+               // intel_ddi_init(dev_priv, PORT_B);
+</span>                intel_ddi_init(dev_priv, PORT_TC1);
+                intel_ddi_init(dev_priv, PORT_TC2);
+                intel_ddi_init(dev_priv, PORT_TC3);
+</code></pre></div></div>
+
+<p>并且在打开了 <code class="language-plaintext highlighter-rouge">drm.debug=0x1e</code> 之后，有这样的提示：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>i915 0000:00:02.0: [drm:intel_dp_aux_xfer [i915]] AUX B/DDI B/PHY B: timeout (status 0x7d4003ff)
+i915 0000:00:02.0: [drm:intel_dp_aux_xfer [i915]] AUX B/DDI B/PHY B: timeout (status 0x7d4003ff)
+...
+i915 0000:00:02.0: [drm:drm_dp_dpcd_access [drm_dp_helper]] AUX B/DDI B/PHY B: Too many retries, giving up. First error: -110
+</code></pre></div></div>
+
+<p>我的电脑显然没有内置两个显示屏，所以测试了一下把这行注释掉，然后重新编译，重启，发现 i915 不再吐 call trace 了，但是 HDMI 还是不太正常。和 <a href="https://github.com/rtxux" class="user-mention">@rtxux</a> 聊时候他说「盲猜 VBT 有问题」，于是我接下来就往这个方向去调试。</p>
+
+<h2 id="vbt">VBT</h2>
+
+<p>VBT 是 Video BIOS Table，似乎是 Intel 自己的一套东西。VBT 包含了显示硬件相关的配置信息。<code class="language-plaintext highlighter-rouge">intel-gpu-tools</code> 这个包里面有解析 VBT 的工具 <code class="language-plaintext highlighter-rouge">intel_vbt_decode</code>，我们可以来看一下 VBT 里面到底记录了什么内容：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># cat /sys/kernel/debug/dri/0/i915_vbt &gt; /tmp/i915_vbt
+# intel_vbt_decode --file=/tmp/i915_vbt
+</code></pre></div></div>
+
+<p>可以观察到 VBT 大致的结构：</p>
+
+<ul>
+  <li>VBT header，记录 VBT 的 signature、版本、checksum 等信息；</li>
+  <li>BDB header，BDB = BIOS Data Block。BDB 是真正记录显示信息的地方；</li>
+  <li>接下来是多个 BDB。对于我的设备来讲，block 2 是 general definitions，包含了各个 child device 的信息，也是后面关注的地方。其他的 block 不太重要，忽略。</li>
+</ul>
+
+<p>BDB block 2 的大致信息如下，只列出了最后用到的信息（其实看完下面的输出之后可能就能猜到是什么原因了，但是实际上 vbt decode 输出的项非常多，所以我当时没有发现某个重要的线索）：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BDB block 2 - General definitions block:
+	// ...
+	Child device size: 39
+	Child device count: 10
+	Child device info:
+		Device handle: 0x0008 (LFP 1 (eDP))
+		Device type: 0x1806 (unknown)
+			Internal connector
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0a (DP-A)
+		// ...
+	Child device info:
+		Device handle: 0x0080 (LFP 2 (eDP))
+		Device type: 0x1806 (unknown)
+			Internal connector
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x07 (DP-B)
+		// ...
+	Child device info:
+		Device handle: 0x0004 (EFP 1 (HDMI/DVI/DP))
+		Device type: 0x60d2 (DVI-D)
+			Power management
+			Hotplug signaling
+			HDMI output
+			Content protection
+			High speed link
+			TMDS/DVI signaling
+			Digital output
+		// ...
+		DVO Port: 0x07 (DP-B)
+        // ...
+	Child device info:
+		Device handle: 0x0040 (EFP 2 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0d (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0020 (EFP 3 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x0f (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0010 (EFP 4 (HDMI/DVI/DP))
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x11 (unknown)
+        // ...
+	Child device info:
+		Device handle: 0x0002 (unknown)
+		Device type: 0x68c6 (DisplayPort)
+			Power management
+			Hotplug signaling
+			Content protection
+			High speed link
+			DisplayPort output
+			Digital output
+		// ...
+		DVO Port: 0x13 (unknown)
+		// ...
+</code></pre></div></div>
+
+<p>开启调试输出后对应启动时的输出：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port A VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:1 LSPCON:0 USB-Type-C:0 TBT:0 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port A VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port B VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:1 LSPCON:0 USB-Type-C:0 TBT:0 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port B VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] More than one child device for port B in VBT, using the first.
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port D VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port E VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port F VBT DP max link rate: 810000
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT info: CRT:0 DVI:0 HDMI:0 DP:1 eDP:0 LSPCON:0 USB-Type-C:1 TBT:1 DSC:0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT HDMI level shift: 0
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT HDMI max TMDS clock: 297000 kHz
+i915 0000:00:02.0: [drm:intel_bios_init [i915]] Port G VBT DP max link rate: 810000
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">VBT info</code> 在内核中的输出代码如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">is_dvi</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_dvi</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+<span class="n">is_dp</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_dp</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+<span class="n">is_crt</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_crt</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+<span class="n">is_hdmi</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_hdmi</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+<span class="n">is_edp</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_edp</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+
+<span class="n">supports_typec_usb</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_typec_usb</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+<span class="n">supports_tbt</span> <span class="o">=</span> <span class="n">intel_bios_encoder_supports_tbt</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+
+<span class="n">drm_dbg_kms</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">drm</span><span class="p">,</span>
+        <span class="s">"Port %c VBT info: CRT:%d DVI:%d HDMI:%d DP:%d eDP:%d LSPCON:%d USB-Type-C:%d TBT:%d DSC:%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+        <span class="n">port_name</span><span class="p">(</span><span class="n">port</span><span class="p">),</span> <span class="n">is_crt</span><span class="p">,</span> <span class="n">is_dvi</span><span class="p">,</span> <span class="n">is_hdmi</span><span class="p">,</span> <span class="n">is_dp</span><span class="p">,</span> <span class="n">is_edp</span><span class="p">,</span>
+        <span class="n">HAS_LSPCON</span><span class="p">(</span><span class="n">i915</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">child</span><span class="o">-&gt;</span><span class="n">lspcon</span><span class="p">,</span>
+        <span class="n">supports_typec_usb</span><span class="p">,</span> <span class="n">supports_tbt</span><span class="p">,</span>
+        <span class="n">devdata</span><span class="o">-&gt;</span><span class="n">dsc</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>但是可以看到，所有的 Port 对应输出 HDMI 支持都是 <code class="language-plaintext highlighter-rouge">HDMI:0</code>，表明 i915 认为它们不支持 HDMI 编码。是 <code class="language-plaintext highlighter-rouge">intel_bios_encoder_supports_hdmi</code> 的问题吗？我一开始是这么认为的，然后去看了一下它的实现：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bool</span>
+<span class="nf">intel_bios_encoder_supports_dvi</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">intel_bios_encoder_data</span> <span class="o">*</span><span class="n">devdata</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">return</span> <span class="n">devdata</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">.</span><span class="n">device_type</span> <span class="o">&amp;</span> <span class="n">DEVICE_TYPE_TMDS_DVI_SIGNALING</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">bool</span>
+<span class="nf">intel_bios_encoder_supports_hdmi</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">intel_bios_encoder_data</span> <span class="o">*</span><span class="n">devdata</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">return</span> <span class="n">intel_bios_encoder_supports_dvi</span><span class="p">(</span><span class="n">devdata</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+		<span class="p">(</span><span class="n">devdata</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">.</span><span class="n">device_type</span> <span class="o">&amp;</span> <span class="n">DEVICE_TYPE_NOT_HDMI_OUTPUT</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>其中 <code class="language-plaintext highlighter-rouge">DEVICE_TYPE_TMDS_DVI_SIGNALING</code> 值为 <code class="language-plaintext highlighter-rouge">1 &lt;&lt; 4</code>，<code class="language-plaintext highlighter-rouge">DEVICE_TYPE_NOT_HDMI_OUTPUT</code> 值为 <code class="language-plaintext highlighter-rouge">1 &lt;&lt; 11</code>。如果识别到了正确的设备，那么：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python 3.10.5 (main, Jun  6 2022, 18:49:26) [GCC 12.1.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; 0x60d2 &amp; (1 &lt;&lt; 4)
+16
+&gt;&gt;&gt; 0x60d2 &amp; (1 &lt;&lt; 11)
+0
+&gt;&gt;&gt; 0x1806 &amp; (1 &lt;&lt; 4)
+0
+&gt;&gt;&gt; 0x1806 &amp; (1 &lt;&lt; 11)
+2048
+&gt;&gt;&gt; 0x68c6 &amp; (1 &lt;&lt; 4)
+0
+&gt;&gt;&gt; 0x68c6 &amp; (1 &lt;&lt; 11)
+2048
+</code></pre></div></div>
+
+<p>对于上面 VBT dump 里面三类不同的子设备，如果 <code class="language-plaintext highlighter-rouge">intel_bios_encoder_supports_hdmi</code> 值不为 true，那么只有可能是 <code class="language-plaintext highlighter-rouge">0x1806</code>（eDP）或者 <code class="language-plaintext highlighter-rouge">0x68c6</code>（DP）。为了验证，我添加了一下输出：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">drm_dbg_kms</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">drm</span><span class="p">,</span>
+        <span class="s">"Port %c Device type: %x"</span><span class="p">,</span>
+        <span class="n">port_name</span><span class="p">(</span><span class="n">port</span><span class="p">),</span> <span class="n">devdata</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">.</span><span class="n">device_type</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>编译安装重启后的日志验证了猜测：HDMI 设备（<code class="language-plaintext highlighter-rouge">0x60d2</code>）没有被 i915 识别到。一开始我在想：会不会是 i915 读 VBT 的时候出了问题？但是仔细读日志看到了这一行：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>More than one child device for port B in VBT, using the first.
+</code></pre></div></div>
+
+<p>所以 port B 其实有不止一个设备？重新看 decode 的输出，发现那个不存在的第二个 eDP 和 HDMI 子设备占用了同一个 DVO Port（DVO = Digital Video Out）。去看了一下对应输出的内核源代码：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span> <span class="nf">parse_ddi_port</span><span class="p">(</span><span class="k">struct</span> <span class="n">intel_bios_encoder_data</span> <span class="o">*</span><span class="n">devdata</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">drm_i915_private</span> <span class="o">*</span><span class="n">i915</span> <span class="o">=</span> <span class="n">devdata</span><span class="o">-&gt;</span><span class="n">i915</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">child_device_config</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">devdata</span><span class="o">-&gt;</span><span class="n">child</span><span class="p">;</span>
+	<span class="k">enum</span> <span class="n">port</span> <span class="n">port</span><span class="p">;</span>
+
+	<span class="n">port</span> <span class="o">=</span> <span class="n">dvo_port_to_port</span><span class="p">(</span><span class="n">i915</span><span class="p">,</span> <span class="n">child</span><span class="o">-&gt;</span><span class="n">dvo_port</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">port</span> <span class="o">==</span> <span class="n">PORT_NONE</span><span class="p">)</span>
+		<span class="k">return</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_port_valid</span><span class="p">(</span><span class="n">i915</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">drm_dbg_kms</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">drm</span><span class="p">,</span>
+			    <span class="s">"VBT reports port %c as supported, but that can't be true: skipping</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+			    <span class="n">port_name</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port</span><span class="p">])</span> <span class="p">{</span>
+		<span class="n">drm_dbg_kms</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">drm</span><span class="p">,</span>
+		 	    <span class="s">"More than one child device for port %c in VBT, using the first.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+		 	    <span class="n">port_name</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">sanitize_device_type</span><span class="p">(</span><span class="n">devdata</span><span class="p">,</span> <span class="n">port</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">intel_bios_encoder_supports_dvi</span><span class="p">(</span><span class="n">devdata</span><span class="p">))</span>
+		<span class="n">sanitize_ddc_pin</span><span class="p">(</span><span class="n">devdata</span><span class="p">,</span> <span class="n">port</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">intel_bios_encoder_supports_dp</span><span class="p">(</span><span class="n">devdata</span><span class="p">))</span>
+		<span class="n">sanitize_aux_ch</span><span class="p">(</span><span class="n">devdata</span><span class="p">,</span> <span class="n">port</span><span class="p">);</span>
+
+	<span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port</span><span class="p">]</span> <span class="o">=</span> <span class="n">devdata</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>整个 i915 源代码只有这个会写入 <code class="language-plaintext highlighter-rouge">i915-&gt;vbt.ports[port]</code>，而调用 <code class="language-plaintext highlighter-rouge">parse_ddi_port()</code> 的函数只有一个地方：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span> <span class="nf">parse_ddi_ports</span><span class="p">(</span><span class="k">struct</span> <span class="n">drm_i915_private</span> <span class="o">*</span><span class="n">i915</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">intel_bios_encoder_data</span> <span class="o">*</span><span class="n">devdata</span><span class="p">;</span>
+	<span class="k">enum</span> <span class="n">port</span> <span class="n">port</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">has_ddi_port_info</span><span class="p">(</span><span class="n">i915</span><span class="p">))</span>
+		<span class="k">return</span><span class="p">;</span>
+
+	<span class="n">list_for_each_entry</span><span class="p">(</span><span class="n">devdata</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">display_devices</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+		<span class="n">parse_ddi_port</span><span class="p">(</span><span class="n">devdata</span><span class="p">);</span>
+
+	<span class="n">for_each_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port</span><span class="p">])</span>
+			<span class="n">print_ddi_port</span><span class="p">(</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port</span><span class="p">],</span> <span class="n">port</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>对 VBT 里面每个显示设备循环 parse。所以 <code class="language-plaintext highlighter-rouge">parse_ddi_port()</code> 做的事情就是生成 <code class="language-plaintext highlighter-rouge">i915-&gt;vbt.ports</code>（它的类型是 <code class="language-plaintext highlighter-rouge">struct intel_bios_encoder_data *ports[I915_MAX_PORTS];</code>）。而如果 <code class="language-plaintext highlighter-rouge">ports</code> 数组中对应的 port 已经有值了，那么说明之前已经有相同 port 的设备 parse 过了，i915 的行为就是跳过后面相同 ports 的设备。所以，对应这台笔记本的 VBT，i915 会去尝试初始化那个不存在的 eDP，而直接不去初始化 HDMI 子设备，而对于超时而无法初始化的 eDP，i915 的状态会被搞乱掉，从而导致了开头提到的一系列 bug。</p>
+
+<h2 id="怎么修">怎么修？</h2>
+
+<p>对于终端用户来说，目前除了自己编译内核以外别无他法。对 VBT 很熟悉的人可能可以去自己改 BIOS 的 VBT，但是至少我不太敢这么玩。要改的代码很简单，位于 <code class="language-plaintext highlighter-rouge">drivers/gpu/drm/i915/display/intel_bios.c</code> 的 <code class="language-plaintext highlighter-rouge">parse_ddi_port()</code> 函数：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">vbt</span><span class="p">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port</span><span class="p">])</span> <span class="p">{</span>
+    <span class="c1">// drm_dbg_kms(&amp;i915-&gt;drm,</span>
+    <span class="c1">// 	    "More than one child device for port %c in VBT, using the first.\n",</span>
+    <span class="c1">// 	    port_name(port));</span>
+    <span class="c1">// return;</span>
+    <span class="n">drm_dbg_kms</span><span class="p">(</span><span class="o">&amp;</span><span class="n">i915</span><span class="o">-&gt;</span><span class="n">drm</span><span class="p">,</span>
+            <span class="s">"I know that i915 stucks with an nonexisting eDP, "</span> 
+            <span class="s">"thus although we have more than one child device for port %c in VBT, "</span>
+            <span class="s">"I would like to use the latter one and ignore the first!</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+            <span class="n">port_name</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>其实只要把这个 <code class="language-plaintext highlighter-rouge">return;</code> 去掉就行（让后面 HDMI 子设备的配置覆盖掉前面那个不对的 eDP 设备的配置）。另外别去注释掉 Port B 的加载（不然 HDMI 就没了）。这个解决方法也附在了对应的 issue 里面。我在 drm-tip 内核（5.19.0-rc7）上测试，目前还没有发现问题——我没有去看 5.18 和 5.15 LTS 的代码，但是应该也是类似的改法。</p>
+
+<p>这个改法应该不能直接推到 i915 里面，因为说不准别的电脑会依赖于「对相同 port 的子设备使用首个设备」的逻辑。</p>
+
+<p>同样，我也不太清楚联想这个 BIOS VBT 写得是否合理，说不准这个 VBT 是从别的型号的电脑上抄过来改的，然后没删掉第二个 eDP，然后 Intel 的 Windows 驱动能够正常处理这个情况呢。全局来讲最简单的办法恐怕是让联想推个新 BIOS 更新。如果让 i915 来处理，恐怕会变得更麻烦。</p>
+
+<p>此外，尽管 UEFI 设置里可以开启 S3 睡眠，但是我只测试了修改后在 S0ix 下的情况，因为 S0ix——</p>
+
+<p><img src="/pictures/i915/meme-notsobad.jpg" alt="不也挺好吗"></p>
+
+<p class="center"><em>不也挺好吗.jpg</em></p>
+
+<p>我没有量化对比过 S3 和 S0ix 的耗电情况，只是 S0ix 睡眠恢复后似乎不会让任何东西坏掉，而 S3 睡眠会让触摸板一卡一卡的（好像可以通过重新加载 <code class="language-plaintext highlighter-rouge">psmouse</code> 来恢复），休眠（Hibernate）会让 sof 音频固件出问题（可以通过重新加载 <code class="language-plaintext highlighter-rouge">snd_sof_pci_intel_tgl</code> 来恢复）。</p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr>
+<h3>Comments</h3>
+<p id="comment_darkmode_warning" style="display: none;">Note: Disqus 完整评论组件不以暗黑模式显示。</p>
+<div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
+<script>
+// https://blog.skk.moe/post/prevent-disqus-from-slowing-your-site/
+function loadDisqus() {
+    var dsqjs = new DisqusJS({
+        shortname: 'taokyblog',
+        siteName: 'taoky\'s blog',
+        // identifier: '',
+        // url: '',
+        // title: '',
+        api: '//blog.taoky.moe/api/',
+        apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+        nocomment: '无评论.',
+        admin: 'taoky',
+        adminLabel: 'taoky'
+    });
+}
+
+// 通过检查 window 对象确认是否在浏览器中运行
+var runningOnBrowser = typeof window !== "undefined";
+// 通过检查 scroll 事件 API 和 User-Agent 来匹配爬虫
+var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+// 检查当前浏览器是否支持 IntersectionObserver API
+var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+
+// 一个小 hack，将耗时任务包裹在 setTimeout(() => { }, 1) 中，可以推迟到 Event Loop 的任务队列中、等待主调用栈清空后才执行，在绝大部分浏览器中都有效
+// 其实这个 hack 本来是用于优化骨架屏显示的。一些浏览器总是等 JavaScript 执行完了才开始页面渲染，导致骨架屏起不到降低 FCP 的优化效果，所以通过 hack 将耗时函数放到骨架屏渲染完成后再进行。
+setTimeout(function () {
+  if (!isBot && supportsIntersectionObserver) {
+    // 当前环境不是爬虫、并且浏览器兼容 IntersectionObserver API
+    var disqus_observer = new IntersectionObserver(function(entries) {
+      // 当前视窗中已出现 Disqus 评论框所在位置
+      if (entries[0].isIntersecting) {
+        // 加载 Disqus
+        loadDisqus();
+        // 停止当前的 Observer
+        disqus_observer.disconnect();
+      }
+    }, { threshold: [0] });
+    // 设置让 Observer 观察 #disqus_thread 元素
+    disqus_observer.observe(document.getElementById('disqus_thread'));
+  } else {
+    // 当前环境是爬虫、或当前浏览器其不兼容 IntersectionObserver API
+    // 直接加载 Disqus
+    loadDisqus();
+  }
+}, 1);
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
+</script>
+<noscript>Disqus comment requires JavaScript.</noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://blog.taoky.moe/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
