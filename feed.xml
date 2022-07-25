@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-07-21T18:20:41+00:00</updated>
+  <updated>2022-07-25T11:34:34+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -496,7 +496,7 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
       
 
       
-        <category term="linux" />
+        <category term="Linux" />
       
         <category term="kernel" />
       
