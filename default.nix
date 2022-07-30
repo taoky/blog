@@ -2,7 +2,7 @@
 
 with pkgs; mkShell {
 	buildInputs = [
-		ruby
+		ruby_2_7
 	];
 
 	nativeBuildInputs = [
