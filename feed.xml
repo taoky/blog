@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-10-28T16:39:16+00:00</updated>
+  <updated>2022-10-30T15:32:47+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -36,7 +36,9 @@
       <published>2022-07-21T18:18:00+00:00</published>
       <updated>2022-07-21T18:18:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">&lt;p&gt;最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。&lt;/p&gt;
+      <content type="html" xml:base="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">&lt;p&gt;Update 1 (2022/10/30): &lt;a href=&quot;https://fwupd.org/lvfs/devices/com.lenovo.ThinkPadN3MET.firmware&quot;&gt;T14 Gen3 的固件升级 N3MET08W&lt;/a&gt; 已经修复了这个问题，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fwupdmgr&lt;/code&gt; 更新即可。&lt;/p&gt;
+
+&lt;p&gt;最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。&lt;/p&gt;
 
 &lt;h2 id=&quot;出了什么问题&quot;&gt;出了什么问题？&lt;/h2&gt;
 
@@ -506,7 +508,7 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
       
 
       
-        <summary type="html">最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。</summary>
+        <summary type="html">Update 1 (2022/10/30): T14 Gen3 的固件升级 N3MET08W 已经修复了这个问题，使用 fwupdmgr 更新即可。</summary>
       
 
       

@@ -10,7 +10,7 @@
   
   
   <title>调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</title>
-  <meta name="description" content="最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。">
+  <meta name="description" content="Update 1 (2022/10/30): T14 Gen3 的固件升级 N3MET08W 已经修复了这个问题，使用 fwupdmgr 更新即可。">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -1009,7 +1009,9 @@
   
 
   <div class="post-content" itemprop="articleBody">
-    <p>最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。</p>
+    <p>Update 1 (2022/10/30): <a href="https://fwupd.org/lvfs/devices/com.lenovo.ThinkPadN3MET.firmware">T14 Gen3 的固件升级 N3MET08W</a> 已经修复了这个问题，使用 <code class="language-plaintext highlighter-rouge">fwupdmgr</code> 更新即可。</p>
+
+<p>最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。</p>
 
 <h2 id="出了什么问题">出了什么问题？</h2>
 
