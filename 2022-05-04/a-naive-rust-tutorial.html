@@ -3505,7 +3505,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[test]</span>
 <span class="k">fn</span> <span class="nf">cursor</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">cursor</span> <span class="o">=</span> <span class="n">llist</span><span class="py">.cursor_</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">cursor</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.cursor_mut</span><span class="p">();</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.current</span><span class="p">(),</span> <span class="nb">None</span><span class="p">);</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.peek_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">3</span><span class="p">));</span>
     <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span>

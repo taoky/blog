@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2022-11-27T13:01:39+00:00</updated>
+  <updated>2022-12-03T08:43:44+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -5894,7 +5894,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nd&quot;&gt;#[test]&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;llist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;init_llist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;llist&lt;/span&gt;&lt;span class=&quot;py&quot;&gt;.cursor_&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;llist&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.cursor_mut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
     &lt;span class=&quot;nd&quot;&gt;assert_eq!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.current&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
     &lt;span class=&quot;nd&quot;&gt;assert_eq!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.peek_next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Some&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;cursor&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.move_next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
