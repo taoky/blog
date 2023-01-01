@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-01-01T16:35:38+00:00</updated>
+  <updated>2023-01-01T17:08:22+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -642,7 +642,7 @@ echo {} &amp;gt; /sys/fs/cgroup/adventofcode-2022/day0/cgroup.procs
 
 &lt;p&gt;（这个列表也是允许在信号处理函数里面运行的库函数和系统调用的列表）&lt;/p&gt;
 
-&lt;p&gt;而这个异步信号安全函数列表有多少函数呢？大概对于我们的需求，可以开文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open(2)&lt;/code&gt; 看一看 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read(2)&lt;/code&gt; 写一写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write(2)&lt;/code&gt;，但是&lt;strong&gt;不能&lt;/strong&gt;做内存地址分配 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;malloc(3)&lt;/code&gt;，也不能直接退出 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exit(2)&lt;/code&gt;（要用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_exit(2)&lt;/code&gt; 替代）。&lt;/p&gt;
+&lt;p&gt;而这个异步信号安全函数列表有多少函数呢？大概对于我们的需求，可以开文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open(2)&lt;/code&gt; 看一看 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read(2)&lt;/code&gt; 写一写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write(2)&lt;/code&gt;，但是&lt;strong&gt;不能&lt;/strong&gt;做内存地址分配 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;malloc(3)&lt;/code&gt;，也不能直接退出 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exit(3)&lt;/code&gt;（要用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_exit(2)&lt;/code&gt; 替代）。&lt;/p&gt;
 
 &lt;p&gt;相信用过 Python multiprocessing 的同学肯定有被 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 的这个行为坑的。&lt;/p&gt;
 

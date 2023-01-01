@@ -1459,7 +1459,7 @@ echo {} &gt; /sys/fs/cgroup/adventofcode-2022/day0/cgroup.procs
 
 <p>（这个列表也是允许在信号处理函数里面运行的库函数和系统调用的列表）</p>
 
-<p>而这个异步信号安全函数列表有多少函数呢？大概对于我们的需求，可以开文件 <code class="language-plaintext highlighter-rouge">open(2)</code> 看一看 <code class="language-plaintext highlighter-rouge">read(2)</code> 写一写 <code class="language-plaintext highlighter-rouge">write(2)</code>，但是<strong>不能</strong>做内存地址分配 <code class="language-plaintext highlighter-rouge">malloc(3)</code>，也不能直接退出 <code class="language-plaintext highlighter-rouge">exit(2)</code>（要用 <code class="language-plaintext highlighter-rouge">_exit(2)</code> 替代）。</p>
+<p>而这个异步信号安全函数列表有多少函数呢？大概对于我们的需求，可以开文件 <code class="language-plaintext highlighter-rouge">open(2)</code> 看一看 <code class="language-plaintext highlighter-rouge">read(2)</code> 写一写 <code class="language-plaintext highlighter-rouge">write(2)</code>，但是<strong>不能</strong>做内存地址分配 <code class="language-plaintext highlighter-rouge">malloc(3)</code>，也不能直接退出 <code class="language-plaintext highlighter-rouge">exit(3)</code>（要用 <code class="language-plaintext highlighter-rouge">_exit(2)</code> 替代）。</p>
 
 <p>相信用过 Python multiprocessing 的同学肯定有被 <code class="language-plaintext highlighter-rouge">fork()</code> 的这个行为坑的。</p>
 
