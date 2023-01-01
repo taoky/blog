@@ -170,7 +170,7 @@ mark {
 
 /* 代码片断 */
 pre, code, pre tt {
-  font-family: 'JetBrains Mono', 'SF Mono', Courier, 'Courier New', monospace;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Ubuntu Mono', Consolas, 'Liberation Mono', Menlo, Courier, 'Courier New', monospace;
   font-variant-ligatures: none;
 }
 
