@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-01-01T17:44:14+00:00</updated>
+  <updated>2023-01-02T17:20:47+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -552,7 +552,7 @@ open: Permission denied
 
 &lt;h3 id=&quot;实现&quot;&gt;实现&lt;/h3&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://github.com/taoky/adventofcode/blob/2022-rs/src/resource/cgroup.rs&quot;&gt;我用 Rust 完成了功能的实现&lt;/a&gt;。在初始化时，如果当前用户是 root，就直接用 Rust 的文件操作 API 在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/sys/fs/cgroup&lt;/code&gt; 下创建需要的节点（而且不需要给程序本身创建子节点，因为 root 可以顺利把生成的进程从其他的节点移动过来），否则就询问用户是否以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; 权限执行初始化脚本：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/taoky/adventofcode/blob/2f48038b6fda211b3c894b3eff33d32e5cacf6d8/src/resource/cgroup.rs&quot;&gt;我用 Rust 完成了功能的实现&lt;/a&gt;。在初始化时，如果当前用户是 root，就直接用 Rust 的文件操作 API 在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/sys/fs/cgroup&lt;/code&gt; 下创建需要的节点（而且不需要给程序本身创建子节点，因为 root 可以顺利把生成的进程从其他的节点移动过来），否则就询问用户是否以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; 权限执行初始化脚本：&lt;/p&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;// 或许可以用 Polkit 那一套东西显示更好的权限申请对话框？&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sudo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;script&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;explanation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -729,7 +729,7 @@ ru_maxrss (since Linux 2.6.32)
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;问题的关键是，&lt;strong&gt;怎么实现 IPC 呢&lt;/strong&gt;？现在写的时候想想，应该是可以用管道来处理的（而且比下面的做法要合理很多），不过之前&lt;a href=&quot;https://github.com/taoky/adventofcode/blob/2022-rs/src/resource/getrusage.rs&quot;&gt;实际写的时候的做法&lt;/a&gt;是：&lt;/p&gt;
+&lt;p&gt;问题的关键是，&lt;strong&gt;怎么实现 IPC 呢&lt;/strong&gt;？现在写的时候想想，应该是可以用管道来处理的（而且比下面的做法要合理很多），不过之前&lt;a href=&quot;https://github.com/taoky/adventofcode/blob/2f48038b6fda211b3c894b3eff33d32e5cacf6d8/src/resource/getrusage.rs&quot;&gt;实际写的时候的做法&lt;/a&gt;是：&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;初始化的时候用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;memfd_create()&lt;/code&gt; 在内存里创建一个匿名文件；&lt;/li&gt;

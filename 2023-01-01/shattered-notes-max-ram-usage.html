@@ -1369,7 +1369,7 @@ open: Permission denied
 
 <h3 id="实现">实现</h3>
 
-<p><a href="https://github.com/taoky/adventofcode/blob/2022-rs/src/resource/cgroup.rs">我用 Rust 完成了功能的实现</a>。在初始化时，如果当前用户是 root，就直接用 Rust 的文件操作 API 在 <code class="language-plaintext highlighter-rouge">/sys/fs/cgroup</code> 下创建需要的节点（而且不需要给程序本身创建子节点，因为 root 可以顺利把生成的进程从其他的节点移动过来），否则就询问用户是否以 <code class="language-plaintext highlighter-rouge">sudo</code> 权限执行初始化脚本：</p>
+<p><a href="https://github.com/taoky/adventofcode/blob/2f48038b6fda211b3c894b3eff33d32e5cacf6d8/src/resource/cgroup.rs">我用 Rust 完成了功能的实现</a>。在初始化时，如果当前用户是 root，就直接用 Rust 的文件操作 API 在 <code class="language-plaintext highlighter-rouge">/sys/fs/cgroup</code> 下创建需要的节点（而且不需要给程序本身创建子节点，因为 root 可以顺利把生成的进程从其他的节点移动过来），否则就询问用户是否以 <code class="language-plaintext highlighter-rouge">sudo</code> 权限执行初始化脚本：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 或许可以用 Polkit 那一套东西显示更好的权限申请对话框？</span>
 <span class="k">fn</span> <span class="nf">sudo</span><span class="p">(</span><span class="n">script</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span> <span class="n">explanation</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
@@ -1546,7 +1546,7 @@ ru_maxrss (since Linux 2.6.32)
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>问题的关键是，<strong>怎么实现 IPC 呢</strong>？现在写的时候想想，应该是可以用管道来处理的（而且比下面的做法要合理很多），不过之前<a href="https://github.com/taoky/adventofcode/blob/2022-rs/src/resource/getrusage.rs">实际写的时候的做法</a>是：</p>
+<p>问题的关键是，<strong>怎么实现 IPC 呢</strong>？现在写的时候想想，应该是可以用管道来处理的（而且比下面的做法要合理很多），不过之前<a href="https://github.com/taoky/adventofcode/blob/2f48038b6fda211b3c894b3eff33d32e5cacf6d8/src/resource/getrusage.rs">实际写的时候的做法</a>是：</p>
 
 <ul>
   <li>初始化的时候用 <code class="language-plaintext highlighter-rouge">memfd_create()</code> 在内存里创建一个匿名文件；</li>
