@@ -848,6 +848,12 @@
 </ul>
 </li>
 <li class="toc-entry toc-h2"><a href="#总结">总结</a></li>
+<li class="toc-entry toc-h2"><a href="#附注使用-systemd-user-session-实现非特权用户使用-cgroups">附注：使用 systemd user session 实现非特权用户使用 cgroups</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#不可行的方案用户命名空间user-namespace">不可行的方案：用户命名空间（User namespace）</a></li>
+<li class="toc-entry toc-h3"><a href="#systemd-dbus">Systemd? DBus?</a></li>
+</ul>
+</li>
 </ul>
   </div>
   
@@ -1561,6 +1567,208 @@ ru_maxrss (since Linux 2.6.32)
 <p>这么看下来，好像还是写轮询最简单（也最「安全」？毕竟因为不用管 <code class="language-plaintext highlighter-rouge">fork()</code> 而不需要 <code class="language-plaintext highlighter-rouge">unsafe</code>）。另外写代码以及写本文的时候也读了一些 kernel 的代码，以及使用了一些 tracing kernel 的工具，这是比较意外的——首先我没有料到自己真的会去翻 elixir（以及本地 <code class="language-plaintext highlighter-rouge">rg</code>），其次现在做 tracing 也比我想象的方便太多了：获取内核函数调用信息不需要我去编译一个带超大调试符号的 kernel，也不需要再找一台电脑连着来 gdb。我不太喜欢黑盒子，所以能了解 how it works 也是很有意思的。</p>
 
 <p>另外祝各位读者 2023 新年快乐！</p>
+
+<h2 id="附注使用-systemd-user-session-实现非特权用户使用-cgroups">附注：使用 systemd user session 实现非特权用户使用 cgroups</h2>
+
+<p>(Updated at 2023/01/05)</p>
+
+<h3 id="不可行的方案用户命名空间user-namespace">不可行的方案：用户命名空间（User namespace）</h3>
+
+<p>前几天写完之后我在想，能不能用用户命名空间 + Cgroup 命名空间 + 挂载命名空间的方式来实现？因为在用户创建的命名空间里面，他自己就可以像 root 一样做一些事情，再加上 cgroup 和挂载的隔离，或许是可行的？</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;</span><span class="w"> </span><span class="nb">whoami</span>
+<span class="go">taoky
+</span><span class="gp">&gt;</span><span class="w"> </span><span class="c"># -U =&gt; User namespace, -C =&gt; Cgroup namespace, -r =&gt; map current user to root, -m =&gt; Mount namespace</span>
+<span class="gp">&gt;</span><span class="w"> </span>unshare <span class="nt">-UCrm</span>
+<span class="go">Welcome to fish, the friendly interactive shell
+Type help for instructions on how to use fish
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">whoami</span>
+<span class="go">root
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">cat</span> /proc/self/cgroup
+<span class="go">0::/
+</span><span class="gp">#</span><span class="w"> </span><span class="c"># 确实进程看到自己的 cgroup 是处在根的（在新的命名空间里面了）</span>
+<span class="gp">#</span><span class="w"> </span><span class="nb">mkdir</span> /tmp/cgrouptest
+<span class="gp">#</span><span class="w"> </span>mount <span class="nt">-t</span> cgroup2 none /tmp/cgrouptest
+<span class="gp">#</span><span class="w"> </span><span class="nb">cd</span> /tmp/cgrouptest
+<span class="gp">#</span><span class="w"> </span><span class="nb">ls</span>
+<span class="go">cgroup.controllers      cpu.stat             memory.pressure
+cgroup.events           io.pressure          memory.reclaim
+cgroup.freeze           irq.pressure         memory.stat
+cgroup.kill             memory.current       memory.swap.current
+cgroup.max.depth        memory.events        memory.swap.events
+cgroup.max.descendants  memory.events.local  memory.swap.high
+cgroup.pressure         memory.high          memory.swap.max
+cgroup.procs            memory.low           memory.zswap.current
+cgroup.stat             memory.max           memory.zswap.max
+cgroup.subtree_control  memory.min           pids.current
+cgroup.threads          memory.numa_stat     pids.events
+cgroup.type             memory.oom.group     pids.max
+cpu.pressure            memory.peak          pids.peak
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">cat </span>cgroup.procs
+<span class="go">165570
+（省略）
+278195
+</span><span class="gp">#</span><span class="w"> </span><span class="c"># 有一些外面的 PID，如果写入 subtree_control 会如何？</span>
+<span class="gp">#</span><span class="w"> </span><span class="nb">echo</span> +memory <span class="o">&gt;</span> cgroup.subtree_control
+<span class="go">write: Device or resource busy
+</span><span class="gp">#</span><span class="w"> </span><span class="c"># 可以看到，我们现在所处的并非真正的 cgroup 树根（即使看到的是 /）</span>
+<span class="gp">#</span><span class="w"> </span><span class="nb">mkdir </span>testinuserns
+<span class="gp">#</span><span class="w"> </span><span class="c"># 切换终端</span>
+<span class="gp">&gt;</span><span class="w"> </span><span class="nb">cd</span> /sys/fs/cgroup/
+<span class="gp">&gt;</span><span class="w"> </span>find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'testinuserns'</span>
+<span class="go">./user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-org.kde.konsole-165570.scope/testinuserns
+</span></code></pre></div></div>
+
+<p>所以可以发现，所谓 cgroup 命名空间的隔离，在 v2 中只是给命名空间中的进程一个子树的 “view”。它没有实际的隔离效果，内部的操作仍然受到最外面这棵 cgroup 树的约束。而我们需要 <code class="language-plaintext highlighter-rouge">memory</code>，把整个 scope 里面的进程搬到子节点或许可行，但是这样可能破坏了 systemd 维护的 cgroup 树的结构。</p>
+
+<h3 id="systemd-dbus">Systemd? DBus?</h3>
+
+<p>事实上，本文最开始的做法也<a href="https://systemd.io/CGROUP_DELEGATION/">不为 systemd 所推荐</a>：</p>
+
+<blockquote>
+  <p>Specifically: 🔥 don’t create your own cgroups below the root cgroup 🔥. That’s owned by systemd, and you will step on systemd’s toes if you ignore that, and systemd will step on yours. Get your own delegated sub-tree, you may create as many cgroups there as you like. Seriously, if you create cgroups directly in the cgroup root, then all you do is ask for trouble.</p>
+</blockquote>
+
+<p>Systemd 不喜欢有人去随便改 cgroup 树。我们可以通过创建瞬态（transient）scope 的方法来实现这一点，先用 <code class="language-plaintext highlighter-rouge">systemd-run</code> 试试：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;</span><span class="w"> </span>systemd-run <span class="nt">--scope</span> <span class="nt">--user</span> fish
+<span class="go">Running scope as unit: run-rb1b698264f37427bbe14a4945bfdebbb.scope
+Welcome to fish, the friendly interactive shell
+Type help for instructions on how to use fish
+</span><span class="gp">&gt;</span><span class="w"> </span>systemctl status <span class="nt">--user</span> run-rb1b698264f37427bbe14a4945bfdebbb.scope
+<span class="go">● run-rb1b698264f37427bbe14a4945bfdebbb.scope - /usr/bin/fish
+</span><span class="gp">     Loaded: loaded (/run/user/1000/systemd/transient/run-rb1b698264f37427bbe14a4945bfdebbb.scope;</span><span class="w"> </span>transient<span class="o">)</span>
+<span class="go">  Transient: yes
+</span><span class="gp">     Active: active (running) since Thu 2023-01-05 01:31:41 CST;</span><span class="w"> </span>7s ago
+<span class="go">      Tasks: 5 (limit: 57432)
+     Memory: 6.3M
+        CPU: 96ms
+     CGroup: /user.slice/user-1000.slice/user@1000.service/app.slice/run-rb1b698264f37427bbe14a4945bfdebbb.scope
+             ├─279164 /usr/bin/fish
+             ├─279194 systemctl status --user run-rb1b698264f37427bbe14a4945bfdebbb.scope
+             └─279195 less
+
+Jan 05 01:31:41 shimarin.taoky.moe systemd[164790]: Started /usr/bin/fish.
+</span><span class="gp">&gt;</span><span class="w"> </span><span class="nb">ls</span> /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-rb1b698264f37427bbe14a4945bfdebbb.scope
+<span class="go">cgroup.controllers      cpu.stat             memory.pressure
+cgroup.events           io.pressure          memory.reclaim
+cgroup.freeze           irq.pressure         memory.stat
+cgroup.kill             memory.current       memory.swap.current
+cgroup.max.depth        memory.events        memory.swap.events
+cgroup.max.descendants  memory.events.local  memory.swap.high
+cgroup.pressure         memory.high          memory.swap.max
+cgroup.procs            memory.low           memory.zswap.current
+cgroup.stat             memory.max           memory.zswap.max
+cgroup.subtree_control  memory.min           pids.current
+cgroup.threads          memory.numa_stat     pids.events
+cgroup.type             memory.oom.group     pids.max
+cpu.pressure            memory.peak          pids.peak
+</span><span class="gp">&gt;</span><span class="w"> </span><span class="nb">cat</span> /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-r62b28a939ee94d75a6611312c5de83db.scope/cgroup.procs
+<span class="go">279164
+279517
+</span><span class="gp">&gt;</span><span class="w"> </span><span class="nb">exit</span>  <span class="c"># 退出刚刚创建的 fish</span>
+<span class="gp">&gt;</span><span class="w"> </span>systemctl status <span class="nt">--user</span> run-rb1b698264f37427bbe14a4945bfdebbb.scope
+<span class="go">Unit run-rb1b698264f37427bbe14a4945bfdebbb.scope could not be found.
+</span><span class="gp">&gt;</span><span class="w"> </span><span class="c"># 自动销毁了</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">systemd-run</code> 在这里实际做的事情是用 DBus 和用户的 systemd 通信。因此只要我们的程序也用 DBus 去通信……就可以了？</p>
+
+<p>虽然讲很简单，但是实际写起来相当麻烦，因为：</p>
+
+<ul>
+  <li>DBus 概念很复杂（我到现在也还是迷迷糊糊的）；</li>
+  <li>Systemd 缺乏完善的 DBus API 文档（特别是对我们手头的需求）；</li>
+  <li>Systemd 的报错很让人迷惑，甚至需要挂 gdb 看源码才能知道错误原因。</li>
+</ul>
+
+<p>下面是一些小笔记。以及我最后的<a href="https://github.com/taoky/adventofcode/blob/3ad78a7145999992029c893a76a78c18330dbcbc/src/resource/cgroup.rs#L169">实现</a>。</p>
+
+<p>可供参考的 systemd 相关的文档如下：</p>
+
+<ul>
+  <li><a href="https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html">org.freedesktop.systemd1 — The D-Bus interface of systemd</a></li>
+  <li><a href="https://www.freedesktop.org/wiki/Software/systemd/dbus/">The D-Bus API of systemd/PID 1</a></li>
+  <li><a href="https://www.freedesktop.org/wiki/Software/systemd/ControlGroupInterface/">The New Control Group Interfaces</a></li>
+  <li><a href="https://github.com/systemd/systemd/blob/main/src/run/run.c">Systemd-run 的源代码</a></li>
+</ul>
+
+<p>以及 D-Feet，和 <code class="language-plaintext highlighter-rouge">dbus-monitor</code> 也会有帮助。</p>
+
+<p>作为参考，我的做法是用 Rust 的 <a href="https://dbus.pages.freedesktop.org/zbus/">zbus</a> 库。用 <code class="language-plaintext highlighter-rouge">zbus-xmlgen --session org.freedesktop.systemd1.Scope /org/freedesktop/systemd1</code> 导出了一份 Manager 的类型标注，然后模仿着写：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">connection</span> <span class="o">=</span> <span class="nn">Connection</span><span class="p">::</span><span class="nf">session</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">systemd_manager</span> <span class="o">=</span> <span class="nn">ManagerProxyBlocking</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">connection</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="nf">getpid</span><span class="p">()</span><span class="nf">.as_raw</span><span class="p">()];</span>
+<span class="k">let</span> <span class="n">job</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.start_transient_unit</span><span class="p">(</span>
+    <span class="s">"test-transient.scope"</span><span class="p">,</span>
+    <span class="s">"replace"</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="p">[</span>
+        <span class="p">(</span><span class="s">"PIDs"</span><span class="p">,</span> <span class="n">pids</span><span class="p">[</span><span class="o">..</span><span class="p">]</span><span class="nf">.into</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s">"Description"</span><span class="p">,</span> <span class="s">"Transient cgroup for benchmarking"</span><span class="nf">.into</span><span class="p">()),</span>
+    <span class="p">],</span>
+    <span class="o">&amp;</span><span class="p">[],</span>
+<span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>然后发现 systemd 给我们发回来一个极其迷惑的错误：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>System.Error.ENXIO: No such device or address
+</code></pre></div></div>
+
+<p>这是哪里出了问题呢？是这个方案完全不可行？还是哪个参数错了？从这个毫无信息量的错误信息里面完全看不出来，最后我装了 systemd 的调试符号包，然后 gdb 直接挂到了用户 session 的 systemd 上，对着源代码调试，最后发现是在<a href="https://github.com/systemd/systemd/blob/de712a85ffb7ea129536b4e14a1f5cb48f7116f7/src/core/dbus-scope.c#LL90C21-L90C51">这里</a>挂的：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">r</span> <span class="o">=</span> <span class="n">sd_bus_message_enter_container</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">,</span> <span class="s">"u"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">r</code> 返回了小于 0 的值，代表这里执行出错了。这里的符号代表了 DBus 中的不同类型，具体的表格可以参考 <a href="https://man.archlinux.org/man/sd_bus_message_append.3.en"><code class="language-plaintext highlighter-rouge">sd_bus_message_append(3)</code> 的帮助</a>，其中 <code class="language-plaintext highlighter-rouge">a</code> 是数组，而 <code class="language-plaintext highlighter-rouge">u</code> 是 32 位无符号整数。</p>
+
+<p>然而，<code class="language-plaintext highlighter-rouge">getpid()</code> 返回的类型是 32 位<strong>有符号整数</strong>。而 DBus 的信息是有类型签名的，所以修复方法是：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="nf">getpid</span><span class="p">()</span><span class="nf">.as_raw</span><span class="p">()</span> <span class="k">as</span> <span class="nb">u32</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>就好了。这里 systemd 的设计可以说是非常糟糕：没有地方给出 <code class="language-plaintext highlighter-rouge">start_transient_unit()</code> 的第三个参数里面需要有哪些字段，字段的类型需要是什么，只能自己翻 systemd 的源代码才能读到答案。</p>
+
+<p>另外，也发现 systemd 不会清理创建失败的 scope，所以要处理一下：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="mi">_</span><span class="n">err</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.reset_failed_unit</span><span class="p">(</span><span class="s">"test-transient.scope"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">start_transient_unit()</code> 成功执行时会返回一个 Job 的 path。为了避免竞争问题，肯定要等 job 执行好了才能继续操作，但是并没有直接 “wait job” 的接口。需要先注册 job 被移除的信号，然后等信号：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">removed_jobs</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.receive_job_removed</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+
+<span class="c">// ...</span>
+
+<span class="k">for</span> <span class="n">signal</span> <span class="n">in</span> <span class="n">removed_jobs</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">args</span> <span class="o">=</span> <span class="n">signal</span><span class="nf">.args</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="py">.job</span> <span class="o">==</span> <span class="n">job</span><span class="nf">.as_ref</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>不过至少 ObjectPath 还能比较是否相等。</p>
+
+<p>在知道 scope 已经创建之后，接下来就要获取 scope 的 cgroup 路径。可以先获取到 scope 在 DBus 下的 ObjectPath：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">scope_dbus_path</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.get_unit</span><span class="p">(</span><span class="s">"test-transient.scope"</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>这里也花了很长时间理解，最后我的处理方法是：再用 <code class="language-plaintext highlighter-rouge">zbus-xmlgen</code> 导出一份 <code class="language-plaintext highlighter-rouge">org.freedesktop.systemd1.Scope</code> 的类型标注（开个 D-Feet 看看，然后 <code class="language-plaintext highlighter-rouge">zbus-xmlgen --session org.freedesktop.systemd1 /org/freedesktop/systemd1/unit/已有的_某个_scope</code>）。</p>
+
+<p>之后就可以方便获取到 cgroup 路径了：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">systemd_scope</span> <span class="o">=</span> <span class="nn">ScopeProxyBlocking</span><span class="p">::</span><span class="nf">builder</span><span class="p">(</span><span class="o">&amp;</span><span class="n">connection</span><span class="p">)</span>
+    <span class="nf">.path</span><span class="p">(</span><span class="n">scope_dbus_path</span><span class="p">)</span><span class="o">?</span>
+    <span class="nf">.build</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">cgroup_path</span> <span class="o">=</span> <span class="n">systemd_scope</span><span class="nf">.control_group</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>可能可以直接用 <code class="language-plaintext highlighter-rouge">zbus::fdo</code> 来读取对应的值，但是我发现读到了之后取出 <code class="language-plaintext highlighter-rouge">String</code> 很难，估计是因为没有类型信息的原因。之后的事情就简单很多了。</p>
+
+<p>从 systemd 拿到的 scope 默认有 memory 和 pid，对于我的需求来讲够用了。</p>
 
 <hr />
 

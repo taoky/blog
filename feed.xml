@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-01-02T17:20:47+00:00</updated>
+  <updated>2023-01-04T18:02:47+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -744,6 +744,208 @@ ru_maxrss (since Linux 2.6.32)
 &lt;p&gt;这么看下来，好像还是写轮询最简单（也最「安全」？毕竟因为不用管 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fork()&lt;/code&gt; 而不需要 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unsafe&lt;/code&gt;）。另外写代码以及写本文的时候也读了一些 kernel 的代码，以及使用了一些 tracing kernel 的工具，这是比较意外的——首先我没有料到自己真的会去翻 elixir（以及本地 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rg&lt;/code&gt;），其次现在做 tracing 也比我想象的方便太多了：获取内核函数调用信息不需要我去编译一个带超大调试符号的 kernel，也不需要再找一台电脑连着来 gdb。我不太喜欢黑盒子，所以能了解 how it works 也是很有意思的。&lt;/p&gt;
 
 &lt;p&gt;另外祝各位读者 2023 新年快乐！&lt;/p&gt;
+
+&lt;h2 id=&quot;附注使用-systemd-user-session-实现非特权用户使用-cgroups&quot;&gt;附注：使用 systemd user session 实现非特权用户使用 cgroups&lt;/h2&gt;
+
+&lt;p&gt;(Updated at 2023/01/05)&lt;/p&gt;
+
+&lt;h3 id=&quot;不可行的方案用户命名空间user-namespace&quot;&gt;不可行的方案：用户命名空间（User namespace）&lt;/h3&gt;
+
+&lt;p&gt;前几天写完之后我在想，能不能用用户命名空间 + Cgroup 命名空间 + 挂载命名空间的方式来实现？因为在用户创建的命名空间里面，他自己就可以像 root 一样做一些事情，再加上 cgroup 和挂载的隔离，或许是可行的？&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;whoami&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;taoky
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# -U =&amp;gt; User namespace, -C =&amp;gt; Cgroup namespace, -r =&amp;gt; map current user to root, -m =&amp;gt; Mount namespace&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;unshare &lt;span class=&quot;nt&quot;&gt;-UCrm&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;Welcome to fish, the friendly interactive shell
+Type help for instructions on how to use fish
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;whoami&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;root
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/self/cgroup
+&lt;span class=&quot;go&quot;&gt;0::/
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# 确实进程看到自己的 cgroup 是处在根的（在新的命名空间里面了）&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; /tmp/cgrouptest
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;mount &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; cgroup2 none /tmp/cgrouptest
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp/cgrouptest
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;cgroup.controllers      cpu.stat             memory.pressure
+cgroup.events           io.pressure          memory.reclaim
+cgroup.freeze           irq.pressure         memory.stat
+cgroup.kill             memory.current       memory.swap.current
+cgroup.max.depth        memory.events        memory.swap.events
+cgroup.max.descendants  memory.events.local  memory.swap.high
+cgroup.pressure         memory.high          memory.swap.max
+cgroup.procs            memory.low           memory.zswap.current
+cgroup.stat             memory.max           memory.zswap.max
+cgroup.subtree_control  memory.min           pids.current
+cgroup.threads          memory.numa_stat     pids.events
+cgroup.type             memory.oom.group     pids.max
+cpu.pressure            memory.peak          pids.peak
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;cgroup.procs
+&lt;span class=&quot;go&quot;&gt;165570
+（省略）
+278195
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# 有一些外面的 PID，如果写入 subtree_control 会如何？&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; +memory &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; cgroup.subtree_control
+&lt;span class=&quot;go&quot;&gt;write: Device or resource busy
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# 可以看到，我们现在所处的并非真正的 cgroup 树根（即使看到的是 /）&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;testinuserns
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# 切换终端&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /sys/fs/cgroup/
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;find &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'testinuserns'&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;./user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-org.kde.konsole-165570.scope/testinuserns
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;所以可以发现，所谓 cgroup 命名空间的隔离，在 v2 中只是给命名空间中的进程一个子树的 “view”。它没有实际的隔离效果，内部的操作仍然受到最外面这棵 cgroup 树的约束。而我们需要 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;memory&lt;/code&gt;，把整个 scope 里面的进程搬到子节点或许可行，但是这样可能破坏了 systemd 维护的 cgroup 树的结构。&lt;/p&gt;
+
+&lt;h3 id=&quot;systemd-dbus&quot;&gt;Systemd? DBus?&lt;/h3&gt;
+
+&lt;p&gt;事实上，本文最开始的做法也&lt;a href=&quot;https://systemd.io/CGROUP_DELEGATION/&quot;&gt;不为 systemd 所推荐&lt;/a&gt;：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Specifically: 🔥 don’t create your own cgroups below the root cgroup 🔥. That’s owned by systemd, and you will step on systemd’s toes if you ignore that, and systemd will step on yours. Get your own delegated sub-tree, you may create as many cgroups there as you like. Seriously, if you create cgroups directly in the cgroup root, then all you do is ask for trouble.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Systemd 不喜欢有人去随便改 cgroup 树。我们可以通过创建瞬态（transient）scope 的方法来实现这一点，先用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemd-run&lt;/code&gt; 试试：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;systemd-run &lt;span class=&quot;nt&quot;&gt;--scope&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; fish
+&lt;span class=&quot;go&quot;&gt;Running scope as unit: run-rb1b698264f37427bbe14a4945bfdebbb.scope
+Welcome to fish, the friendly interactive shell
+Type help for instructions on how to use fish
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;systemctl status &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; run-rb1b698264f37427bbe14a4945bfdebbb.scope
+&lt;span class=&quot;go&quot;&gt;● run-rb1b698264f37427bbe14a4945bfdebbb.scope - /usr/bin/fish
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;     Loaded: loaded (/run/user/1000/systemd/transient/run-rb1b698264f37427bbe14a4945bfdebbb.scope;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;transient&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;  Transient: yes
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;     Active: active (running) since Thu 2023-01-05 01:31:41 CST;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;7s ago
+&lt;span class=&quot;go&quot;&gt;      Tasks: 5 (limit: 57432)
+     Memory: 6.3M
+        CPU: 96ms
+     CGroup: /user.slice/user-1000.slice/user@1000.service/app.slice/run-rb1b698264f37427bbe14a4945bfdebbb.scope
+             ├─279164 /usr/bin/fish
+             ├─279194 systemctl status --user run-rb1b698264f37427bbe14a4945bfdebbb.scope
+             └─279195 less
+
+Jan 05 01:31:41 shimarin.taoky.moe systemd[164790]: Started /usr/bin/fish.
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-rb1b698264f37427bbe14a4945bfdebbb.scope
+&lt;span class=&quot;go&quot;&gt;cgroup.controllers      cpu.stat             memory.pressure
+cgroup.events           io.pressure          memory.reclaim
+cgroup.freeze           irq.pressure         memory.stat
+cgroup.kill             memory.current       memory.swap.current
+cgroup.max.depth        memory.events        memory.swap.events
+cgroup.max.descendants  memory.events.local  memory.swap.high
+cgroup.pressure         memory.high          memory.swap.max
+cgroup.procs            memory.low           memory.zswap.current
+cgroup.stat             memory.max           memory.zswap.max
+cgroup.subtree_control  memory.min           pids.current
+cgroup.threads          memory.numa_stat     pids.events
+cgroup.type             memory.oom.group     pids.max
+cpu.pressure            memory.peak          pids.peak
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/run-r62b28a939ee94d75a6611312c5de83db.scope/cgroup.procs
+&lt;span class=&quot;go&quot;&gt;279164
+279517
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# 退出刚刚创建的 fish&lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;systemctl status &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; run-rb1b698264f37427bbe14a4945bfdebbb.scope
+&lt;span class=&quot;go&quot;&gt;Unit run-rb1b698264f37427bbe14a4945bfdebbb.scope could not be found.
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c&quot;&gt;# 自动销毁了&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;systemd-run&lt;/code&gt; 在这里实际做的事情是用 DBus 和用户的 systemd 通信。因此只要我们的程序也用 DBus 去通信……就可以了？&lt;/p&gt;
+
+&lt;p&gt;虽然讲很简单，但是实际写起来相当麻烦，因为：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;DBus 概念很复杂（我到现在也还是迷迷糊糊的）；&lt;/li&gt;
+  &lt;li&gt;Systemd 缺乏完善的 DBus API 文档（特别是对我们手头的需求）；&lt;/li&gt;
+  &lt;li&gt;Systemd 的报错很让人迷惑，甚至需要挂 gdb 看源码才能知道错误原因。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;下面是一些小笔记。以及我最后的&lt;a href=&quot;https://github.com/taoky/adventofcode/blob/3ad78a7145999992029c893a76a78c18330dbcbc/src/resource/cgroup.rs#L169&quot;&gt;实现&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;可供参考的 systemd 相关的文档如下：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html&quot;&gt;org.freedesktop.systemd1 — The D-Bus interface of systemd&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.freedesktop.org/wiki/Software/systemd/dbus/&quot;&gt;The D-Bus API of systemd/PID 1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.freedesktop.org/wiki/Software/systemd/ControlGroupInterface/&quot;&gt;The New Control Group Interfaces&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/systemd/systemd/blob/main/src/run/run.c&quot;&gt;Systemd-run 的源代码&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以及 D-Feet，和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dbus-monitor&lt;/code&gt; 也会有帮助。&lt;/p&gt;
+
+&lt;p&gt;作为参考，我的做法是用 Rust 的 &lt;a href=&quot;https://dbus.pages.freedesktop.org/zbus/&quot;&gt;zbus&lt;/a&gt; 库。用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zbus-xmlgen --session org.freedesktop.systemd1.Scope /org/freedesktop/systemd1&lt;/code&gt; 导出了一份 Manager 的类型标注，然后模仿着写：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_manager&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;ManagerProxyBlocking&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getpid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.as_raw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()];&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;job&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_manager&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.start_transient_unit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;test-transient.scope&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;replace&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;PIDs&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.into&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Description&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Transient cgroup for benchmarking&quot;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.into&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后发现 systemd 给我们发回来一个极其迷惑的错误：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;System.Error.ENXIO: No such device or address
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这是哪里出了问题呢？是这个方案完全不可行？还是哪个参数错了？从这个毫无信息量的错误信息里面完全看不出来，最后我装了 systemd 的调试符号包，然后 gdb 直接挂到了用户 session 的 systemd 上，对着源代码调试，最后发现是在&lt;a href=&quot;https://github.com/systemd/systemd/blob/de712a85ffb7ea129536b4e14a1f5cb48f7116f7/src/core/dbus-scope.c#LL90C21-L90C51&quot;&gt;这里&lt;/a&gt;挂的：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sd_bus_message_enter_container&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'a'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;u&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r&lt;/code&gt; 返回了小于 0 的值，代表这里执行出错了。这里的符号代表了 DBus 中的不同类型，具体的表格可以参考 &lt;a href=&quot;https://man.archlinux.org/man/sd_bus_message_append.3.en&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sd_bus_message_append(3)&lt;/code&gt; 的帮助&lt;/a&gt;，其中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a&lt;/code&gt; 是数组，而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;u&lt;/code&gt; 是 32 位无符号整数。&lt;/p&gt;
+
+&lt;p&gt;然而，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getpid()&lt;/code&gt; 返回的类型是 32 位&lt;strong&gt;有符号整数&lt;/strong&gt;。而 DBus 的信息是有类型签名的，所以修复方法是：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pids&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getpid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.as_raw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;u32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就好了。这里 systemd 的设计可以说是非常糟糕：没有地方给出 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;start_transient_unit()&lt;/code&gt; 的第三个参数里面需要有哪些字段，字段的类型需要是什么，只能自己翻 systemd 的源代码才能读到答案。&lt;/p&gt;
+
+&lt;p&gt;另外，也发现 systemd 不会清理创建失败的 scope，所以要处理一下：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_manager&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.reset_failed_unit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;test-transient.scope&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;start_transient_unit()&lt;/code&gt; 成功执行时会返回一个 Job 的 path。为了避免竞争问题，肯定要等 job 执行好了才能继续操作，但是并没有直接 “wait job” 的接口。需要先注册 job 被移除的信号，然后等信号：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;removed_jobs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_manager&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.receive_job_removed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;// ...&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;signal&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;removed_jobs&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;py&quot;&gt;.job&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;job&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.as_ref&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;不过至少 ObjectPath 还能比较是否相等。&lt;/p&gt;
+
+&lt;p&gt;在知道 scope 已经创建之后，接下来就要获取 scope 的 cgroup 路径。可以先获取到 scope 在 DBus 下的 ObjectPath：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scope_dbus_path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_manager&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.get_unit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;test-transient.scope&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里也花了很长时间理解，最后我的处理方法是：再用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zbus-xmlgen&lt;/code&gt; 导出一份 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.freedesktop.systemd1.Scope&lt;/code&gt; 的类型标注（开个 D-Feet 看看，然后 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zbus-xmlgen --session org.freedesktop.systemd1 /org/freedesktop/systemd1/unit/已有的_某个_scope&lt;/code&gt;）。&lt;/p&gt;
+
+&lt;p&gt;之后就可以方便获取到 cgroup 路径了：&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_scope&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;ScopeProxyBlocking&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;builder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scope_dbus_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;.build&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cgroup_path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemd_scope&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.control_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可能可以直接用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zbus::fdo&lt;/code&gt; 来读取对应的值，但是我发现读到了之后取出 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;String&lt;/code&gt; 很难，估计是因为没有类型信息的原因。之后的事情就简单很多了。&lt;/p&gt;
+
+&lt;p&gt;从 systemd 拿到的 scope 默认有 memory 和 pid，对于我的需求来讲够用了。&lt;/p&gt;
 
 &lt;hr /&gt;
 
