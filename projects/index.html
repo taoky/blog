@@ -91,7 +91,9 @@
   </header>
 
   <div class="post-content">
-    <p><strong>以下仅列出个人的 side projects。</strong></p>
+    <p><strong>以下仅列出个人的 side projects（与其他人合作或在 org 中的项目不列于此）。</strong></p>
+
+<p>Last updated: 2023/02/17</p>
 
 <h2 id="喜欢的项目">喜欢的项目</h2>
 
@@ -106,6 +108,57 @@
 <a href="https://github.com/taoky/raid-telegraf">raid-telegraf</a> 解析 megacli 和 storcli 的输出，能够与 telegraf 结合处理 RAID 健康信息，用于监控。</li>
   <li>
 <a href="https://github.com/ustclug-dev/206hub">206hub</a> 静态的物品评论平台 206hub，我个人觉得是一个很好的熟悉静态网站生成器（以及检验静态网站生成器扩展性）的项目。第一版用 Jekyll，第二版用 Next.js。</li>
+  <li>
+<a href="https://github.com/taoky/rsync-speedtest">rsync-speedtest</a> 针对多 IP 出口环境的 rsync 测速程序。在写的时候发现了 <a href="https://github.com/taoky/rsync-speedtest/blob/e80567dd96aba499ff485e2ffb1e5c0c2b378470/src/main.rs#L74">rsync 处理 SIGINT 不正确导致可能有残留进程继续运行的问题</a>。</li>
+  <li>
+<a href="https://github.com/taoky/reccli">reccli</a> 与<a href="https://rec.ustc.edu.cn">科大 REC 站点</a>交互的 CLI 工具。</li>
+  <li>
+<a href="https://github.com/taoky/quiz">quiz</a> TUI 助记卡片小工具。</li>
+</ul>
+
+<h2 id="demo-类项目">Demo 类项目</h2>
+
+<ul>
+  <li>
+<a href="https://github.com/taoky/gh-auth">gh-auth</a> 绑定科大身份和 GitHub 账号，生成可用于校验的 token 的程序。</li>
+  <li>
+<a href="https://github.com/taoky/recfs">recfs</a> 从 <a href="https://github.com/myl7/recfs">myl7/recfs</a> 修改而来，补全了基本功能。但是因为网盘的逻辑和 POSIX fs 很不搭，所以我建议不要用。</li>
+  <li>
+<a href="https://github.com/taoky/goto">goto</a> 极简的 go 程序，用作 URL 的 alias 302 跳转。</li>
+  <li>
+<a href="https://github.com/taoky/showimg">showimg</a> 使用 gtk-rs 编写的，在屏幕上显示无边框图片的小程序。本来是想显示个准星在玩游戏的时候用的，但是后来测试发现没啥意义（该打不中的还是打不中）。</li>
+  <li>
+<a href="https://github.com/taoky/fake-wmic">fake-wmic</a> wine 没有 wmic cli 程序，但是某个程序就要用它怎么办？写个程序假装自己是 wmic，并且提供假的输出，这就是这个东西解决的问题。</li>
+  <li>
+<a href="https://github.com/taoky/esxi-package">esxi-package</a> 为 ESXi 6 打包 Python 程序的尝试。</li>
+  <li>
+<a href="https://github.com/taoky/adventofcode">adventofcode</a> 包含 Rust 的 Adevnt of Code 2022 题解，但是重点不在于此，而在于对 solution binary 内存占用测量的实现，具体细节见<a href="https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage.html">这篇文章</a>。</li>
+</ul>
+
+<h2 id="for-ustclug--vlab">For USTCLUG &amp; Vlab</h2>
+
+<ul>
+  <li>
+<a href="https://github.com/taoky/midori">midori</a> 从上游已经停止维护的 Midori 浏览器修改，修了很多 bug，为图书馆查询机设计。</li>
+  <li>
+<a href="https://github.com/taoky/ustc-cas-mock">ustc-cas-mock</a> 模仿科大统一身份认证接口，用于调试 Vlab 的网站用的。</li>
+  <li>
+<a href="https://github.com/ustc-vlab/vlab-mock">vlab-mock</a> 模仿 PVE 和后处理程序的接口，也是用于调试 Vlab 的网站用的。</li>
+  <li>
+<a href="https://github.com/USTC-vlab/filestash">filestash</a> 魔改版 <a href="https://github.com/mickael-kerjean/filestash">Filestash</a>，更容易构建，构建更加可复现，实现了快速登录，并且修复了一些 bug，精简了功能。</li>
+</ul>
+
+<h2 id="for-myself">For myself</h2>
+
+<ul>
+  <li>
+<a href="https://github.com/taoky/system76-scheduler">systemd76-scheduler (bug fix)</a> 在我的设备上修复了无法正确识别当前电源状态的问题。</li>
+  <li>
+<a href="https://github.com/taoky/gnome-shell-extension-taoky-customization">gnome-shell-extension-taoky-customization</a> 自用的 GNOME 扩展，一些小的修改。</li>
+  <li>
+<a href="https://github.com/taoky/scripts">scripts</a> 自用脚本与配置集合。</li>
+  <li>
+<a href="https://github.com/taoky/paintings">paintings</a> 用 Krita 画的一些画。</li>
 </ul>
 
 <h2 id="应该不会再尝试维护的项目">应该不会再尝试维护的项目</h2>
