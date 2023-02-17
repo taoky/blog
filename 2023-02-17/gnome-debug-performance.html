@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>调试一则：为什么 GNOME 在我的电脑上这么慢？</title>
+  <meta name="description" content="距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://blog.taoky.moe/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+
+  <link href="/assets/fonts/bitter.css" rel="stylesheet">
+  
+  
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8N496PNK2G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-8N496PNK2G');
+    </script>
+  
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky's blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger">
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewbox="0 0 18 15" width="18px" height="15px">
+            <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="https://www.taoky.moe/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">调试一则：为什么 GNOME 在我的电脑上这么慢？</h1>
+    
+    <p class="post-meta"><time datetime="2023-02-17T20:30:00+00:00" itemprop="datePublished">Feb 17, 2023</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/linux/">Linux</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/gnome/">GNOME</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/debug/">debug</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/perf/">perf</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#%E8%B5%84%E6%96%99%E6%94%B6%E9%9B%86">资料收集</a></li>
+<li class="toc-entry toc-h2"><a href="#perf">Perf?</a></li>
+<li class="toc-entry toc-h2"><a href="#%E7%9C%8B%E7%9C%8B-coredump-%E5%90%A7">看看 coredump 吧</a></li>
+<li class="toc-entry toc-h2"><a href="#gdb-with-pwntools">GDB with pwntools?</a></li>
+<li class="toc-entry toc-h2"><a href="#idle-monitor">Idle monitor?</a></li>
+<li class="toc-entry toc-h2"><a href="#%E6%98%AF-gnome-shell-%E6%88%96%E8%80%85%E6%89%A9%E5%B1%95%E7%9A%84%E9%97%AE%E9%A2%98%E5%90%97">是 gnome-shell 或者扩展的问题吗？</a></li>
+<li class="toc-entry toc-h2"><a href="#dbus">DBus…??</a></li>
+<li class="toc-entry toc-h2"><a href="#gnome-desktop-%E4%B8%8D%E6%98%AF-gnome-desktop">“gnome-desktop” 不是 “GNOME Desktop”</a></li>
+<li class="toc-entry toc-h2"><a href="#%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E">补充说明</a></li>
+<li class="toc-entry toc-h2"><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p>距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，<a href="https://ftp.lug.ustc.edu.cn/%E6%B4%BB%E5%8A%A8/2022.9.20_%E8%BD%AF%E4%BB%B6%E8%87%AA%E7%94%B1%E6%97%A5/slides/gnome-wayland-user-perspective.pdf">这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides</a>）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。</p>
+
+<p>而且，Wayland session 还带来了一点负加成：不能只重启混成器（在这里是 <code class="language-plaintext highlighter-rouge">gnome-shell</code>）而保留其他的用户进程。也就是说，靠 Alt + F2 然后输入 <code class="language-plaintext highlighter-rouge">r</code> 是做不到的。这导致我每隔两三天就要 logout 然后再 login，否则到最后鼠标晃一晃都卡，生产力大幅降低。因此前段时间我打算来尝试解决这个问题。</p>
+
+<h2 id="资料收集">资料收集</h2>
+
+<p>找一些关键词，可以搜索到 gnome-shell 的这个 issue：<a href="https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62">GNOME Shell becomes extremely slow and consumes tons of CPU</a>，其中 issue 作者介绍：</p>
+
+<ul>
+  <li>有时候在长时间放着电脑不动，然后再回来的时候，GNOME Shell 就会变得很卡，CPU 占用很高；</li>
+  <li>把扩展坞拔掉之后就又好了；</li>
+  <li>perf 显示 <code class="language-plaintext highlighter-rouge">g_source_iter_next</code> 占用了大量的 CPU 时间；</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">gcore</code> 生成的 coredump 里面也显示主线程在 <code class="language-plaintext highlighter-rouge">g_source_iter_next</code>。</li>
+</ul>
+
+<p>尽管 issue 里面没有直接能起到帮助的内容，但是有很重要的几点：</p>
+
+<ul>
+  <li>GDB 的 gcore 可以在运行时生成 coredump，里面说不定有很多有意义的信息（当然了，你得把<a href="https://wiki.archlinux.org/title/Debugging/Getting_traces#Install_debug_packages">调试符号</a>装了，否则 coredump 基本没啥意义）；</li>
+  <li>perf 可以看 gnome-shell 的 CPU 热点。</li>
+</ul>
+
+<h2 id="perf">Perf?</h2>
+
+<p>在下次卡顿的时候，参考上面的 issue，我尝试用 <code class="language-plaintext highlighter-rouge">perf</code> 跑了一下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>perf record -e cycles:u -g --call-graph=lbr
+</code></pre></div></div>
+
+<p>但是 <code class="language-plaintext highlighter-rouge">perf report</code> 的结果却匪夷所思：</p>
+
+<p><img src="/pictures/gnome/perf-report.png" alt="perf report of sluggish GNOME"></p>
+
+<ul>
+  <li>看起来大部分时间花在字符串处理上（<code class="language-plaintext highlighter-rouge">g_scanner_get_token_i</code>, <code class="language-plaintext highlighter-rouge">g_regex_escape_string</code>, <code class="language-plaintext highlighter-rouge">g_strchug</code> 为前三名自身调用 CPU 占比最高的）？</li>
+  <li>
+<a href="https://github.com/GNOME/glib/blob/02a00a831cea8e8b0224dd5b517dc402c25f3ea4/glib/gslist.c#L830"><code class="language-plaintext highlighter-rouge">g_slist_last</code> 的实现就是再简单不过的链表遍历</a>，为什么它的 Children 值会这么高？</li>
+</ul>
+
+<p>展开之后的调用链也怪怪的：</p>
+
+<p><img src="/pictures/gnome/perf-child.png" alt="perf report of sluggish GNOME, expanded"></p>
+
+<p>至少我是看不出来到底哪里出了问题，看了 glib 的代码，甚至最后解决了问题之后也还是想不通：为什么 regex escape 会占用这么大的 CPU 时间？</p>
+
+<h2 id="看看-coredump-吧">看看 coredump 吧</h2>
+
+<p>在 perf 没有思路的情况下，尝试做了几个 coredump（<code class="language-plaintext highlighter-rouge">gcore $(pidof gnome-shell)</code>）看看情况。同时在 <a href="https://github.com/libreliu" class="user-mention">@libreliu</a> 的推荐下，也用 <code class="language-plaintext highlighter-rouge">eu-stack</code> 看了看正在运行中的 <code class="language-plaintext highlighter-rouge">gnome-shell</code> 的 backtrace。</p>
+
+<p>首先 <code class="language-plaintext highlighter-rouge">sudo eu-stack --pid=$(pidof gnome-shell) -m</code> 做了一些采样，发现活跃的其实只有主线程，其他的线程要么在 poll，要么在 futex wait，不太可能是它们导致的卡顿。</p>
+
+<p>因此之后应该盯着主线程看就行。作为参考，这是其中某个 coredump 的主线程 backtrace：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#0  0x00007f2519d48574 in g_main_context_prepare (context=0x56505bdc2ab0, priority=0x7ffea40dd3f8) at ../glib/glib/gmain.c:3792
+3792	          if (result == FALSE &amp;&amp; source-&gt;priv-&gt;ready_time != -1)
+[Current thread is 1 (Thread 0x7f25142deb00 (LWP 1936586))]
+&gt;&gt;&gt; bt full
+#0  0x00007f2519d48574 in g_main_context_prepare (context=0x56505bdc2ab0, priority=0x7ffea40dd3f8) at ../glib/glib/gmain.c:3792
+        result = &lt;optimized out&gt;
+        prepare = 0x0
+        source_timeout = -1
+        i = &lt;optimized out&gt;
+        n_ready = 0
+        current_priority = 2147483647
+        source = 0x56505f905730
+        iter = {
+          context = 0x56505bdc2ab0,
+          may_modify = 1,
+          current_list = 0x56505bdc2d60 = {[0] = 0x56505bdc2d40, [1] = 0x56505bdde360, [2] = 0x56506201e0a0, [3] = 0x56505e6bef20},
+          source = 0x56505f905730
+        }
+#1  0x00007f2519d9fa96 in g_main_context_iterate.constprop.0 (context=0x56505bdc2ab0, block=1, dispatch=1, self=&lt;optimized out&gt;) at ../glib/glib/gmain.c:4228
+        max_priority = 0
+        timeout = 4
+        some_ready = &lt;optimized out&gt;
+        nfds = &lt;optimized out&gt;
+        allocated_nfds = 39
+        fds = &lt;optimized out&gt;
+        begin_time_nsec = 1019133648184898
+#2  0x00007f2519d47d8f in g_main_loop_run (loop=0x56505dd1ced0) at ../glib/glib/gmain.c:4448
+        __func__ = "g_main_loop_run"
+#3  0x00007f2518ed0d3b in meta_context_run_main_loop (context=0x5650647779b0, context@entry=0x56505bdbe0c0, error=0x56505bdc2ab0, error@entry=0x7ffea40dd4d0) at ../mutter/src/core/meta-context.c:455
+        priv = 0x56505bdbe050
+        __func__ = "meta_context_run_main_loop"
+#4  0x000056505b3c448d in main (argc=&lt;optimized out&gt;, argv=&lt;optimized out&gt;) at ../gnome-shell/src/main.c:582
+        context = 0x56505bdbe0c0
+        error = 0x0
+        ecode = 0
+</code></pre></div></div>
+
+<p>参考 <a href="https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62#note_117928">https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62#note_117928</a> 的评论，加载 glib_gdb 插件看一下 <code class="language-plaintext highlighter-rouge">source_lists</code> 的内容：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; source /usr/share/glib-2.0/gdb/glib_gdb.py
+&gt;&gt;&gt; gforeach i in context-&gt;source_lists: print (((GSourceList *)$i)-&gt;head)-&gt;name
+$1 = 0x7f2519f78871 "GCancellable"
+$2 = 0x0
+$3 = 0x7f2519e0cb6a "GUnixSignalSource: SIGTERM"
+$4 = 0x56505c38edf0 "[mutter] Wayland events"
+$5 = 0x565063b1e040 "[mutter] Clutter frame clock (0x56506442a030)"
+$6 = 0x0
+</code></pre></div></div>
+
+<p>好像没什么异常的嘛！看一下当前的事件：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; print *source
+$7 = {
+  callback_data = 0x565065296360,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f251908f120 &lt;idle_monitor_source_funcs&gt;,
+  ref_count = 2,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 3971079,
+  poll_fds = 0x0,
+  prev = 0x5650647779b0,
+  next = 0x565064689800,
+  name = 0x5650652fceb0 "[mutter] Idle monitor",
+  priv = 0x7f23fb15dc90
+}
+</code></pre></div></div>
+
+<p>emmm 为什么这个 source 不在上面显示的 <code class="language-plaintext highlighter-rouge">source_lists</code> 里面呢？这个问题我当时没有想清楚，但是之后我看了一下 <code class="language-plaintext highlighter-rouge">context</code>：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; print *context
+$8 = {
+  mutex = {
+    p = 0x1,
+    i = {[0] = 1, [1] = 0}
+  },
+  cond = {
+    p = 0x0,
+    i = {[0] = 0, [1] = 0}
+  },
+  owner = 0x56505be55f60,
+  owner_count = 2,
+  flags = G_MAIN_CONTEXT_FLAGS_NONE,
+  waiters = 0x0,
+  ref_count = 15634,
+  sources = 0x56505bda6b00 = {
+    [0x69fb08] = 0x5650680e3330,
+    [0x3a3d45] = 0x5650641cebb0,
+    [0x923354] = 0x565064cceaa0,
+    [0x427140] = 0x565066146120,
+    [0xad54f7] = 0x56506807eeb0,
+    [0x9fe13c] = 0x5650681e2680,
+    [0x61c13d] = 0x565063ae0320,
+    [0x3dc2ed] = 0x565062e24b50,
+    [0xac60a6] = 0x565067888d70,
+    [0x3d42f3] = 0x565062457650,
+    [0xaeac2e] = 0x56506a500a40,
+    [0x14e7c1] = 0x5650627ae2c0,
+    [0x1484dd] = 0x565064ef0910,
+    [0x415fda] = 0x565066611ab0,
+    [0x1] = 0x56505bdcf050,
+    [0x69fb0a] = 0x565064bd82d0,
+    [0x923356] = 0x565060f89ea0,
+    [0x10e7f1] = 0x56505e2f4960,
+    [0x427142] = 0x565060172940,
+    [0x4288a] = 0x565063f351d0,
+    [0x9121ef] = 0x565065623200,
+    [0x3dc2ef] = 0x5650660eef50,
+    [0x485f87] = 0x5650644c5ea0,
+    [0xad54f9] = 0x565066d38aa0,
+    [0x61c13f] = 0x5650648bd220,
+    [0x3237d7] = 0x565063fac8c0,
+    [0x3d42f5] = 0x565063ff6790,
+    [0x9c4a24] = 0x565064412200,
+    [0xaeac30] = 0x5650639f3400,
+    [0x78a316] = 0x56505c1b56d0,
+    [0x14e7c3] = 0x565064753c80,
+    [0xa37e2b] = 0x565060125f90,
+    [0x4] = 0x56505bdc8f00,
+    [0xd9c78] = 0x565063d5e2a0,
+    [0xad54fb] = 0x565064b01620,
+    [0x4288c] = 0x56505f38eb10,
+    [0x9121f1] = 0x56506811c920,
+    [0x3dc2f1] = 0x565061086ce0,
+    [0x5] = 0x56505bee6ea0,
+    [0x7dfa1d] = 0x565065399f90,
+    [0x3237d9] = 0x565060a68d90,
+    [0x2666f3] = 0x5650625c4800,
+    [0x9121f3] = 0x56506885fdf0,
+    [0xaa9af0] = 0x56505c34c740,
+    [0x3237db] = 0x56505cd96930,
+    [0x2f322e] = 0x5650610659c0,
+    [0x9c4a28] = 0x565066b3c790,
+    [0x2666f5] = 0x565062b286a0,
+    [0x8be805] = 0x56506515d870,
+    [0x10e7f8] = 0x565064367cc0,
+    [0xa37e30] = 0x565065c43520,
+    [0x495f81] = 0x565060416f90,
+    [0x7dfa21] = 0x565065bf9f30,
+    [0x2f3230] = 0x565060c80f20,
+    [0x850b41] = 0x56505d242a60,
+    [0x2666f7] = 0x56505c75acb0,
+    [0x36fd76] = 0x56505f567b90,
+    [0x35f7b1] = 0x565064ac1420,
+    [0x10e7fa] = 0x56505f21b710,
+    [0x861caa] = 0x5650601b5270,
+    [0x925646] = 0x565069aa5370,
+    [0x2f3232] = 0x565066e09dd0,
+    [0x2d4f60] = 0x56505f4e2590,
+    [0x8be808] = 0x565069b14a00,
+    [0x8d850c] = 0x565065541980,
+    [0x378914] = 0x565060738d60,
+    [0x2dc3b8] = 0x56505f432c60,
+    [0xc] = 0x56505c0c7b90,
+    [0x41fcf4] = 0x56505d1be040,
+    [0x35f7b3] = 0x565063109a60,
+    [0x59f032] = 0x565066b7be80,
+    [0x310f34] = 0x565066e93fe0,
+    [0x3dabb4] = 0x565065becc70,
+    [0x2d4f62] = 0x565066df25b0,
+    [0x8be80a] = 0x5650683ac340,
+    [0x378916] = 0x5650629356c0,
+    [0x71c08a] = 0x565063c7cc80,
+    [0x925649] = 0x565069a95d20,
+    [0x35f7b5] = 0x565066c57da0,
+    [0x7e6e7e] = 0x565069346380,
+    [0x3dabb6] = 0x565062699710,
+    [0x8d850f] = 0x56506a75e950,
+    [0x6863e4] = 0x565065e8cf90,
+    [0x2eec67] = 0x5650658989e0,
+    [0x9ef89b] = 0x565068025030,
+    [0x2d4f64] = 0x5650642ce5f0,
+    [0x8be80c] = 0x565064220980,
+    [0x378918] = 0x5650648728b0,
+    [0x90a202] = 0x565064b2f860,
+    [0x71c08c] = 0x565066ab6270,
+    [0x861caf] = 0x565062fd22b0,
+    [0x10e7ff] = 0x56505c205ca0,
+    [0x92564b] = 0x5650601cda30,
+    [0x7a0bcc] = 0x565066eb4a70,
+    [0x2eec69] = 0x5650652a04b0,
+    [0x8d8511] = 0x565060dffcb0,
+    [0x6863e6] = 0x565066855b50,
+    [0x8de7f5] = 0x56506390d060,
+    [0x658cc2] = 0x56506539c940,
+    [0x3dabb8] = 0x565066e21b90
+    ...
+  },
+  pending_dispatches = 0x56505bdc2c00,
+  timeout = 29978,
+  next_id = 11915638,
+  source_lists = 0x7f24b4001900 = {[0] = 0x7f24a4001800, [1] = 0x7f24a40f2d20, [2] = 0x56505bdc2d40, [3] = 0x56505bdde360, [4] = 0x56506201e0a0, [5] = 0x56505e6bef20},
+  in_check_or_prepare = 0,
+  poll_records = 0x56505bdc2c20,
+  n_poll_records = 35,
+  cached_poll_array = 0x56505fbde300,
+  cached_poll_array_size = 39,
+  wakeup = 0x56505bdae370,
+  wake_up_rec = {
+    fd = 3,
+    events = 1,
+    revents = 0
+  },
+  poll_changed = 0,
+  poll_func = 0x7f2519d4f0f0 &lt;g_poll&gt;,
+  time = 1019133648187,
+  time_is_fresh = 1
+}
+</code></pre></div></div>
+
+<p>诶等等，<code class="language-plaintext highlighter-rouge">sources</code> 里面怎么这么多东西？而且看起来还没有 <code class="language-plaintext highlighter-rouge">print</code> 完，随便采样几个：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; print *(GSource *)0x56506885fdf0
+$9 = {
+  callback_data = 0x7f23b7637d20,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f251908f120 &lt;idle_monitor_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 9511411,
+  poll_fds = 0x0,
+  prev = 0x56506811c920,
+  next = 0x565069a87760,
+  name = 0x565068eaede0 "[mutter] Idle monitor",
+  priv = 0x7f23a8477730
+}
+&gt;&gt;&gt; print *(GSource *)0x565060dffcb0
+$10 = {
+  callback_data = 0x7f23b72b71b0,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f251908f120 &lt;idle_monitor_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 9274641,
+  poll_fds = 0x0,
+  prev = 0x56506a75e950,
+  next = 0x5650688a62b0,
+  name = 0x565060b99bc0 "[mutter] Idle monitor",
+  priv = 0x7f23b77db350
+}
+&gt;&gt;&gt; print *(GSource *)0x565060a68d90
+$11 = {
+  callback_data = 0x7f23fa0aeaa0,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f251908f120 &lt;idle_monitor_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 3291097,
+  poll_fds = 0x0,
+  prev = 0x565063fac8c0,
+  next = 0x56505cd96930,
+  name = 0x565066c08d20 "[mutter] Idle monitor",
+  priv = 0x565060443230
+}
+</code></pre></div></div>
+
+<p>怎么全是 <code class="language-plaintext highlighter-rouge">[mutter] Idle monitor</code>？这里肯定有点问题。</p>
+
+<h2 id="gdb-with-pwntools">GDB with pwntools?</h2>
+
+<p>从 <code class="language-plaintext highlighter-rouge">sources</code> 那里的省略号可以看出，其实里面还有别的东西，这可以用下面的命令看到：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print -elements unlimited -- context-&gt;sources
+</code></pre></div></div>
+
+<p>但是要怎么方便地看出 sources 里面的内容？glib gdb 插件提供的 <code class="language-plaintext highlighter-rouge">gforeach</code> 似乎不支持这样的功能，而且 gdb 也不支持一次执行多条调试语句。于是我想出了一个歪主意：写个脚本和 GDB 交互。我用 pwntools 略熟悉一些，所以脚本就用它写了（可以看成是高配版的 <a href="https://man7.org/linux/man-pages/man1/expect.1.html">expect(1)</a>，大概吧？）。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'file'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">'file to run'</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="c1"># context.log_level = "debug"
+</span><span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="sa">f</span><span class="s">'gdb -c </span><span class="si">{</span><span class="n">args</span><span class="p">.</span><span class="nb">file</span><span class="si">}</span><span class="s">'</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1"># 我的 GDB 加载了 https://github.com/cyrus-and/gdb-dashboard
+# 所以 prompt 和标准的有所不同
+</span><span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"set style enabled off"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"up"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
+<span class="c1"># p.sendline("up")
+# p.recvuntil("&gt;&gt;&gt;")
+</span><span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"print -elements unlimited -- context-&gt;sources"</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">)</span>
+
+<span class="n">address</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">number</span> <span class="o">=</span> <span class="s">""</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+    <span class="n">current_char</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">"="</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">","</span> <span class="ow">or</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">"["</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">number</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="s">""</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current_char</span><span class="p">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">or</span> <span class="n">current_char</span><span class="p">.</span><span class="n">isalpha</span><span class="p">():</span>
+            <span class="n">number</span> <span class="o">+=</span> <span class="n">current_char</span>
+
+<span class="c1"># print(address)
+</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">address</span><span class="p">:</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">f</span><span class="s">"print *(GSource *)</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">))</span>
+
+<span class="n">p</span><span class="p">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>果不其然：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; grep "Idle monitor" 1936586-sources-1.txt | wc                                                      
+   7224   43344  353976
+&gt; grep "ref_count" 1936586-sources-1.txt | wc                                                         
+   7313   21939  124321
+</code></pre></div></div>
+
+<p>总共才 7313 个 source，idle monitor 占了将近 99%。就算和我遇到的性能问题无关，这里肯定也是有点问题的。</p>
+
+<h2 id="idle-monitor">Idle monitor?</h2>
+
+<p>很容易就能在 mutter 代码（作为 GNOME Wayland 混成器的核心组件，mutter 是嵌入在 gnome-shell 里面的库）里面找到产生这个 source 的<a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L319">函数</a>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="n">MetaIdleMonitorWatch</span> <span class="o">*</span>
+<span class="nf">make_watch</span> <span class="p">(</span><span class="n">MetaIdleMonitor</span>           <span class="o">*</span><span class="n">monitor</span><span class="p">,</span>
+            <span class="n">guint64</span>                    <span class="n">timeout_msec</span><span class="p">,</span>
+            <span class="n">MetaIdleMonitorWatchFunc</span>   <span class="n">callback</span><span class="p">,</span>
+            <span class="n">gpointer</span>                   <span class="n">user_data</span><span class="p">,</span>
+            <span class="n">GDestroyNotify</span>             <span class="n">notify</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">MetaIdleMonitorWatch</span> <span class="o">*</span><span class="n">watch</span><span class="p">;</span>
+
+  <span class="n">watch</span> <span class="o">=</span> <span class="n">g_new0</span> <span class="p">(</span><span class="n">MetaIdleMonitorWatch</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">monitor</span><span class="p">;</span>
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">=</span> <span class="n">get_next_watch_serial</span> <span class="p">();</span>
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span><span class="p">;</span>
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">user_data</span><span class="p">;</span>
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">notify</span> <span class="o">=</span> <span class="n">notify</span><span class="p">;</span>
+  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">timeout_msec</span> <span class="o">=</span> <span class="n">timeout_msec</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">timeout_msec</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">GSource</span> <span class="o">*</span><span class="n">source</span> <span class="o">=</span> <span class="n">g_source_new</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">idle_monitor_source_funcs</span><span class="p">,</span>
+                                      <span class="k">sizeof</span> <span class="p">(</span><span class="n">GSource</span><span class="p">));</span>
+      <span class="n">g_source_set_name</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s">"[mutter] Idle monitor"</span><span class="p">);</span>
+
+      <span class="n">g_source_set_callback</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">watch</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">inhibited</span><span class="p">)</span>
+        <span class="p">{</span>
+          <span class="n">g_source_set_ready_time</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span>
+                                   <span class="n">monitor</span><span class="o">-&gt;</span><span class="n">last_event_time</span> <span class="o">+</span>
+                                   <span class="n">timeout_msec</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="n">g_source_attach</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+      <span class="n">g_source_unref</span> <span class="p">(</span><span class="n">source</span><span class="p">);</span>
+
+      <span class="n">watch</span><span class="o">-&gt;</span><span class="n">timeout_source</span> <span class="o">=</span> <span class="n">source</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="n">g_hash_table_insert</span> <span class="p">(</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">watches</span><span class="p">,</span>
+                       <span class="n">GUINT_TO_POINTER</span> <span class="p">(</span><span class="n">watch</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">),</span>
+                       <span class="n">watch</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">watch</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">make_watch()</code> 函数会由两种不同的 watch 生成函数调用：<a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L361"><code class="language-plaintext highlighter-rouge">meta_idle_monitor_add_idle_watch()</code></a> 和 <a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L361"><code class="language-plaintext highlighter-rouge">meta_idle_monitor_add_user_active_watch()</code></a>。</p>
+
+<p>在 mutter 中，”idle watch” 是一个积累 idle time 的定时器，在到达指定的时间之后会执行回调函数；而 “user active watch” 是一个一次性的定时器，当用户活跃时就会执行回调，并且销毁自己。上面只有 idle watch 调用 <code class="language-plaintext highlighter-rouge">make_watch()</code> 的时候 <code class="language-plaintext highlighter-rouge">timeout_msec</code> 不为 0，所以之后只关心它。</p>
+
+<p>而 <a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L439"><code class="language-plaintext highlighter-rouge">meta_idle_monitor_remove_watch()</code></a> 则可以销毁 watch。</p>
+
+<p>这些函数在 <code class="language-plaintext highlighter-rouge">meta-idle-manager.c</code> 里面似乎又包了一层，<a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L146"><code class="language-plaintext highlighter-rouge">handle_add_idle_watch()</code></a> 和 <a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L180"><code class="language-plaintext highlighter-rouge">handle_remove_watch()</code></a> 分别<a href="https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L201">和对应的信号绑定</a>。</p>
+
+<p>看起来，只要外面正确调用了 add idle watch 和 remove watch，就不会有问题。</p>
+
+<h2 id="是-gnome-shell-或者扩展的问题吗">是 gnome-shell 或者扩展的问题吗？</h2>
+
+<p>在 gnome-shell 代码里面搜索：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; rg add_idle_watch                                                                                 
+js/ui/pointerWatcher.js
+39:        this._idleMonitor.add_idle_watch(IDLE_TIME, this._onIdleMonitorBecameIdle.bind(this));
+
+js/ui/unlockDialog.js
+344:        this._idleWatchId = this._idleMonitor.add_idle_watch(HINT_TIMEOUT * 1000, () =&gt; {
+600:        this._idleWatchId = this._idleMonitor.add_idle_watch(IDLE_TIMEOUT * 1000, this._escape.bind(this));
+</code></pre></div></div>
+
+<p>其中 <code class="language-plaintext highlighter-rouge">pointerWatcher</code> 只会在放大镜功能里用到，而 <code class="language-plaintext highlighter-rouge">unlockDialog</code> 看起来销毁逻辑也是正确的。对于我用的扩展，Dash to Dock 会使用 <code class="language-plaintext highlighter-rouge">pointerWatcher</code>，所以是它的问题吗？</p>
+
+<p>我尝试自己编译了一份 mutter，在每次 add idle watch 和 remove watch 的时候打印一下，结果发现：</p>
+
+<ul>
+  <li>打开 Lollypop（一个音乐播放器）的时候，会有 idle watch 添加和销毁，但是好像有些 idle watch 总是不会被销毁；</li>
+  <li>打开 Steam 之后，idle watch 的相关行为变得更加频繁；</li>
+  <li>以上的事件看起来和扩展无关：因为即使全部关闭也是如此。</li>
+</ul>
+
+<h2 id="dbus">DBus…??</h2>
+
+<p>此时我注意到，<code class="language-plaintext highlighter-rouge">meta-idle-manager.c</code> 里面有一些和 DBus 有关的操作，于是用 <code class="language-plaintext highlighter-rouge">dbus-monitor</code> 看一下有没有可疑的消息：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dbus-monitor --session | grep -i idle
+</code></pre></div></div>
+
+<p>结果发现，在 mutter 有调试输出的时候，<code class="language-plaintext highlighter-rouge">dbus-monitor</code> 也有反应，证明这些 idle watch 都是通过 DBus 通信创建/销毁的。<code class="language-plaintext highlighter-rouge">busctl --user</code> 可以看到发起的进程来源，结果竟然是……</p>
+
+<p><code class="language-plaintext highlighter-rouge">gsd-power</code> 和 <code class="language-plaintext highlighter-rouge">gnome-session-binary</code>。</p>
+
+<p>（在 gdb 里面，可以 <code class="language-plaintext highlighter-rouge">print ((DBusWatch *)((MetaIdleMonitorWatch *)((GSourceCallback *)((GSource*){i})-&gt;callback_data)-&gt;data)-&gt;user_data)-&gt;dbus_name</code> 来看对应的 source）</p>
+
+<p>所以是它们的实现问题？不过在此之前，先来验证一下 DBus 创建的 idle watch 的行为。我拿 zbus 整了个 demo:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::{</span><span class="nn">time</span><span class="p">::</span><span class="n">Duration</span><span class="p">,</span> <span class="nn">thread</span><span class="p">::</span><span class="n">sleep</span><span class="p">};</span>
+
+<span class="k">use</span> <span class="nn">zbus</span><span class="p">::</span><span class="nn">blocking</span><span class="p">::</span><span class="n">Connection</span><span class="p">;</span>
+
+<span class="k">mod</span> <span class="n">mutter</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">connection</span> <span class="o">=</span> <span class="nn">Connection</span><span class="p">::</span><span class="nf">session</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">proxy</span> <span class="o">=</span> <span class="nn">mutter</span><span class="p">::</span><span class="nn">IdleMonitorProxyBlocking</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">connection</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="k">for</span> <span class="mi">_</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="mi">10000</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">res</span> <span class="o">=</span> <span class="n">proxy</span><span class="nf">.add_idle_watch</span><span class="p">(</span><span class="mi">110000</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="c">// println!("{:?}", res);</span>
+    <span class="p">}</span>
+    <span class="k">loop</span> <span class="p">{</span>
+        <span class="nf">sleep</span><span class="p">(</span><span class="nn">Duration</span><span class="p">::</span><span class="nf">from_secs</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>mutter 的 mod 由 <code class="language-plaintext highlighter-rouge">zbus-xmlgen --session org.gnome.Mutter.IdleMonitor /org/gnome/Mutter/IdleMonitor/Core</code> 生成，并且需要加上 <code class="language-plaintext highlighter-rouge">default_path = "/org/gnome/Mutter/IdleMonitor/Core"</code>。</p>
+
+<p>运行之后可以发现：</p>
+
+<ul>
+  <li>我们成功搞出了 10000 个 idle watch</li>
+  <li>GNOME 确实变卡了，如果开个 3D 游戏会更明显</li>
+  <li>如果关掉进程，这些 idle watch 会一起销毁掉</li>
+</ul>
+
+<p>所以，问题就在于 <code class="language-plaintext highlighter-rouge">gsd-power</code> 和 <code class="language-plaintext highlighter-rouge">gnome-session-binary</code> 长时间运行泄漏了大量的 idle watch 导致卡顿……但是这就是问题的根源了吗？</p>
+
+<h2 id="gnome-desktop-不是-gnome-desktop">“gnome-desktop” 不是 “GNOME Desktop”</h2>
+
+<p>我检查的两者的代码，发现它们的 pattern 都是：add idle watch 之前，先销毁掉之前记录的 watch。而对应的函数是 <code class="language-plaintext highlighter-rouge">gnome_idle_monitor_add_idle_watch()</code>，这个函数并不在 gnome-settings-daemon 或者 gnome-session 里面，而是在 gnome-desktop 里面。</p>
+
+<p>这个名字极其容易导致误解，以至于它的 <a href="https://github.com/GNOME/gnome-desktop/blob/master/README.md#how-to-report-bugs">README 里面这么写</a>：</p>
+
+<blockquote>
+  <p>Bugs should be reported to the Issues section of gnome-desktop repository. Due to very high numbers of misdirected gnome-shell bugs, the issue tracker has unfortunately been restricted to GNOME developers only. If you have found a bug in this library, feel free to contact any GNOME developer and ask for your report to be forwarded here.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">gnome-desktop</code> 事实上做的事情是：为一些程序提供来自 <code class="language-plaintext highlighter-rouge">gnome-shell</code> 的接口。就我们的例子来说，DBus 请求其实是 <code class="language-plaintext highlighter-rouge">gnome-desktop</code> 帮它们干的。其中添加 idle watch 会调用：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">add_idle_watch</span> <span class="p">(</span><span class="n">GnomeIdleMonitor</span>      <span class="o">*</span><span class="n">monitor</span><span class="p">,</span>
+		<span class="n">GnomeIdleMonitorWatch</span> <span class="o">*</span><span class="n">watch</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">meta_dbus_idle_monitor_call_add_idle_watch</span> <span class="p">(</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">proxy</span><span class="p">,</span>
+						    <span class="n">watch</span><span class="o">-&gt;</span><span class="n">timeout_msec</span><span class="p">,</span>
+						    <span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">cancellable</span><span class="p">,</span>
+						    <span class="n">on_watch_added</span><span class="p">,</span> <span class="n">idle_monitor_watch_ref</span> <span class="p">(</span><span class="n">watch</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><a href="https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#LL369C12-L369C12"><code class="language-plaintext highlighter-rouge">on_watch_added</code></a> 是一个执行之后的回调函数：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">on_watch_added</span> <span class="p">(</span><span class="n">GObject</span>      <span class="o">*</span><span class="n">object</span><span class="p">,</span>
+		<span class="n">GAsyncResult</span> <span class="o">*</span><span class="n">result</span><span class="p">,</span>
+		<span class="n">gpointer</span>      <span class="n">user_data</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">GnomeIdleMonitorWatch</span> <span class="o">*</span><span class="n">watch</span> <span class="o">=</span> <span class="n">user_data</span><span class="p">;</span>
+	<span class="n">GnomeIdleMonitor</span> <span class="o">*</span><span class="n">monitor</span><span class="p">;</span>
+	<span class="n">GError</span> <span class="o">*</span><span class="n">error</span><span class="p">;</span>
+	<span class="n">GVariant</span> <span class="o">*</span><span class="n">res</span><span class="p">;</span>
+
+	<span class="n">error</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="n">res</span> <span class="o">=</span> <span class="n">g_dbus_proxy_call_finish</span> <span class="p">(</span><span class="n">G_DBUS_PROXY</span> <span class="p">(</span><span class="n">object</span><span class="p">),</span> <span class="n">result</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">g_error_matches</span> <span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">G_IO_ERROR</span><span class="p">,</span> <span class="n">G_IO_ERROR_CANCELLED</span><span class="p">))</span> <span class="p">{</span>
+			<span class="n">g_error_free</span> <span class="p">(</span><span class="n">error</span><span class="p">);</span>
+			<span class="n">idle_monitor_watch_unref</span> <span class="p">(</span><span class="n">watch</span><span class="p">);</span>
+			<span class="k">return</span><span class="p">;</span>
+		<span class="p">}</span>
+
+		<span class="n">g_warning</span> <span class="p">(</span><span class="s">"Failed to acquire idle monitor proxy: %s"</span><span class="p">,</span> <span class="n">error</span><span class="o">-&gt;</span><span class="n">message</span><span class="p">);</span>
+		<span class="n">g_error_free</span> <span class="p">(</span><span class="n">error</span><span class="p">);</span>
+		<span class="n">idle_monitor_watch_unref</span> <span class="p">(</span><span class="n">watch</span><span class="p">);</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">watch</span><span class="o">-&gt;</span><span class="n">dead</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">idle_monitor_watch_unref</span> <span class="p">(</span><span class="n">watch</span><span class="p">);</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">monitor</span> <span class="o">=</span> <span class="n">watch</span><span class="o">-&gt;</span><span class="n">monitor</span><span class="p">;</span>
+	<span class="n">g_variant_get</span> <span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s">"(u)"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">watch</span><span class="o">-&gt;</span><span class="n">upstream_id</span><span class="p">);</span>
+	<span class="n">g_variant_unref</span> <span class="p">(</span><span class="n">res</span><span class="p">);</span>
+
+	<span class="n">g_hash_table_insert</span> <span class="p">(</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">watches_by_upstream_id</span><span class="p">,</span>
+			     <span class="n">GINT_TO_POINTER</span> <span class="p">(</span><span class="n">watch</span><span class="o">-&gt;</span><span class="n">upstream_id</span><span class="p">),</span> <span class="n">watch</span><span class="p">);</span>
+	<span class="n">idle_monitor_watch_unref</span> <span class="p">(</span><span class="n">watch</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>而删除 watch 的操作，在 <a href="https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L520"><code class="language-plaintext highlighter-rouge">gnome_idle_monitor_remove_watch()</code></a> 里面：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span>
+<span class="nf">gnome_idle_monitor_remove_watch</span> <span class="p">(</span><span class="n">GnomeIdleMonitor</span> <span class="o">*</span><span class="n">monitor</span><span class="p">,</span>
+				 <span class="n">guint</span>		   <span class="n">id</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">GnomeIdleMonitorWatch</span> <span class="o">*</span><span class="n">watch</span><span class="p">;</span>
+
+	<span class="n">g_return_if_fail</span> <span class="p">(</span><span class="n">GNOME_IS_IDLE_MONITOR</span> <span class="p">(</span><span class="n">monitor</span><span class="p">));</span>
+
+	<span class="n">watch</span> <span class="o">=</span> <span class="n">g_hash_table_lookup</span> <span class="p">(</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">watches</span><span class="p">,</span> <span class="n">GINT_TO_POINTER</span> <span class="p">(</span><span class="n">id</span><span class="p">));</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">watch</span><span class="p">)</span>
+		<span class="k">return</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">watch</span><span class="o">-&gt;</span><span class="n">upstream_id</span><span class="p">)</span>
+		<span class="n">meta_dbus_idle_monitor_call_remove_watch</span> <span class="p">(</span><span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">proxy</span><span class="p">,</span>
+							  <span class="n">watch</span><span class="o">-&gt;</span><span class="n">upstream_id</span><span class="p">,</span>
+							  <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+
+	<span class="n">gnome_idle_monitor_remove_watch_internal</span> <span class="p">(</span><span class="n">monitor</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>可以看到，只有在 <code class="language-plaintext highlighter-rouge">watch-&gt;upstream_id</code> 有效的时候，才会实际发送删除 watch 的 DBus 请求。而这个参数的赋值在 <code class="language-plaintext highlighter-rouge">on_watch_added</code> 里面，如果 dbus 结果成功并且 <code class="language-plaintext highlighter-rouge">watch-&gt;dead</code> 为否，那么就会赋值。</p>
+
+<p>而 <code class="language-plaintext highlighter-rouge">watch-&gt;dead</code> 会在销毁 watch 的时候<a href="https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L132">被赋值</a>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">idle_monitor_watch_destroy</span> <span class="p">(</span><span class="n">GnomeIdleMonitorWatch</span> <span class="o">*</span><span class="n">watch</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">watch</span><span class="o">-&gt;</span><span class="n">dead</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">;</span>
+	<span class="n">idle_monitor_watch_unref</span> <span class="p">(</span><span class="n">watch</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>销毁操作在初始化的时候就<a href="https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L322">注册在了 GHashTable 里面</a>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">gnome_idle_monitor_init</span> <span class="p">(</span><span class="n">GnomeIdleMonitor</span> <span class="o">*</span><span class="n">monitor</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span> <span class="o">=</span> <span class="n">gnome_idle_monitor_get_instance_private</span> <span class="p">(</span><span class="n">monitor</span><span class="p">);</span>
+
+	<span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">watches</span> <span class="o">=</span> <span class="n">g_hash_table_new_full</span> <span class="p">(</span><span class="nb">NULL</span><span class="p">,</span>
+							<span class="nb">NULL</span><span class="p">,</span>
+							<span class="nb">NULL</span><span class="p">,</span>
+							<span class="p">(</span><span class="n">GDestroyNotify</span><span class="p">)</span><span class="n">idle_monitor_watch_destroy</span><span class="p">);</span>
+	<span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">watches_by_upstream_id</span> <span class="o">=</span> <span class="n">g_hash_table_new</span> <span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+
+	<span class="n">monitor</span><span class="o">-&gt;</span><span class="n">priv</span><span class="o">-&gt;</span><span class="n">cancellable</span> <span class="o">=</span> <span class="n">g_cancellable_new</span> <span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>我尝试在 <code class="language-plaintext highlighter-rouge">on_watch_added()</code> 里面加了点 <code class="language-plaintext highlighter-rouge">g_warning</code> 来调试，结果发现有一些 watch 会触发 <code class="language-plaintext highlighter-rouge">watch-&gt;dead</code> 的分支，但是它们实际上是有 <code class="language-plaintext highlighter-rouge">upstream_id</code> 的！而 <code class="language-plaintext highlighter-rouge">upstream_id</code> 的信息在此之后就丢失了，所以 gnome-desktop 之后就无法向 mutter 发送删除对应 watch 的请求了，于是就导致了泄漏。从我的理解看，这种情况会发生在：</p>
+
+<ul>
+  <li>某个程序添加了一个 idle watch。</li>
+  <li>但是很快就 remove 了这个 watch，这个时候因为 DBus 相对慢一些（大概吧），<code class="language-plaintext highlighter-rouge">on_watch_added()</code> 还没跑完，因此没有 <code class="language-plaintext highlighter-rouge">upstream_id</code>，remove 请求不会被发送，但是 <code class="language-plaintext highlighter-rouge">idle_monitor_watch_destroy()</code> 会被调用，因此 <code class="language-plaintext highlighter-rouge">watch-&gt;dead</code> 会被赋值。</li>
+  <li>之后 <code class="language-plaintext highlighter-rouge">on_watch_added()</code> 执行，此时就走到 <code class="language-plaintext highlighter-rouge">watch-&gt;dead</code> 的分支了，因为没有在这个分支销毁 watch，因此 <code class="language-plaintext highlighter-rouge">upstream_id</code> 也就丢失了。</li>
+</ul>
+
+<p>修复也很简单，我<a href="https://gitlab.gnome.org/GNOME/gnome-desktop/-/merge_requests/155">提交了一个 MR</a>，很快就合并进去了，对应的 43.2 版本已经修复了这个问题。从对 <code class="language-plaintext highlighter-rouge">on_watch_added</code> 的 git blame 来看，这个问题似乎……已经有 10 年的历史了？</p>
+
+<h2 id="补充说明">补充说明</h2>
+
+<p>很上面的地方提到，在分析 coredump 的时候，我发现虽然 <code class="language-plaintext highlighter-rouge">sources</code> 里面东西很多，但是 <code class="language-plaintext highlighter-rouge">source_lists</code> 就几个元素：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; gforeach i in context-&gt;source_lists: print (((GSourceList *)$i)-&gt;head)-&gt;name
+$1 = 0x7f2519f78871 "GCancellable"
+$2 = 0x0
+$3 = 0x7f2519e0cb6a "GUnixSignalSource: SIGTERM"
+$4 = 0x56505c38edf0 "[mutter] Wayland events"
+$5 = 0x565063b1e040 "[mutter] Clutter frame clock (0x56506442a030)"
+$6 = 0x0
+</code></pre></div></div>
+
+<p>并且，glib 的 <code class="language-plaintext highlighter-rouge">gmain.c</code> 里面，没有直接从 <code class="language-plaintext highlighter-rouge">sources</code> 这个 <code class="language-plaintext highlighter-rouge">GHashTable</code> 里面遍历的代码。难道我搞错了什么？我在写这篇文章的时候重新看了一下 glib 的代码，结果发现了我之前的一个错误：<code class="language-plaintext highlighter-rouge">source_lists</code> <strong>并非 GSource 的列表</strong>，而是 <strong>GSource 的列表的列表</strong>！</p>
+
+<p>在 <code class="language-plaintext highlighter-rouge">struct _GSource</code> 的定义里：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">_GSource</span>
+<span class="p">{</span>
+  <span class="cm">/*&lt; private &gt;*/</span>
+  <span class="n">gpointer</span> <span class="n">callback_data</span><span class="p">;</span>
+  <span class="n">GSourceCallbackFuncs</span> <span class="o">*</span><span class="n">callback_funcs</span><span class="p">;</span>
+
+  <span class="k">const</span> <span class="n">GSourceFuncs</span> <span class="o">*</span><span class="n">source_funcs</span><span class="p">;</span>
+  <span class="n">guint</span> <span class="n">ref_count</span><span class="p">;</span>
+
+  <span class="n">GMainContext</span> <span class="o">*</span><span class="n">context</span><span class="p">;</span>
+
+  <span class="n">gint</span> <span class="n">priority</span><span class="p">;</span>
+  <span class="n">guint</span> <span class="n">flags</span><span class="p">;</span>
+  <span class="n">guint</span> <span class="n">source_id</span><span class="p">;</span>
+
+  <span class="n">GSList</span> <span class="o">*</span><span class="n">poll_fds</span><span class="p">;</span>
+  
+  <span class="n">GSource</span> <span class="o">*</span><span class="n">prev</span><span class="p">;</span>
+  <span class="n">GSource</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+
+  <span class="kt">char</span>    <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+
+  <span class="n">GSourcePrivate</span> <span class="o">*</span><span class="n">priv</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>可以看到 <code class="language-plaintext highlighter-rouge">prev</code> 和 <code class="language-plaintext highlighter-rouge">next</code>。这表明了，其实 <code class="language-plaintext highlighter-rouge">GSource</code> 本身也是链表的节点。拿我之前的 coredump 试一下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; gforeach i in context-&gt;source_lists: print (((GSourceList *)$i)-&gt;head)
+$42 = (GSource *) 0x56505c195c70
+$43 = (GSource *) 0x565061f8a9a0
+$44 = (GSource *) 0x56505bdcf050
+$45 = (GSource *) 0x56505c2cbaa0
+$46 = (GSource *) 0x5650680b1860
+$47 = (GSource *) 0x56506a7cd4f0
+&gt;&gt;&gt; print *((GSource *) 0x565061f8a9a0)-&gt;next
+$48 = {
+  callback_data = 0x56506a6d86e0,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f25184b8500 &lt;g_datetime_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911477,
+  poll_fds = 0x56505e4d1a60 = {[0] = 0x565067a11364},
+  prev = 0x565061f8a9a0,
+  next = 0x565067ff5e80,
+  name = 0x0,
+  priv = 0x7f23fb79f990
+}
+&gt;&gt;&gt; print *((GSource *) 0x565061f8a9a0)-&gt;next-&gt;next
+$49 = {
+  callback_data = 0x565066bf54e0,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f25184b8500 &lt;g_datetime_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911478,
+  poll_fds = 0x565062786e80 = {[0] = 0x565067ff5ef4},
+  prev = 0x565067a112f0,
+  next = 0x56506574fe90,
+  name = 0x0,
+  priv = 0x56506a679950
+}
+&gt;&gt;&gt; print *((GSource *) 0x565061f8a9a0)-&gt;next-&gt;next-&gt;next
+$50 = {
+  callback_data = 0x565062e67150,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f25184b8500 &lt;g_datetime_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911479,
+  poll_fds = 0x565062762150 = {[0] = 0x56506574ff04},
+  prev = 0x565067ff5e80,
+  next = 0x56506803aed0,
+  name = 0x0,
+  priv = 0x7f23aa743b50
+}
+</code></pre></div></div>
+
+<p>所以其实当前处理的 source 远不止 6 个。我们的 idle source 也在里面：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; print *((GSource *) 0x56505bdcf050)-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next-&gt;next
+$77 = {
+  callback_data = 0x56505f338bd0,
+  callback_funcs = 0x7f2519e303e0 &lt;g_source_callback_funcs&gt;,
+  source_funcs = 0x7f251908f120 &lt;idle_monitor_source_funcs&gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 274802,
+  poll_fds = 0x0,
+  prev = 0x565062083920,
+  next = 0x56505d6fb170,
+  name = 0x565060556180 "[mutter] Idle monitor",
+  priv = 0x56505c85e890
+}
+</code></pre></div></div>
+
+<h2 id="总结">总结</h2>
+
+<p>其实还挺开心的，虽然我还是不知道 perf 那个输出是怎么回事。同时，我也希望这篇文章能帮助读者调试类似的性能问题：有关 gnome-shell 性能调试的技巧网络上很少，我也试过 sysprof，对于这个例子没有给出有价值的信息（可能是漏了啥，比如说 <code class="language-plaintext highlighter-rouge">fno-omit-frame-pointer</code> 之类，虽然没有查过，但是猜测 Arch 没开这个 flag）。同时使用 <code class="language-plaintext highlighter-rouge">gcore</code> 也对调试起到了相当大的帮助（因为显然不能直接 <code class="language-plaintext highlighter-rouge">gdb attach</code> 上去，否则整个图形界面就卡住了）。</p>
+
+<p>感觉如果之后再有有趣的调试经历的话，「调试一则」或许可以弄成一个系列也说不准。</p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr>
+<h3>Comments</h3>
+<p id="comment_darkmode_warning" style="display: none;">Note: Disqus 完整评论组件不以暗黑模式显示。</p>
+<div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
+<script>
+// https://blog.skk.moe/post/prevent-disqus-from-slowing-your-site/
+function loadDisqus() {
+    var dsqjs = new DisqusJS({
+        shortname: 'taokyblog',
+        siteName: 'taoky\'s blog',
+        // identifier: '',
+        // url: '',
+        // title: '',
+        api: '//blog.taoky.moe/api/',
+        apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+        nocomment: '无评论.',
+        admin: 'taoky',
+        adminLabel: 'taoky'
+    });
+}
+
+// 通过检查 window 对象确认是否在浏览器中运行
+var runningOnBrowser = typeof window !== "undefined";
+// 通过检查 scroll 事件 API 和 User-Agent 来匹配爬虫
+var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+// 检查当前浏览器是否支持 IntersectionObserver API
+var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+
+// 一个小 hack，将耗时任务包裹在 setTimeout(() => { }, 1) 中，可以推迟到 Event Loop 的任务队列中、等待主调用栈清空后才执行，在绝大部分浏览器中都有效
+// 其实这个 hack 本来是用于优化骨架屏显示的。一些浏览器总是等 JavaScript 执行完了才开始页面渲染，导致骨架屏起不到降低 FCP 的优化效果，所以通过 hack 将耗时函数放到骨架屏渲染完成后再进行。
+setTimeout(function () {
+  if (!isBot && supportsIntersectionObserver) {
+    // 当前环境不是爬虫、并且浏览器兼容 IntersectionObserver API
+    var disqus_observer = new IntersectionObserver(function(entries) {
+      // 当前视窗中已出现 Disqus 评论框所在位置
+      if (entries[0].isIntersecting) {
+        // 加载 Disqus
+        loadDisqus();
+        // 停止当前的 Observer
+        disqus_observer.disconnect();
+      }
+    }, { threshold: [0] });
+    // 设置让 Observer 观察 #disqus_thread 元素
+    disqus_observer.observe(document.getElementById('disqus_thread'));
+  } else {
+    // 当前环境是爬虫、或当前浏览器其不兼容 IntersectionObserver API
+    // 直接加载 Disqus
+    loadDisqus();
+  }
+}, 1);
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
+</script>
+<noscript>Disqus comment requires JavaScript.</noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://blog.taoky.moe/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-02-17T18:06:57+00:00</updated>
+  <updated>2023-02-17T20:44:36+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -24,6 +24,819 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">调试一则：为什么 GNOME 在我的电脑上这么慢？</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html" rel="alternate" type="text/html" title="调试一则：为什么 GNOME 在我的电脑上这么慢？" />
+      
+      <published>2023-02-17T20:30:00+00:00</published>
+      <updated>2023-02-17T20:30:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-02-17/gnome-debug-performance</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html">&lt;p&gt;距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，&lt;a href=&quot;https://ftp.lug.ustc.edu.cn/%E6%B4%BB%E5%8A%A8/2022.9.20_%E8%BD%AF%E4%BB%B6%E8%87%AA%E7%94%B1%E6%97%A5/slides/gnome-wayland-user-perspective.pdf&quot;&gt;这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides&lt;/a&gt;）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。&lt;/p&gt;
+
+&lt;p&gt;而且，Wayland session 还带来了一点负加成：不能只重启混成器（在这里是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-shell&lt;/code&gt;）而保留其他的用户进程。也就是说，靠 Alt + F2 然后输入 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r&lt;/code&gt; 是做不到的。这导致我每隔两三天就要 logout 然后再 login，否则到最后鼠标晃一晃都卡，生产力大幅降低。因此前段时间我打算来尝试解决这个问题。&lt;/p&gt;
+
+&lt;h2 id=&quot;资料收集&quot;&gt;资料收集&lt;/h2&gt;
+
+&lt;p&gt;找一些关键词，可以搜索到 gnome-shell 的这个 issue：&lt;a href=&quot;https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62&quot;&gt;GNOME Shell becomes extremely slow and consumes tons of CPU&lt;/a&gt;，其中 issue 作者介绍：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;有时候在长时间放着电脑不动，然后再回来的时候，GNOME Shell 就会变得很卡，CPU 占用很高；&lt;/li&gt;
+  &lt;li&gt;把扩展坞拔掉之后就又好了；&lt;/li&gt;
+  &lt;li&gt;perf 显示 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_source_iter_next&lt;/code&gt; 占用了大量的 CPU 时间；&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcore&lt;/code&gt; 生成的 coredump 里面也显示主线程在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_source_iter_next&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;尽管 issue 里面没有直接能起到帮助的内容，但是有很重要的几点：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;GDB 的 gcore 可以在运行时生成 coredump，里面说不定有很多有意义的信息（当然了，你得把&lt;a href=&quot;https://wiki.archlinux.org/title/Debugging/Getting_traces#Install_debug_packages&quot;&gt;调试符号&lt;/a&gt;装了，否则 coredump 基本没啥意义）；&lt;/li&gt;
+  &lt;li&gt;perf 可以看 gnome-shell 的 CPU 热点。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;perf&quot;&gt;Perf?&lt;/h2&gt;
+
+&lt;p&gt;在下次卡顿的时候，参考上面的 issue，我尝试用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;perf&lt;/code&gt; 跑了一下：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;perf record -e cycles:u -g --call-graph=lbr
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;perf report&lt;/code&gt; 的结果却匪夷所思：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/gnome/perf-report.png&quot; alt=&quot;perf report of sluggish GNOME&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;看起来大部分时间花在字符串处理上（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_scanner_get_token_i&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_regex_escape_string&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_strchug&lt;/code&gt; 为前三名自身调用 CPU 占比最高的）？&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/GNOME/glib/blob/02a00a831cea8e8b0224dd5b517dc402c25f3ea4/glib/gslist.c#L830&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_slist_last&lt;/code&gt; 的实现就是再简单不过的链表遍历&lt;/a&gt;，为什么它的 Children 值会这么高？&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;展开之后的调用链也怪怪的：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/gnome/perf-child.png&quot; alt=&quot;perf report of sluggish GNOME, expanded&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;至少我是看不出来到底哪里出了问题，看了 glib 的代码，甚至最后解决了问题之后也还是想不通：为什么 regex escape 会占用这么大的 CPU 时间？&lt;/p&gt;
+
+&lt;h2 id=&quot;看看-coredump-吧&quot;&gt;看看 coredump 吧&lt;/h2&gt;
+
+&lt;p&gt;在 perf 没有思路的情况下，尝试做了几个 coredump（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcore $(pidof gnome-shell)&lt;/code&gt;）看看情况。同时在 @libreliu 的推荐下，也用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eu-stack&lt;/code&gt; 看了看正在运行中的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-shell&lt;/code&gt; 的 backtrace。&lt;/p&gt;
+
+&lt;p&gt;首先 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo eu-stack --pid=$(pidof gnome-shell) -m&lt;/code&gt; 做了一些采样，发现活跃的其实只有主线程，其他的线程要么在 poll，要么在 futex wait，不太可能是它们导致的卡顿。&lt;/p&gt;
+
+&lt;p&gt;因此之后应该盯着主线程看就行。作为参考，这是其中某个 coredump 的主线程 backtrace：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#0  0x00007f2519d48574 in g_main_context_prepare (context=0x56505bdc2ab0, priority=0x7ffea40dd3f8) at ../glib/glib/gmain.c:3792
+3792	          if (result == FALSE &amp;amp;&amp;amp; source-&amp;gt;priv-&amp;gt;ready_time != -1)
+[Current thread is 1 (Thread 0x7f25142deb00 (LWP 1936586))]
+&amp;gt;&amp;gt;&amp;gt; bt full
+#0  0x00007f2519d48574 in g_main_context_prepare (context=0x56505bdc2ab0, priority=0x7ffea40dd3f8) at ../glib/glib/gmain.c:3792
+        result = &amp;lt;optimized out&amp;gt;
+        prepare = 0x0
+        source_timeout = -1
+        i = &amp;lt;optimized out&amp;gt;
+        n_ready = 0
+        current_priority = 2147483647
+        source = 0x56505f905730
+        iter = {
+          context = 0x56505bdc2ab0,
+          may_modify = 1,
+          current_list = 0x56505bdc2d60 = {[0] = 0x56505bdc2d40, [1] = 0x56505bdde360, [2] = 0x56506201e0a0, [3] = 0x56505e6bef20},
+          source = 0x56505f905730
+        }
+#1  0x00007f2519d9fa96 in g_main_context_iterate.constprop.0 (context=0x56505bdc2ab0, block=1, dispatch=1, self=&amp;lt;optimized out&amp;gt;) at ../glib/glib/gmain.c:4228
+        max_priority = 0
+        timeout = 4
+        some_ready = &amp;lt;optimized out&amp;gt;
+        nfds = &amp;lt;optimized out&amp;gt;
+        allocated_nfds = 39
+        fds = &amp;lt;optimized out&amp;gt;
+        begin_time_nsec = 1019133648184898
+#2  0x00007f2519d47d8f in g_main_loop_run (loop=0x56505dd1ced0) at ../glib/glib/gmain.c:4448
+        __func__ = &quot;g_main_loop_run&quot;
+#3  0x00007f2518ed0d3b in meta_context_run_main_loop (context=0x5650647779b0, context@entry=0x56505bdbe0c0, error=0x56505bdc2ab0, error@entry=0x7ffea40dd4d0) at ../mutter/src/core/meta-context.c:455
+        priv = 0x56505bdbe050
+        __func__ = &quot;meta_context_run_main_loop&quot;
+#4  0x000056505b3c448d in main (argc=&amp;lt;optimized out&amp;gt;, argv=&amp;lt;optimized out&amp;gt;) at ../gnome-shell/src/main.c:582
+        context = 0x56505bdbe0c0
+        error = 0x0
+        ecode = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;参考 &lt;a href=&quot;https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62#note_117928&quot;&gt;https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/62#note_117928&lt;/a&gt; 的评论，加载 glib_gdb 插件看一下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source_lists&lt;/code&gt; 的内容：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; source /usr/share/glib-2.0/gdb/glib_gdb.py
+&amp;gt;&amp;gt;&amp;gt; gforeach i in context-&amp;gt;source_lists: print (((GSourceList *)$i)-&amp;gt;head)-&amp;gt;name
+$1 = 0x7f2519f78871 &quot;GCancellable&quot;
+$2 = 0x0
+$3 = 0x7f2519e0cb6a &quot;GUnixSignalSource: SIGTERM&quot;
+$4 = 0x56505c38edf0 &quot;[mutter] Wayland events&quot;
+$5 = 0x565063b1e040 &quot;[mutter] Clutter frame clock (0x56506442a030)&quot;
+$6 = 0x0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;好像没什么异常的嘛！看一下当前的事件：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; print *source
+$7 = {
+  callback_data = 0x565065296360,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f251908f120 &amp;lt;idle_monitor_source_funcs&amp;gt;,
+  ref_count = 2,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 3971079,
+  poll_fds = 0x0,
+  prev = 0x5650647779b0,
+  next = 0x565064689800,
+  name = 0x5650652fceb0 &quot;[mutter] Idle monitor&quot;,
+  priv = 0x7f23fb15dc90
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;emmm 为什么这个 source 不在上面显示的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source_lists&lt;/code&gt; 里面呢？这个问题我当时没有想清楚，但是之后我看了一下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context&lt;/code&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; print *context
+$8 = {
+  mutex = {
+    p = 0x1,
+    i = {[0] = 1, [1] = 0}
+  },
+  cond = {
+    p = 0x0,
+    i = {[0] = 0, [1] = 0}
+  },
+  owner = 0x56505be55f60,
+  owner_count = 2,
+  flags = G_MAIN_CONTEXT_FLAGS_NONE,
+  waiters = 0x0,
+  ref_count = 15634,
+  sources = 0x56505bda6b00 = {
+    [0x69fb08] = 0x5650680e3330,
+    [0x3a3d45] = 0x5650641cebb0,
+    [0x923354] = 0x565064cceaa0,
+    [0x427140] = 0x565066146120,
+    [0xad54f7] = 0x56506807eeb0,
+    [0x9fe13c] = 0x5650681e2680,
+    [0x61c13d] = 0x565063ae0320,
+    [0x3dc2ed] = 0x565062e24b50,
+    [0xac60a6] = 0x565067888d70,
+    [0x3d42f3] = 0x565062457650,
+    [0xaeac2e] = 0x56506a500a40,
+    [0x14e7c1] = 0x5650627ae2c0,
+    [0x1484dd] = 0x565064ef0910,
+    [0x415fda] = 0x565066611ab0,
+    [0x1] = 0x56505bdcf050,
+    [0x69fb0a] = 0x565064bd82d0,
+    [0x923356] = 0x565060f89ea0,
+    [0x10e7f1] = 0x56505e2f4960,
+    [0x427142] = 0x565060172940,
+    [0x4288a] = 0x565063f351d0,
+    [0x9121ef] = 0x565065623200,
+    [0x3dc2ef] = 0x5650660eef50,
+    [0x485f87] = 0x5650644c5ea0,
+    [0xad54f9] = 0x565066d38aa0,
+    [0x61c13f] = 0x5650648bd220,
+    [0x3237d7] = 0x565063fac8c0,
+    [0x3d42f5] = 0x565063ff6790,
+    [0x9c4a24] = 0x565064412200,
+    [0xaeac30] = 0x5650639f3400,
+    [0x78a316] = 0x56505c1b56d0,
+    [0x14e7c3] = 0x565064753c80,
+    [0xa37e2b] = 0x565060125f90,
+    [0x4] = 0x56505bdc8f00,
+    [0xd9c78] = 0x565063d5e2a0,
+    [0xad54fb] = 0x565064b01620,
+    [0x4288c] = 0x56505f38eb10,
+    [0x9121f1] = 0x56506811c920,
+    [0x3dc2f1] = 0x565061086ce0,
+    [0x5] = 0x56505bee6ea0,
+    [0x7dfa1d] = 0x565065399f90,
+    [0x3237d9] = 0x565060a68d90,
+    [0x2666f3] = 0x5650625c4800,
+    [0x9121f3] = 0x56506885fdf0,
+    [0xaa9af0] = 0x56505c34c740,
+    [0x3237db] = 0x56505cd96930,
+    [0x2f322e] = 0x5650610659c0,
+    [0x9c4a28] = 0x565066b3c790,
+    [0x2666f5] = 0x565062b286a0,
+    [0x8be805] = 0x56506515d870,
+    [0x10e7f8] = 0x565064367cc0,
+    [0xa37e30] = 0x565065c43520,
+    [0x495f81] = 0x565060416f90,
+    [0x7dfa21] = 0x565065bf9f30,
+    [0x2f3230] = 0x565060c80f20,
+    [0x850b41] = 0x56505d242a60,
+    [0x2666f7] = 0x56505c75acb0,
+    [0x36fd76] = 0x56505f567b90,
+    [0x35f7b1] = 0x565064ac1420,
+    [0x10e7fa] = 0x56505f21b710,
+    [0x861caa] = 0x5650601b5270,
+    [0x925646] = 0x565069aa5370,
+    [0x2f3232] = 0x565066e09dd0,
+    [0x2d4f60] = 0x56505f4e2590,
+    [0x8be808] = 0x565069b14a00,
+    [0x8d850c] = 0x565065541980,
+    [0x378914] = 0x565060738d60,
+    [0x2dc3b8] = 0x56505f432c60,
+    [0xc] = 0x56505c0c7b90,
+    [0x41fcf4] = 0x56505d1be040,
+    [0x35f7b3] = 0x565063109a60,
+    [0x59f032] = 0x565066b7be80,
+    [0x310f34] = 0x565066e93fe0,
+    [0x3dabb4] = 0x565065becc70,
+    [0x2d4f62] = 0x565066df25b0,
+    [0x8be80a] = 0x5650683ac340,
+    [0x378916] = 0x5650629356c0,
+    [0x71c08a] = 0x565063c7cc80,
+    [0x925649] = 0x565069a95d20,
+    [0x35f7b5] = 0x565066c57da0,
+    [0x7e6e7e] = 0x565069346380,
+    [0x3dabb6] = 0x565062699710,
+    [0x8d850f] = 0x56506a75e950,
+    [0x6863e4] = 0x565065e8cf90,
+    [0x2eec67] = 0x5650658989e0,
+    [0x9ef89b] = 0x565068025030,
+    [0x2d4f64] = 0x5650642ce5f0,
+    [0x8be80c] = 0x565064220980,
+    [0x378918] = 0x5650648728b0,
+    [0x90a202] = 0x565064b2f860,
+    [0x71c08c] = 0x565066ab6270,
+    [0x861caf] = 0x565062fd22b0,
+    [0x10e7ff] = 0x56505c205ca0,
+    [0x92564b] = 0x5650601cda30,
+    [0x7a0bcc] = 0x565066eb4a70,
+    [0x2eec69] = 0x5650652a04b0,
+    [0x8d8511] = 0x565060dffcb0,
+    [0x6863e6] = 0x565066855b50,
+    [0x8de7f5] = 0x56506390d060,
+    [0x658cc2] = 0x56506539c940,
+    [0x3dabb8] = 0x565066e21b90
+    ...
+  },
+  pending_dispatches = 0x56505bdc2c00,
+  timeout = 29978,
+  next_id = 11915638,
+  source_lists = 0x7f24b4001900 = {[0] = 0x7f24a4001800, [1] = 0x7f24a40f2d20, [2] = 0x56505bdc2d40, [3] = 0x56505bdde360, [4] = 0x56506201e0a0, [5] = 0x56505e6bef20},
+  in_check_or_prepare = 0,
+  poll_records = 0x56505bdc2c20,
+  n_poll_records = 35,
+  cached_poll_array = 0x56505fbde300,
+  cached_poll_array_size = 39,
+  wakeup = 0x56505bdae370,
+  wake_up_rec = {
+    fd = 3,
+    events = 1,
+    revents = 0
+  },
+  poll_changed = 0,
+  poll_func = 0x7f2519d4f0f0 &amp;lt;g_poll&amp;gt;,
+  time = 1019133648187,
+  time_is_fresh = 1
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;诶等等，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources&lt;/code&gt; 里面怎么这么多东西？而且看起来还没有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;print&lt;/code&gt; 完，随便采样几个：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; print *(GSource *)0x56506885fdf0
+$9 = {
+  callback_data = 0x7f23b7637d20,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f251908f120 &amp;lt;idle_monitor_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 9511411,
+  poll_fds = 0x0,
+  prev = 0x56506811c920,
+  next = 0x565069a87760,
+  name = 0x565068eaede0 &quot;[mutter] Idle monitor&quot;,
+  priv = 0x7f23a8477730
+}
+&amp;gt;&amp;gt;&amp;gt; print *(GSource *)0x565060dffcb0
+$10 = {
+  callback_data = 0x7f23b72b71b0,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f251908f120 &amp;lt;idle_monitor_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 9274641,
+  poll_fds = 0x0,
+  prev = 0x56506a75e950,
+  next = 0x5650688a62b0,
+  name = 0x565060b99bc0 &quot;[mutter] Idle monitor&quot;,
+  priv = 0x7f23b77db350
+}
+&amp;gt;&amp;gt;&amp;gt; print *(GSource *)0x565060a68d90
+$11 = {
+  callback_data = 0x7f23fa0aeaa0,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f251908f120 &amp;lt;idle_monitor_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 3291097,
+  poll_fds = 0x0,
+  prev = 0x565063fac8c0,
+  next = 0x56505cd96930,
+  name = 0x565066c08d20 &quot;[mutter] Idle monitor&quot;,
+  priv = 0x565060443230
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;怎么全是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[mutter] Idle monitor&lt;/code&gt;？这里肯定有点问题。&lt;/p&gt;
+
+&lt;h2 id=&quot;gdb-with-pwntools&quot;&gt;GDB with pwntools?&lt;/h2&gt;
+
+&lt;p&gt;从 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources&lt;/code&gt; 那里的省略号可以看出，其实里面还有别的东西，这可以用下面的命令看到：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print -elements unlimited -- context-&amp;gt;sources
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是要怎么方便地看出 sources 里面的内容？glib gdb 插件提供的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gforeach&lt;/code&gt; 似乎不支持这样的功能，而且 gdb 也不支持一次执行多条调试语句。于是我想出了一个歪主意：写个脚本和 GDB 交互。我用 pwntools 略熟悉一些，所以脚本就用它写了（可以看成是高配版的 &lt;a href=&quot;https://man7.org/linux/man-pages/man1/expect.1.html&quot;&gt;expect(1)&lt;/a&gt;，大概吧？）。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pwn&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;argparse&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argparse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ArgumentParser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_argument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'file'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'file to run'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# context.log_level = &quot;debug&quot;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'gdb -c &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# 我的 GDB 加载了 https://github.com/cyrus-and/gdb-dashboard
+# 所以 prompt 和标准的有所不同
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recvuntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&amp;gt;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;set style enabled off&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recvuntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&amp;gt;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;up&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recvuntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&amp;gt;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# p.sendline(&quot;up&quot;)
+# p.recvuntil(&quot;&amp;gt;&amp;gt;&amp;gt;&quot;)
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;print -elements unlimited -- context-&amp;gt;sources&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recvuntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&amp;gt;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;utf-8&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;address&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;=&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;,&quot;&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;[&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isdigit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;or&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isalpha&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_char&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# print(address)
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;print *(GSource *)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recvuntil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&amp;gt;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;utf-8&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;interactive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;果不其然：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; grep &quot;Idle monitor&quot; 1936586-sources-1.txt | wc                                                      
+   7224   43344  353976
+&amp;gt; grep &quot;ref_count&quot; 1936586-sources-1.txt | wc                                                         
+   7313   21939  124321
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;总共才 7313 个 source，idle monitor 占了将近 99%。就算和我遇到的性能问题无关，这里肯定也是有点问题的。&lt;/p&gt;
+
+&lt;h2 id=&quot;idle-monitor&quot;&gt;Idle monitor?&lt;/h2&gt;
+
+&lt;p&gt;很容易就能在 mutter 代码（作为 GNOME Wayland 混成器的核心组件，mutter 是嵌入在 gnome-shell 里面的库）里面找到产生这个 source 的&lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L319&quot;&gt;函数&lt;/a&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MetaIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;make_watch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MetaIdleMonitor&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;guint64&lt;/span&gt;                    &lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;MetaIdleMonitorWatchFunc&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;callback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;gpointer&lt;/span&gt;                   &lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;GDestroyNotify&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;MetaIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_new0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MetaIdleMonitorWatch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get_next_watch_serial&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;callback&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;callback&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;notify&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;GSource&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_source_new&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idle_monitor_source_funcs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                      &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GSource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;g_source_set_name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;[mutter] Idle monitor&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;n&quot;&gt;g_source_set_callback&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inhibited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;g_source_set_ready_time&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                   &lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;last_event_time&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+                                   &lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;g_source_attach&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;g_source_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout_source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;g_hash_table_insert&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watches&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                       &lt;span class=&quot;n&quot;&gt;GUINT_TO_POINTER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                       &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make_watch()&lt;/code&gt; 函数会由两种不同的 watch 生成函数调用：&lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L361&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meta_idle_monitor_add_idle_watch()&lt;/code&gt;&lt;/a&gt; 和 &lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L361&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meta_idle_monitor_add_user_active_watch()&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;在 mutter 中，”idle watch” 是一个积累 idle time 的定时器，在到达指定的时间之后会执行回调函数；而 “user active watch” 是一个一次性的定时器，当用户活跃时就会执行回调，并且销毁自己。上面只有 idle watch 调用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;make_watch()&lt;/code&gt; 的时候 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;timeout_msec&lt;/code&gt; 不为 0，所以之后只关心它。&lt;/p&gt;
+
+&lt;p&gt;而 &lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-monitor.c#L439&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meta_idle_monitor_remove_watch()&lt;/code&gt;&lt;/a&gt; 则可以销毁 watch。&lt;/p&gt;
+
+&lt;p&gt;这些函数在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meta-idle-manager.c&lt;/code&gt; 里面似乎又包了一层，&lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L146&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;handle_add_idle_watch()&lt;/code&gt;&lt;/a&gt; 和 &lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L180&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;handle_remove_watch()&lt;/code&gt;&lt;/a&gt; 分别&lt;a href=&quot;https://gitlab.gnome.org/GNOME/mutter/-/blob/7f292326c8f4e2fd28ab288e8124d43d52060e41/src/backends/meta-idle-manager.c#L201&quot;&gt;和对应的信号绑定&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;看起来，只要外面正确调用了 add idle watch 和 remove watch，就不会有问题。&lt;/p&gt;
+
+&lt;h2 id=&quot;是-gnome-shell-或者扩展的问题吗&quot;&gt;是 gnome-shell 或者扩展的问题吗？&lt;/h2&gt;
+
+&lt;p&gt;在 gnome-shell 代码里面搜索：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; rg add_idle_watch                                                                                 
+js/ui/pointerWatcher.js
+39:        this._idleMonitor.add_idle_watch(IDLE_TIME, this._onIdleMonitorBecameIdle.bind(this));
+
+js/ui/unlockDialog.js
+344:        this._idleWatchId = this._idleMonitor.add_idle_watch(HINT_TIMEOUT * 1000, () =&amp;gt; {
+600:        this._idleWatchId = this._idleMonitor.add_idle_watch(IDLE_TIMEOUT * 1000, this._escape.bind(this));
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pointerWatcher&lt;/code&gt; 只会在放大镜功能里用到，而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unlockDialog&lt;/code&gt; 看起来销毁逻辑也是正确的。对于我用的扩展，Dash to Dock 会使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pointerWatcher&lt;/code&gt;，所以是它的问题吗？&lt;/p&gt;
+
+&lt;p&gt;我尝试自己编译了一份 mutter，在每次 add idle watch 和 remove watch 的时候打印一下，结果发现：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;打开 Lollypop（一个音乐播放器）的时候，会有 idle watch 添加和销毁，但是好像有些 idle watch 总是不会被销毁；&lt;/li&gt;
+  &lt;li&gt;打开 Steam 之后，idle watch 的相关行为变得更加频繁；&lt;/li&gt;
+  &lt;li&gt;以上的事件看起来和扩展无关：因为即使全部关闭也是如此。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;dbus&quot;&gt;DBus…??&lt;/h2&gt;
+
+&lt;p&gt;此时我注意到，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;meta-idle-manager.c&lt;/code&gt; 里面有一些和 DBus 有关的操作，于是用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dbus-monitor&lt;/code&gt; 看一下有没有可疑的消息：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dbus-monitor --session | grep -i idle
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;结果发现，在 mutter 有调试输出的时候，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dbus-monitor&lt;/code&gt; 也有反应，证明这些 idle watch 都是通过 DBus 通信创建/销毁的。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;busctl --user&lt;/code&gt; 可以看到发起的进程来源，结果竟然是……&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gsd-power&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-session-binary&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;（在 gdb 里面，可以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;print ((DBusWatch *)((MetaIdleMonitorWatch *)((GSourceCallback *)((GSource*){i})-&amp;gt;callback_data)-&amp;gt;data)-&amp;gt;user_data)-&amp;gt;dbus_name&lt;/code&gt; 来看对应的 source）&lt;/p&gt;
+
+&lt;p&gt;所以是它们的实现问题？不过在此之前，先来验证一下 DBus 创建的 idle watch 的行为。我拿 zbus 整了个 demo:&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::{&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;thread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;zbus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;blocking&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;mod&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mutter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;mutter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;IdleMonitorProxyBlocking&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.add_idle_watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;110000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;// println!(&quot;{:?}&quot;, res);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;loop&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from_secs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;mutter 的 mod 由 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zbus-xmlgen --session org.gnome.Mutter.IdleMonitor /org/gnome/Mutter/IdleMonitor/Core&lt;/code&gt; 生成，并且需要加上 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;default_path = &quot;/org/gnome/Mutter/IdleMonitor/Core&quot;&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;运行之后可以发现：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;我们成功搞出了 10000 个 idle watch&lt;/li&gt;
+  &lt;li&gt;GNOME 确实变卡了，如果开个 3D 游戏会更明显&lt;/li&gt;
+  &lt;li&gt;如果关掉进程，这些 idle watch 会一起销毁掉&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;所以，问题就在于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gsd-power&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-session-binary&lt;/code&gt; 长时间运行泄漏了大量的 idle watch 导致卡顿……但是这就是问题的根源了吗？&lt;/p&gt;
+
+&lt;h2 id=&quot;gnome-desktop-不是-gnome-desktop&quot;&gt;“gnome-desktop” 不是 “GNOME Desktop”&lt;/h2&gt;
+
+&lt;p&gt;我检查的两者的代码，发现它们的 pattern 都是：add idle watch 之前，先销毁掉之前记录的 watch。而对应的函数是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome_idle_monitor_add_idle_watch()&lt;/code&gt;，这个函数并不在 gnome-settings-daemon 或者 gnome-session 里面，而是在 gnome-desktop 里面。&lt;/p&gt;
+
+&lt;p&gt;这个名字极其容易导致误解，以至于它的 &lt;a href=&quot;https://github.com/GNOME/gnome-desktop/blob/master/README.md#how-to-report-bugs&quot;&gt;README 里面这么写&lt;/a&gt;：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Bugs should be reported to the Issues section of gnome-desktop repository. Due to very high numbers of misdirected gnome-shell bugs, the issue tracker has unfortunately been restricted to GNOME developers only. If you have found a bug in this library, feel free to contact any GNOME developer and ask for your report to be forwarded here.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-desktop&lt;/code&gt; 事实上做的事情是：为一些程序提供来自 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-shell&lt;/code&gt; 的接口。就我们的例子来说，DBus 请求其实是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-desktop&lt;/code&gt; 帮它们干的。其中添加 idle watch 会调用：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;add_idle_watch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitor&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;meta_dbus_idle_monitor_call_add_idle_watch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+						    &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout_msec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+						    &lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cancellable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+						    &lt;span class=&quot;n&quot;&gt;on_watch_added&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;idle_monitor_watch_ref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#LL369C12-L369C12&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added&lt;/code&gt;&lt;/a&gt; 是一个执行之后的回调函数：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;on_watch_added&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GObject&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;GAsyncResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;gpointer&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;GError&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;GVariant&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_dbus_proxy_call_finish&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;G_DBUS_PROXY&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g_error_matches&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;G_IO_ERROR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;G_IO_ERROR_CANCELLED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;g_error_free&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;g_warning&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to acquire idle monitor proxy: %s&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;g_error_free&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dead&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;g_variant_get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;(u)&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upstream_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;g_variant_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;g_hash_table_insert&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watches_by_upstream_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+			     &lt;span class=&quot;n&quot;&gt;GINT_TO_POINTER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upstream_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;而删除 watch 的操作，在 &lt;a href=&quot;https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L520&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome_idle_monitor_remove_watch()&lt;/code&gt;&lt;/a&gt; 里面：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;gnome_idle_monitor_remove_watch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+				 &lt;span class=&quot;n&quot;&gt;guint&lt;/span&gt;		   &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;g_return_if_fail&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GNOME_IS_IDLE_MONITOR&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_hash_table_lookup&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watches&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GINT_TO_POINTER&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upstream_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;meta_dbus_idle_monitor_call_remove_watch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proxy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+							  &lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upstream_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+							  &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;gnome_idle_monitor_remove_watch_internal&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以看到，只有在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;upstream_id&lt;/code&gt; 有效的时候，才会实际发送删除 watch 的 DBus 请求。而这个参数的赋值在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added&lt;/code&gt; 里面，如果 dbus 结果成功并且 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;dead&lt;/code&gt; 为否，那么就会赋值。&lt;/p&gt;
+
+&lt;p&gt;而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;dead&lt;/code&gt; 会在销毁 watch 的时候&lt;a href=&quot;https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L132&quot;&gt;被赋值&lt;/a&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;idle_monitor_watch_destroy&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitorWatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dead&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_unref&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;销毁操作在初始化的时候就&lt;a href=&quot;https://github.com/GNOME/gnome-desktop/blob/935ee8d56801e7ed84fc1f76658bcab1bb027943/libgnome-desktop/gnome-idle-monitor.c#L322&quot;&gt;注册在了 GHashTable 里面&lt;/a&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;gnome_idle_monitor_init&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GnomeIdleMonitor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gnome_idle_monitor_get_instance_private&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watches&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_hash_table_new_full&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+							&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+							&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+							&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GDestroyNotify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idle_monitor_watch_destroy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watches_by_upstream_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_hash_table_new&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;monitor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cancellable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_cancellable_new&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我尝试在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added()&lt;/code&gt; 里面加了点 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g_warning&lt;/code&gt; 来调试，结果发现有一些 watch 会触发 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;dead&lt;/code&gt; 的分支，但是它们实际上是有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream_id&lt;/code&gt; 的！而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream_id&lt;/code&gt; 的信息在此之后就丢失了，所以 gnome-desktop 之后就无法向 mutter 发送删除对应 watch 的请求了，于是就导致了泄漏。从我的理解看，这种情况会发生在：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;某个程序添加了一个 idle watch。&lt;/li&gt;
+  &lt;li&gt;但是很快就 remove 了这个 watch，这个时候因为 DBus 相对慢一些（大概吧），&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added()&lt;/code&gt; 还没跑完，因此没有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream_id&lt;/code&gt;，remove 请求不会被发送，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;idle_monitor_watch_destroy()&lt;/code&gt; 会被调用，因此 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;dead&lt;/code&gt; 会被赋值。&lt;/li&gt;
+  &lt;li&gt;之后 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added()&lt;/code&gt; 执行，此时就走到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;watch-&amp;gt;dead&lt;/code&gt; 的分支了，因为没有在这个分支销毁 watch，因此 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream_id&lt;/code&gt; 也就丢失了。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;修复也很简单，我&lt;a href=&quot;https://gitlab.gnome.org/GNOME/gnome-desktop/-/merge_requests/155&quot;&gt;提交了一个 MR&lt;/a&gt;，很快就合并进去了，对应的 43.2 版本已经修复了这个问题。从对 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on_watch_added&lt;/code&gt; 的 git blame 来看，这个问题似乎……已经有 10 年的历史了？&lt;/p&gt;
+
+&lt;h2 id=&quot;补充说明&quot;&gt;补充说明&lt;/h2&gt;
+
+&lt;p&gt;很上面的地方提到，在分析 coredump 的时候，我发现虽然 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources&lt;/code&gt; 里面东西很多，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source_lists&lt;/code&gt; 就几个元素：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; gforeach i in context-&amp;gt;source_lists: print (((GSourceList *)$i)-&amp;gt;head)-&amp;gt;name
+$1 = 0x7f2519f78871 &quot;GCancellable&quot;
+$2 = 0x0
+$3 = 0x7f2519e0cb6a &quot;GUnixSignalSource: SIGTERM&quot;
+$4 = 0x56505c38edf0 &quot;[mutter] Wayland events&quot;
+$5 = 0x565063b1e040 &quot;[mutter] Clutter frame clock (0x56506442a030)&quot;
+$6 = 0x0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;并且，glib 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gmain.c&lt;/code&gt; 里面，没有直接从 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sources&lt;/code&gt; 这个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GHashTable&lt;/code&gt; 里面遍历的代码。难道我搞错了什么？我在写这篇文章的时候重新看了一下 glib 的代码，结果发现了我之前的一个错误：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source_lists&lt;/code&gt; &lt;strong&gt;并非 GSource 的列表&lt;/strong&gt;，而是 &lt;strong&gt;GSource 的列表的列表&lt;/strong&gt;！&lt;/p&gt;
+
+&lt;p&gt;在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;struct _GSource&lt;/code&gt; 的定义里：&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_GSource&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;cm&quot;&gt;/*&amp;lt; private &amp;gt;*/&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gpointer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;callback_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;GSourceCallbackFuncs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;callback_funcs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GSourceFuncs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;source_funcs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;guint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ref_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;GMainContext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;gint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;priority&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;guint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;guint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;source_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;GSList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;poll_fds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  
+  &lt;span class=&quot;n&quot;&gt;GSource&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prev&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;GSource&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;GSourcePrivate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以看到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prev&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;next&lt;/code&gt;。这表明了，其实 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GSource&lt;/code&gt; 本身也是链表的节点。拿我之前的 coredump 试一下：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; gforeach i in context-&amp;gt;source_lists: print (((GSourceList *)$i)-&amp;gt;head)
+$42 = (GSource *) 0x56505c195c70
+$43 = (GSource *) 0x565061f8a9a0
+$44 = (GSource *) 0x56505bdcf050
+$45 = (GSource *) 0x56505c2cbaa0
+$46 = (GSource *) 0x5650680b1860
+$47 = (GSource *) 0x56506a7cd4f0
+&amp;gt;&amp;gt;&amp;gt; print *((GSource *) 0x565061f8a9a0)-&amp;gt;next
+$48 = {
+  callback_data = 0x56506a6d86e0,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f25184b8500 &amp;lt;g_datetime_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911477,
+  poll_fds = 0x56505e4d1a60 = {[0] = 0x565067a11364},
+  prev = 0x565061f8a9a0,
+  next = 0x565067ff5e80,
+  name = 0x0,
+  priv = 0x7f23fb79f990
+}
+&amp;gt;&amp;gt;&amp;gt; print *((GSource *) 0x565061f8a9a0)-&amp;gt;next-&amp;gt;next
+$49 = {
+  callback_data = 0x565066bf54e0,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f25184b8500 &amp;lt;g_datetime_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911478,
+  poll_fds = 0x565062786e80 = {[0] = 0x565067ff5ef4},
+  prev = 0x565067a112f0,
+  next = 0x56506574fe90,
+  name = 0x0,
+  priv = 0x56506a679950
+}
+&amp;gt;&amp;gt;&amp;gt; print *((GSource *) 0x565061f8a9a0)-&amp;gt;next-&amp;gt;next-&amp;gt;next
+$50 = {
+  callback_data = 0x565062e67150,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f25184b8500 &amp;lt;g_datetime_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = -100,
+  flags = 1,
+  source_id = 11911479,
+  poll_fds = 0x565062762150 = {[0] = 0x56506574ff04},
+  prev = 0x565067ff5e80,
+  next = 0x56506803aed0,
+  name = 0x0,
+  priv = 0x7f23aa743b50
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;所以其实当前处理的 source 远不止 6 个。我们的 idle source 也在里面：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; print *((GSource *) 0x56505bdcf050)-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next-&amp;gt;next
+$77 = {
+  callback_data = 0x56505f338bd0,
+  callback_funcs = 0x7f2519e303e0 &amp;lt;g_source_callback_funcs&amp;gt;,
+  source_funcs = 0x7f251908f120 &amp;lt;idle_monitor_source_funcs&amp;gt;,
+  ref_count = 1,
+  context = 0x56505bdc2ab0,
+  priority = 0,
+  flags = 1,
+  source_id = 274802,
+  poll_fds = 0x0,
+  prev = 0x565062083920,
+  next = 0x56505d6fb170,
+  name = 0x565060556180 &quot;[mutter] Idle monitor&quot;,
+  priv = 0x56505c85e890
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;其实还挺开心的，虽然我还是不知道 perf 那个输出是怎么回事。同时，我也希望这篇文章能帮助读者调试类似的性能问题：有关 gnome-shell 性能调试的技巧网络上很少，我也试过 sysprof，对于这个例子没有给出有价值的信息（可能是漏了啥，比如说 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fno-omit-frame-pointer&lt;/code&gt; 之类，虽然没有查过，但是猜测 Arch 没开这个 flag）。同时使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcore&lt;/code&gt; 也对调试起到了相当大的帮助（因为显然不能直接 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gdb attach&lt;/code&gt; 上去，否则整个图形界面就卡住了）。&lt;/p&gt;
+
+&lt;p&gt;感觉如果之后再有有趣的调试经历的话，「调试一则」或许可以弄成一个系列也说不准。&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="Linux" />
+      
+        <category term="GNOME" />
+      
+        <category term="debug" />
+      
+        <category term="perf" />
+      
+
+      
+        <summary type="html">距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -11271,279 +12084,6 @@ a.out:
 
       
         <summary type="html">/*</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">信任与不信任</title>
-      
-      
-      <link href="https://blog.taoky.moe/2015-09-27/trusting-or-not.html" rel="alternate" type="text/html" title="信任与不信任" />
-      
-      <published>2015-09-27T00:00:00+00:00</published>
-      <updated>2015-09-27T00:00:00+00:00</updated>
-      <id>https://blog.taoky.moe/2015-09-27/trusting-or-not</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2015-09-27/trusting-or-not.html">&lt;p&gt;XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。&lt;/p&gt;
-
-&lt;p&gt;这件事情其实各方都有责任，Apple 的 Mac App Store 做得实在太差：经常连接不上，连接上了还很难下载：经常下载到一半就失败了；Apple Developer Program 没有提供 sha1 校验码；开发者作死关了 Gatekeeper，不了解 OS X 应用的数字证书……这件事闹得太大，很多著名应用被感染，以至于 Apple 发出了一个&lt;a href=&quot;http://www.apple.com/cn/xcodeghost/&quot;&gt;申明&lt;/a&gt;。
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;不过，这件事情也是很让人大开眼界的：原来在 IDE 里也可以做手脚！然而 XcodeGhost 并不是第一个做这件事的。Ken Thompson，UNIX 的创造者之一，在他获得图灵奖后做了一个演讲：「Reflections on Trusting Trust」。演讲中他证明了可以在编译器里加入代码，使得编译出来的程序（包括编译器自己）都是有问题的。也就是说，不管有问题的编译器用正确的代码自举（Bootstrap）多少次，结果还是有可能有问题。在最后一部分，他说了这样一句话：&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;You can’t trust code that you did not totally create yourself.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;如果在一个不被信任的平台上建东西，无论建造过程有多么规范严谨，它也不应该被信任。这样想想其实挺恐怖的：你信任你的编译器吗？你信任你的操作系统吗？你信任你的 BIOS/UEFI 吗？你信任你的硬件吗？&lt;/p&gt;
-
-&lt;p&gt;恐怕到最后，结果只有「不」这个字了。&lt;/p&gt;
-
-&lt;p&gt;说到这个，我想到了 Richard Stallman。他用的笔记本从操作系统到 BIOS 全部都是开源的（因此他还用过龙芯的笔记本，不过在 2012 年被偷了）。现在把所有的软件和固件全部都换成开源的并不是很现实的事情。诚然大部分都可以替换，但 Flash 呢？各种各样的音视频格式呢？驱动程序呢？以前我看到有人说「RMS 永远是对的」，现在想来，他至少在这件事情上虽然太过激了点，但确实是对的。&lt;/p&gt;
-
-&lt;p&gt;你看不出闭源的东西里面构造是什么，那么开源的也可以完全信任吗？不。诚然，开源程序可以看到内部的构造，然而可能根本没耐心看、看不懂或是没有发现隐蔽的问题。开源有时比闭源更加可以信任些，但也很难达到「完全信任」的程度，不然 OpenSSL 的「心脏流血」就不会隔这么长时间才被发现了。毕竟，大部分人都不会自己去编译的，而是用别人编译好的二进制文件。&lt;/p&gt;
-
-&lt;p&gt;说到底，做到使用环境能被「完全信任」实在太难，更别说「人」自己也没有办法被完全信任。&lt;/p&gt;
-
-&lt;p&gt;这个问题，恐怕找不到一个完美的解决方案。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;据说写 XcodeGhost 的作者还是个学生。我只能用 Ken Thompson 演讲的最后一段来说了。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;I have watched kids testifying before Congress. It is clear that they are completely unaware of the seriousness of their acts. There is obviously a cultural gap. The act of breaking into a computer system has to have the same social stigma as breaking into a neighbor’s house. It should not matter that the neighbor’s door is unlocked. The press must learn that misguided use of a computer is no more amazing than drunk driving of an automobile.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;现在媒体「misguide」的情况不多了，但如果 XcodeGhost 的编写者真的只是学生，真是只是像他声明里面说的那样没有恶意的话，那他就是「completely unaware of the seriousness of their acts」。&lt;/p&gt;
-
-&lt;p&gt;唉。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;附：我对演讲 Reflections on Trusting Trust 的渣翻译&lt;/p&gt;
-
-&lt;h4 id=&quot;简介&quot;&gt;简介&lt;/h4&gt;
-
-&lt;p&gt;我感谢 ACM 给我这个奖项。我不得不感觉到我得到了这个奖是因为机缘巧合和技术的价值。UNIX 迅速流行，给工业从 central main frames（？）到 autonomous minis（？）带来了巨大改变。我推测 Daniel Bobrow 会代替我站在这里，如果他付不起一台 PDP-10 并且要付清 PDP-11 的欠款的话。此外，现在 UNIX 的情况是由许许多多人的辛勤劳动建筑成的。&lt;/p&gt;
-
-&lt;p&gt;有句老话，「和那个带你来的人跳舞」（Dance with the one that brought you），意思是说我应该谈谈 UNIX 了。我已经很长时间没有为主流 UNIX 工作了，但我仍旧继续因为其他人的工作而得到不应有的赞扬。所以，我不想再谈 UNIX 了，但我想感谢每个作出贡献的人。那把我带给了 Dennis Ritchie。我们的合作已成为一件美好的事情。在我们过去共同工作的十年里，我只能回忆起一件协作不佳的事。那一次，我发现我们都写了相同的 20 行的汇编程序。我对比了源代码，震惊地发现它们每个字符都毫无差别。我们共同工作的结果已经大大超过我们各自的贡献。我是一个程序员。在我的 1040 税收表格上，我的职业就是这么写的。我想给你们展示一下我曾写过的最可爱的程序。我用三步做了这件事，并且最后把它们放在了一起。&lt;/p&gt;
-
-&lt;h4 id=&quot;第一步&quot;&gt;第一步&lt;/h4&gt;
-
-&lt;p&gt;在大学里有电子游戏之前，我们用展示编程练习的方式来愉悦自己。我的其中一个最爱，就是写出最短的可以自我复制的程序。既然这是一个与现实分离的练习，我经常用的是 FORTRAN。的确，选择 FORTRAN 语言的原因和二人三足游戏流行的原因，是一样的。&lt;/p&gt;
-
-&lt;p&gt;更清晰地说，这个问题是写出一个源码，当它被编译并执行时，会输出一份自身源代码的精确复制。如果你从来都没有做过这种事情，我强烈建议你自己去试试。自己去探寻如何做事情是一次披露，这远胜过任何被别人告知如何去做的好处。所谓「最短」只是一种刺激来证明技能以及选出冠军。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'\t'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'0'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'}'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;';'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'/'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'*'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;删除了&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;213&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;行&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-
-&lt;span class=&quot;cm&quot;&gt;/*
- * 字符串 s 是一个
- * 对从 '0' 到结尾的
- * 主体程序的
- * 描述。
- */&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;char&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\t&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s[ ] = {&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    	&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\r&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;%d, &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%s&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;这里是一些简单的翻译，&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;使得一个不编写&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;的程序员也能看懂这段程序。&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;赋值&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;等于&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;不等于&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;增加&lt;/span&gt;
-&lt;span class=&quot;sc&quot;&gt;'x'&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;简单的字符常量&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;&quot;xxx&quot;&lt;/span&gt;	&lt;span class=&quot;err&quot;&gt;多重字符串&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;转换到十进制数格式&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;转换到字符串格式&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;		&lt;span class=&quot;n&quot;&gt;tab&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;制表符&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;		&lt;span class=&quot;err&quot;&gt;新行符号&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 1&lt;/em&gt;（注：原来是图片）&lt;/p&gt;
-
-&lt;p&gt;插图 1 向我们展示了一个用 C 语言编写的自我复制程序。（纯粹主义者会说这个程序并不完全是一个自我复制程序，但会产生一个自我复制程序）这东西太大，没法拿奖，但它证明了这项技术，并且我需要两个重要的特性来完成我的故事：&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;这个程序可以容易地被另一个程序编写&lt;/li&gt;
-  &lt;li&gt;这个程序可以包含一个任意数量的过度超重的行李（？，excess baggage）来被与主算法一起复制。在这个例子里，甚至是注释也被复制了。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h4 id=&quot;第二步&quot;&gt;第二步&lt;/h4&gt;
-
-&lt;p&gt;C 编译器是用 C 语言编写的。我想说的是这个其中一个在编译器用它们自己的语言编写时的「先有鸡还是先有蛋」问题。这个例子里，我会用一个 C 编译器中的特定例子。&lt;/p&gt;
-
-&lt;p&gt;C 允许一个字符串结构来具体说明一个已被初始化的字符数组。在字符串中的单独的字符可以被转义到显示不可打印字符。比如说，&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello world&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;相当于一个包含字符 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\n&lt;/code&gt; 的字符串，它表示新行符号。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 2&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;插图 2 是一个理想化的在 C 编译器中的代码来解释字符转义序列。这是段令人惊奇的代码。它用一种很方便的方式「知道」在任意字符集下什么字符代码被编译成新行。这种知道的艺术允许它自编译，所以延续了知识（？）。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 3&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;假设我们希望改变 C 编译器来包括序列 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt; 显示垂直制表符字符。这个对插图 2 的扩展是明显的，并且在插图 3 中显示。我们随后重新编译 C 编译器，但我们得到了一个问题。显然，这个二进制版本的编译器不知道什么是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt;，源码并不是合法的 C 代码。我们必须「训练」编译器。在它知道 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\v&lt;/code&gt; 是什么后，我们的新改动会变成合法的 C 代码。我们去查了查 ASCII 表格，发现垂直制表符是十进制的 11。我们把我们的代码变得像插图 4 那样。现在老编译器接受了新代码。我们安装编译出来的二进制文件作为新的正式 C 编译器，并且现在我们可以写出方便的版本，就像插图 3 中那样。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\\'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'\n'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 4&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;这是一个深入的概念。这是我见过的很靠近「学习」程序的代码。你简要地辨别它一次，然后你可以用这个自引用的定义。&lt;/p&gt;
-
-&lt;h4 id=&quot;第三步&quot;&gt;第三步&lt;/h4&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  	&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 5&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;再一次，在 C 编译器中，插图 5 显示了当例行代码「compile」被调用来编译下一行代码时对 C 编译器高级别的控制。插图 6 展示了一个对编译器简单的修改使得它当符合一个特定的模式时故意编译错源代码。如果这不是故意的，它被称为一个编译器「漏洞」。既然它是故意的，它应该被称为一个「特洛伊木马」。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;pattern&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  		&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;bug&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  	&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 6&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;我植入编译器的真实的代码会匹配 UNIX 中「login」命令的代码。这种替换代码可以错误编译 login 命令，所以它会接受将要加密的密码或是一个特定的已知密码。所以如果这段代码被安装到二进制文件中并且这个二进制文件被用来编译 login 命令，我就能以任意用户的身份自由驰骋于系统之中。&lt;/p&gt;
-
-&lt;p&gt;这么明显的代码不会很长时间都不被发现的。即便是最偶然的细读代码也会招致怀疑。&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;pattern1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  		&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;bug1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;pattern2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  		&lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;bug2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  	&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;插图 7&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;最后一步在插图 7 中显示。这只是简单添加了第二个特洛伊木马到那个已经存在问题的代码中。第二段模式是作用于 C 编译器的。这个在第一步中自我复制的替换代码向编译器插入了两个特洛伊木马。这需要一个在第二步中的学习阶段。首先我们在正常 C 编译器上编译被修改过的代码来产生一个有问题的二进制文件。我们将这个二进制文件作为正式的 C 编译器。我们现在可以去除编译器代码中的漏洞，并且新二进制在它被编译时会被重新插入漏洞。当然了，那个 login 命令将会一直保留漏洞，而在代码中了无踪迹。&lt;/p&gt;
-
-&lt;h4 id=&quot;寓意&quot;&gt;寓意&lt;/h4&gt;
-
-&lt;p&gt;寓意很明显。你不能相信不是你自己写的代码。（特别是像招聘了我这样的人的公司的代码）没有代码级别的认证与检查会保护你不使用不可信任的代码。在证明了这种攻击的可行性后，我选中了 C 编译器。我本可以选择任何处理程序的程序，比如说汇编器、加载器，甚至于硬件微代码（microcode）。当程序的级别变得更低时，这些漏洞会变得越来越难找。一个恰当安装的微代码漏洞几乎是不可能发现的。&lt;/p&gt;
-
-&lt;p&gt;在努力使你信服我不能被相信之后，我希望来说教一番。我想要批评媒体在处理「黑客」时的方式，比如说 414 帮、Dalton 帮之类的。这些小孩子做的行为是最具有破坏性的并且这些擅自进入与偷窃行为是最糟糕的。只是这些不充足的刑事规范使得他们免于极为严厉的起诉。受到这种行为影响的公司（最大的公司是非常容易受影响的）正在努力推进刑事规范的升级。未授权的计算机系统访问在一些州已是一个大问题，并且正在针对越来越多州的更多立法机构和议会。&lt;/p&gt;
-
-&lt;p&gt;这种一触即发的状况正被酝酿。一方面，媒体、电视和电影正给这些蓄意破坏者造势，称他们为行家（？, whiz）小子；另一方面，这些小孩子做的行为很快会被年复一年的监禁处理。&lt;/p&gt;
-
-&lt;p&gt;我看过一些孩子在议会前的作证。很明显，他们完全不知道他们行为的严重性。有一道很明显的文化代沟。这种闯入计算机系统的行为与闯入邻居家屋子的行为都是社会的耻辱。邻居家门关没关并没有什么关系。媒体必须认识到计算机的错误使用并不比酒后驾车有趣多少。&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="随想" />
-      
-
-      
-        <category term="安全" />
-      
-        <category term="信任" />
-      
-        <category term="系统" />
-      
-
-      
-        <summary type="html">XcodeGhost 应该是创下了 App Store 的先河了，之前里面曾出现过的恶意软件应该不会超过个位数，但自从爆发之后，这种安全性就有点被打破了的味道。归根到底，就是开发者没有安全意识，或者说是过于天真吧。</summary>
       
 
       
