@@ -862,7 +862,7 @@
 
 <p>Gatekeeper 是通过 com.apple.quarantine 标记来判断文件是否从互联网上下载的。标记可以用 <code class="language-plaintext highlighter-rouge">xattr</code> 来查看。</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  Downloads  xattr -l *.app             
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  Downloads  xattr -l *.app
 CheatSheet.app: com.apple.quarantine: 0023;00000000;The\x20Unarchiver;8F22E217-7ED8-44D7-B11F-88B319E5B82E
 Retinizer.app: com.apple.quarantine: 0043;00000000;The\x20Unarchiver;5E278371-834C-4C31-BC70-58E89F7CD0AF
 diumoo.app: com.apple.quarantine: 0003;00000000;The Unarchiver;C91583C2-3D0B-4639-A2D7-41C37AEF5650
@@ -939,7 +939,7 @@ VLC.app: a sealed resource is missing or invalid
 
 <p>没有签名的应用：</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv OnyX.app        
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  /Applications  spctl -avv OnyX.app
 OnyX.app: rejected
 source=no usable signature
 </code></pre></div></div>

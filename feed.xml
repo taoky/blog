@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-02-20T08:46:49+00:00</updated>
+  <updated>2023-04-02T22:24:03+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -411,9 +411,9 @@ $11 = {
 
 &lt;p&gt;果不其然：&lt;/p&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; grep &quot;Idle monitor&quot; 1936586-sources-1.txt | wc                                                      
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; grep &quot;Idle monitor&quot; 1936586-sources-1.txt | wc
    7224   43344  353976
-&amp;gt; grep &quot;ref_count&quot; 1936586-sources-1.txt | wc                                                         
+&amp;gt; grep &quot;ref_count&quot; 1936586-sources-1.txt | wc
    7313   21939  124321
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -481,7 +481,7 @@ $11 = {
 
 &lt;p&gt;在 gnome-shell 代码里面搜索：&lt;/p&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; rg add_idle_watch                                                                                 
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; rg add_idle_watch
 js/ui/pointerWatcher.js
 39:        this._idleMonitor.add_idle_watch(IDLE_TIME, this._onIdleMonitorBecameIdle.bind(this));
 
@@ -873,7 +873,7 @@ $77 = {
 
 &lt;p&gt;Cgroups 的结构是一棵树。我们可以看一下这棵树长什么样子：&lt;/p&gt;
 
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;tree &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;                                                                                                      
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;tree &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;.
 &lt;/span&gt;&lt;span class=&quot;go&quot;&gt;├── dev-hugepages.mount
 ├── dev-mqueue.mount
@@ -3275,7 +3275,7 @@ sete   %sil
 
 &lt;p&gt;晚上看到了提示，发现要修改初始状态，那么就估计是内存了。之前在调试的时候就注意到，内存的访问 pattern 似乎有所规律：&lt;/p&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; cat 4.txt | grep 'Read addr' | head -n 30             
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; cat 4.txt | grep 'Read addr' | head -n 30
 Read addr 00 data 00
 Read addr 00 data 00
 Read addr 00 data 00
@@ -3679,7 +3679,7 @@ ALU XOR: 00 ^ 0f = 000f
             &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c1set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
                 &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c1set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
                     &lt;span class=&quot;n&quot;&gt;candidates&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c1set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-            
+
             &lt;span class=&quot;c1&quot;&gt;# assert len(candidates) &amp;gt; 0, res
 &lt;/span&gt;            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;candidates&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
                 &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;

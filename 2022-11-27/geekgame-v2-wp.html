@@ -2597,7 +2597,7 @@ sete   %sil
 
 <p>晚上看到了提示，发现要修改初始状态，那么就估计是内存了。之前在调试的时候就注意到，内存的访问 pattern 似乎有所规律：</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; cat 4.txt | grep 'Read addr' | head -n 30             
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; cat 4.txt | grep 'Read addr' | head -n 30
 Read addr 00 data 00
 Read addr 00 data 00
 Read addr 00 data 00
@@ -3001,7 +3001,7 @@ ALU XOR: 00 ^ 0f = 000f
             <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">c1set</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">c1set</span><span class="p">[</span><span class="n">tmp</span><span class="p">].</span><span class="n">get</span><span class="p">(</span><span class="n">c2</span><span class="p">):</span>
                     <span class="n">candidates</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">c1set</span><span class="p">[</span><span class="n">tmp</span><span class="p">][</span><span class="n">c2</span><span class="p">])</span>
-            
+
             <span class="c1"># assert len(candidates) &gt; 0, res
 </span>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">"!!!"</span><span class="p">)</span>
