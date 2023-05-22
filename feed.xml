@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-04-02T22:24:03+00:00</updated>
+  <updated>2023-05-22T20:05:30+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -24,6 +24,546 @@
     </author>
   
 
+  
+  
+    <entry>
+      
+      <title type="html">在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html" rel="alternate" type="text/html" title="在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记" />
+      
+      <published>2023-05-22T20:00:00+00:00</published>
+      <updated>2023-05-22T20:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland</id>
+      <content type="html" xml:base="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html">&lt;p&gt;&lt;a href=&quot;https://aur.archlinux.org/packages/wemeet-bin&quot;&gt;众所周知&lt;/a&gt;，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;details&gt;
+&lt;summary&gt;如果你看不到本文的视频……&lt;/summary&gt;
+&lt;p&gt;我也传了一份到 A 站上：&lt;a href=&quot;https://www.acfun.cn/v/ac41424863&quot;&gt;https://www.acfun.cn/v/ac41424863&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;为什么不是传到 B 站上？我其实一开始想这么搞，但是发现现在 B 站的投稿已经没有分 P 功能了（我上次上传视频得好几年以前了），然后合集功能还要「达到一定电磁力」（这玩意和用户等级还是两个不同的东西）才能用。我又不想在别人的 timeline 上蹦出七个怪视频，所以就算了。B 站的产品经理可能脑子有大病吧。&lt;/p&gt;
+
+&lt;p&gt;A 站的快手服务器好像有点问题，我这里太大的视频传的时候会卡住，但是至少分 P 功能还在，不是不能用。&lt;/p&gt;
+
+&lt;p&gt;而 YouTube 对应的功能是「播放列表」，而且我可以设置视频不列出在频道里面，所以没有问题。而且原始录制的视频有点大，直接塞个 video 标签，然后让人一开页面就下载几百兆的东西显然不是什么明智的选择。&lt;/p&gt;
+
+&lt;p&gt;不过说句题外话，A 站好像也挺惨的，我之前注册账号主要是为了看《摇曳露营》，然后被搞出先审后播之后就没新番了，在竞争上处于明显的劣势。&lt;/p&gt;
+&lt;/details&gt;
+
+&lt;h2 id=&quot;不太好的方案&quot;&gt;不太好的方案&lt;/h2&gt;
+
+&lt;h3 id=&quot;虚拟摄像头&quot;&gt;虚拟摄像头？&lt;/h3&gt;
+
+&lt;p&gt;这种方法似乎是在使用 native 客户端的前提下最可行的。我&lt;strong&gt;没有测试过&lt;/strong&gt;这种方案（因为不想装 dkms），但是有一点不能忽略的是：&lt;strong&gt;摄像头的视频编码和屏幕共享的视频编码参数肯定是不同的&lt;/strong&gt;。摄像头拍到的人脸糊一点，artifacts 多一点，其实问题都不算大；但是屏幕共享糊一点的话，屏幕上的字都看不清楚了，这在很多场景下都是不能接受的。&lt;/p&gt;
+
+&lt;h3 id=&quot;xwaylandvideobridge&quot;&gt;&lt;a href=&quot;https://blog.davidedmundson.co.uk/blog/xwaylandvideobridge/&quot;&gt;xwaylandvideobridge&lt;/a&gt;?&lt;/h3&gt;
+
+&lt;p&gt;看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它解决的是使用了 &lt;a href=&quot;https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html&quot;&gt;XRecord 扩展&lt;/a&gt;的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。&lt;/p&gt;
+
+&lt;h3 id=&quot;windows-vm--obsrdp&quot;&gt;Windows VM + OBS/RDP?&lt;/h3&gt;
+
+&lt;p&gt;大概也算是一种勉强能用的方案。OBS + rtmp 推流会有 2s 的延迟，如果走 RDP 延迟会好一些（GNOME 用的是 &lt;a href=&quot;https://gitlab.gnome.org/GNOME/gnome-remote-desktop/&quot;&gt;gnome-remote-desktop&lt;/a&gt;，其他的桌面环境应该有类似的方案）。但是：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;更耗电；&lt;/li&gt;
+  &lt;li&gt;如果是 KVM 用户，且没有显卡虚拟化，只有 QXL 2D 加速，那么投屏的时候 Windows 的 CPU 占用率会奇高。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;proposal&quot;&gt;Proposal&lt;/h2&gt;
+
+&lt;p&gt;调研过 Wayland 的 Portal 投屏的用户可能都看过这个 snippet: &lt;a href=&quot;https://gitlab.gnome.org/-/snippets/19&quot;&gt;https://gitlab.gnome.org/-/snippets/19&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;它的工作原理是：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;和对应的 DBus 接口通信，拿到一个 pipewire 的 fd（well，我不关心具体是怎么调用这个 portal 的）；&lt;/li&gt;
+  &lt;li&gt;用 GStreamer 打开这个 fd，然后经过一个 pipeline 之后用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt; 播放（显示在弹出的窗口中）。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt; 是一个使用 &lt;a href=&quot;https://www.x.org/releases/current/doc/man/man3/Xv.3.xhtml&quot;&gt;XVideo 扩展&lt;/a&gt; 显示视频流的 X11 窗口，所以理论上我们可以在一个独立的 X display 里面运行某会议软件，然后让 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt; 播放到这个 display 里面，这样的话就可以识别到了。&lt;/p&gt;
+
+&lt;h2 id=&quot;x11docker--gstreamer&quot;&gt;x11docker &amp;amp; GStreamer?&lt;/h2&gt;
+
+&lt;p&gt;如果要说再跑一个 X session 的话，x11docker 应该是一个不错的选择，基于容器隔离，并且有一大堆自定义的参数可以选择。然后接下来的问题就是怎么把 GStreamer 的视频流传输到 x11docker 的 X display 里面。由于用户权限等问题，直接在外面 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DISPLAY&lt;/code&gt; 感觉不太像是一个靠谱的主意，因此我当时的想法是，通过网络把视频流传到容器里面的 GStreamer，然后由它显示出来。&lt;/p&gt;
+
+&lt;p&gt;这不是最终的解决方案，如果只想看解决方案，可以直接拉到下一大节。&lt;/p&gt;
+
+&lt;h3 id=&quot;gstreamer-101&quot;&gt;GStreamer 101&lt;/h3&gt;
+
+&lt;p&gt;GStreamer 我感觉资料不多，并且诡异的是，在我搜索的时候，可以在 StackOverflow 上找到一些 GStreamer 标签的问题，但是它们大多不约而同没有任何人回答。所以我觉得可能有必要写一下我在倒腾的时候的一些认识，虽然我不能保证它们完全正确。&lt;/p&gt;
+
+&lt;p&gt;首先我们基本不需要去写代码，大部分工作都可以通过构建 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/tutorials/basic/concepts.html?gi-language=c#walkthrough&quot;&gt;pipeline&lt;/a&gt; 解决。GStreamer 的 pipeline 有一点像 Unix 的管道机制。开头是一个生产多媒体流的 “source”，中间会经过一些 “filter” 对多媒体流做一些处理，最后 “sink” 是这个流的消费者。这些组成 pipeline 的源部件被称为「元素」（Element）。&lt;/p&gt;
+
+&lt;p&gt;我们可以用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gst-launch-1.0&lt;/code&gt; 做简单的测试用途。一个最简单的例子是：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gst-launch-1.0 videotestsrc ! autovideosink
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/videotestsrc/index.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;videotestsrc&lt;/code&gt;&lt;/a&gt; 是产生测试图像信号的 source，而 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/autodetect/autovideosink.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;autovideosink&lt;/code&gt;&lt;/a&gt; 是 sink，会根据平台选择最合适的 video sink 展示给用户。&lt;/p&gt;
+
+&lt;p&gt;之后可以放一点我们自己的视频。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filesrc location=path/to/file&lt;/code&gt; 是从文件中读取数据的 source，于是这样就可以了吗？&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gst-launch-1.0 filesrc location=./test.mp4 ! autovideosink
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;执行会发现：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+
+(gst-launch-1.0:1107112): GStreamer-Video-CRITICAL **: 13:46:40.380: gst_video_info_to_caps: assertion 'info-&amp;gt;finfo != NULL' failed
+ERROR: from element /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage: Internal error: can't allocate images
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-base/sys/xvimage/xvimagesink.c(1169): gst_xv_image_sink_show_frame (): /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage:
+We don't have a bufferpool negotiated
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+ERROR: from element /GstPipeline:pipeline0/GstFileSrc:filesrc0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3132): gst_base_src_loop (): /GstPipeline:pipeline0/GstFileSrc:filesrc0:
+streaming stopped, reason error (-5)
+ERROR: pipeline doesn't want to preroll.
+Freeing pipeline ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这是因为 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filesrc&lt;/code&gt; 产生的数据类型和视频文件的编码一致，而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;autovideosink&lt;/code&gt;（实际上是 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/xvimagesink/index.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt;&lt;/a&gt;）接收的数据类型是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;video/x-raw&lt;/code&gt;，所以我们需要添加一个解码的 filter: &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/playback/decodebin.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;decodebin&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! autovideosink
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对于上面的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xdp-screen-cast&lt;/code&gt; 的 snippet，我们可以看到它的 pipeline 是：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipewiresrc fd=%d path=%u ! videoconvert ! xvimagesink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;videoconvert&lt;/code&gt; 是用来在 raw 视频流之间做色彩空间转换的。但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipewiresrc&lt;/code&gt; 输出的视频流到底是什么样的呢？&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipewiresrc&lt;/code&gt; 不是 GStreamer 官方的插件，所以如果要看它的文档，需要使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gst-inspect-1.0&lt;/code&gt;。&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gst-inspect-1.0 pipewiresrc
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;虽然看不到有效的信息：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Pad Templates:
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      ANY
+
+Clocking Interaction:
+  element is supposed to provide a clock but returned NULL
+Element has no URI handling capabilities.
+
+Pads:
+  SRC: 'src'
+    Pad Template: 'src'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;估计它的输出的类型和 pipewire 源有关系，我们可以修改 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xdp-screen-cast&lt;/code&gt; 的代码，加上一些用来输出相关信息的代码。&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;gst_command&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;pipewiresrc fd=%d path=%u name=pwsrc0 ! videoconvert ! xvimagesink&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gst_command&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gst_command&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Gst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse_launch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gst_command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;pad_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;caps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_current_caps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Video stream type:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;No caps available&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Gst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PadProbeReturn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PASS&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwsrc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_by_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;pwsrc0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;srcpad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pwsrc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_static_pad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;src&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;srcpad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_probe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Gst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PadProbeType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EVENT_DOWNSTREAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pad_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pipeline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Gst&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;State&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PLAYING&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# ...
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这里我们给 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipewiresrc&lt;/code&gt; 加上了一个名字 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pwsrc0&lt;/code&gt;，然后在播放这个 pipeline 之前获取了它的 “src” pad，然后为这个 pad 加上了一个 probe，这个类似钩子的东西会调用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pad_func()&lt;/code&gt; 函数，函数内会输出 “pad” 的 “caps”。&lt;/p&gt;
+
+&lt;p&gt;这里，&lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/tutorials/basic/media-formats-and-pad-capabilities.html?gi-language=c#pads&quot;&gt;“pad”&lt;/a&gt; 可以看作是让数据输入或者输出元素的通道，而 pad 的 “caps” (capabilities) 则代表了哪些类型的数据可以被对应的 pad 处理。在上面的代码中我们添加的 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/additional/design/probes.html?gi-language=c&quot;&gt;probe&lt;/a&gt; 则是一类用来通知应用程序数据流状态的 callback。而 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/plugin-development/advanced/events.html?gi-language=c#downstream-events&quot;&gt;“EVENT_DOWNSTREAM”&lt;/a&gt; 则代表在这个 pipeline 中从上游 (source) 到下游 (sink) 的事件。&lt;/p&gt;
+
+&lt;p&gt;执行可以看到：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;session /org/freedesktop/portal/desktop/session/1_5365/u1 created
+sources selected
+streams:
+stream 144
+No caps available
+Video stream type: video/x-raw, format=(string)BGRx, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144
+Video stream type: video/x-raw, format=(string)BGRx, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;由此可以知道，这里 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipewiresrc&lt;/code&gt; 的输出是一个 1920*1080 大小的，像素格式为 BGRx 的 raw 视频流。对 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt; 做相似的修改，可以观察到输出的视频流是：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Video stream type: video/x-raw, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144, format=(string)YV12
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;因此 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;videoconvert&lt;/code&gt; 在中间将 BGRx 转换为了 YV12 的格式。同样的，如果你有摄像头，也可以试一下下面这个 pipeline：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! autovideosink
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;另外，调试的时候可以加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GST_DEBUG=&quot;3&quot;&lt;/code&gt; 环境变量以输出错误信息（增大数字可以输出更多的信息）。&lt;/p&gt;
+
+&lt;h3 id=&quot;gstreamer-与网络传输-1&quot;&gt;GStreamer 与网络传输 (1)&lt;/h3&gt;
+
+&lt;p&gt;如果两端都安装了 GStreamer，那么可以比较方便地实现网络传输视频流。以 UDP 为例子，发送端需要将数据流扔给 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;udpsink&lt;/code&gt;，而接收端需要从 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;udpsrc&lt;/code&gt; 读取这个数据流。但是直接 naively 加上是不工作的：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; udpsink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;go&quot;&gt;Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+Redistribute latency...
+New clock: GstSystemClock
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;WARNING: from element /GstPipeline:pipeline0/GstUDPSink:udpsink0: Attempting to send a UDP packets larger than maximum size (614400 &amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;65507&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/gst/udp/gstmultiudpsink.c(684): gst_multiudpsink_send_messages (): /GstPipeline:pipeline0/GstUDPSink:udpsink0:
+Reason: Error sending message: Message too long
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;WARNING: from element /GstPipeline:pipeline0/GstUDPSink:udpsink0: Attempting to send a UDP packets larger than maximum size (614400 &amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;65507&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/gst/udp/gstmultiudpsink.c(684): gst_multiudpsink_send_messages (): /GstPipeline:pipeline0/GstUDPSink:udpsink0:
+Reason: Error sending message: Message too long
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;以下省略
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;UDP 的单个包大小有上限。那么有人会说，能不能用 TCP 呢？&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; tcpserversink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;go&quot;&gt;Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+Redistribute latency...
+New clock: GstSystemClock
+0:00:04.3 / 99:99:99.
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;好像没问题？开个新窗口看看接收端
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 tcpclientsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;span class=&quot;go&quot;&gt;Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;(gst-launch-1.0:1188556): GStreamer-Video-CRITICAL **: 02:14:55.643: gst_video_info_to_caps: assertion 'info-&amp;gt;&lt;/span&gt;finfo &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; NULL&lt;span class=&quot;s1&quot;&gt;' failed
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;ERROR: from element /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage: Internal error: can't allocate images
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-base/sys/xvimage/xvimagesink.c(1169): gst_xv_image_sink_show_frame (): /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage:
+We don't have a bufferpool negotiated
+ERROR: pipeline doesn't want to preroll.
+ERROR: from element /GstPipeline:pipeline0/GstTCPClientSrc:tcpclientsrc0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3132): gst_base_src_loop (): /GstPipeline:pipeline0/GstTCPClientSrc:tcpclientsrc0:
+streaming stopped, reason error (-5)
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+Freeing pipeline ...
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;即使能发出去，接收端也无法正常播放，因为它对视频流的属性一无所知。即使我们加上了相关的属性，得到的视频流输出也是没法用的：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;发送端？
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; video/x-raw,format&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;BGRx,width&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,height&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,framerate&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;24/1 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; tcpserversink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;接收端？
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 tcpclientsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; video/x-raw,format&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;BGRx,width&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,height&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,framerate&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;24/1 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;得到的输出是绿屏，可能的原因是这里接收端没有足够多的信息判断每一帧怎么划分。&lt;/p&gt;
+
+&lt;p&gt;对于 UDP，为了让视频流能够正确在网络通讯中存活，一般的做法是用 RTP 包一层。发送的时候用 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/rtp/rtpvrawpay.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rtpvrawpay&lt;/code&gt;&lt;/a&gt; 包，接收的时候用 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/rtp/rtpvrawdepay.html&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rtpvrawdepay&lt;/code&gt;&lt;/a&gt; 解包。&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;发送端
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;RTP 不支持上面例子的 BGRx，所以这里换成了 BGR
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;因为 videotestsrc 支持很多格式，所以 format 随便填一个应该就行
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; video/x-raw,format&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;BGR,width&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,height&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;100,framerate&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;24/1 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtpvrawpay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; udpsink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;接收端
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rtpvrawdepay 要求上游给属性，这里 udpsrc 接收到的是 rtp 包（而不是直接的 raw），所以得按照 rtp 的格式写
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;caps 对类型的要求比较严格，如果 width/height 不声明为 &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;string&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt; 会报错，而且得加上 GST_DEBUG 才能知道是这里的问题
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;只能参考文档猜字符串要怎么写，有些默认值这里省略了，其他的教程可能会写进去
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 udpsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 &lt;span class=&quot;nv&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'application/x-rtp,sampling=(string)BGR,width=(string)100,height=(string)100,depth=(string)8'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtpvrawdepay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这也太麻烦了，如果搜过会发现，好像编码成 H.264 之后就不用写（猜）这么一长串格式了：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;发送端
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;这里 &lt;span class=&quot;nv&quot;&gt;tune&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zerolatency 先加上了，否则延迟可能难以接受
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; x264enc &lt;span class=&quot;nv&quot;&gt;tune&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zerolatency &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtph264pay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; udpsink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;接收端
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 udpsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 &lt;span class=&quot;nv&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'application/x-rtp,encoding-name=(string)H264'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtph264depay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; avdec_h264 &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;或者 MJPEG 也可以：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;发送端
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 videotestsrc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; jpegenc &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtpjpegpay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; udpsink &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;127.0.0.1 &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;接收端
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 udpsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 &lt;span class=&quot;nv&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'application/x-rtp,encoding-name=(string)JPEG'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtpjpegdepay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; jpegdec &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;而对于 TCP，因为 TCP 是流式的（它关心的只是怎么传输一个字节流），而不是像 UDP 那样一个包一个包界限分明，但是 RTP 依赖于 UDP 的这个性质，所以 TCP 下需要用某种编码包一层，或者用 GDP (GStreamer Data Protocol) 包一层：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 发送端
+&amp;gt; gst-launch-1.0 videotestsrc ! videoconvert ! video/x-raw,format=BGRx,width=100,height=100,framerate=24/1 ! gdppay ! tcpserversink host=127.0.0.1 port=5000
+# 接收端
+&amp;gt; gst-launch-1.0 tcpclientsrc port=5000 ! gdpdepay ! video/x-raw,format=BGRx,width=100,height=100,framerate=24/1 ! videoconvert ! autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;视频编码&quot;&gt;视频编码？&lt;/h3&gt;
+
+&lt;p&gt;看起来视频编码是一个不错的主意，但是我们需要考虑两点问题：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;视频编码的质量、延迟&lt;/li&gt;
+  &lt;li&gt;视频编码的性能开销&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;带宽占用可能也是一个值得关注的问题，不过我们这里的场景是本地传输，所以甚至直接传 raw stream 都是可以接受的。&lt;/p&gt;
+
+&lt;p&gt;我们可以在 pipeline 中添加先编码然后直接解码后输出到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xvimagesink&lt;/code&gt; 的过程。rtp pay 和 depay 的损耗几乎可以忽略不计，所以这里就不放了。&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# H.264
+pipewiresrc fd=%d path=%u ! videoconvert ! x264enc tune=zerolatency ! avdec_h264 ! videoconvert ! xvimagesink
+# MJPEG
+pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;首先可以发现的是，默认参数下，H.264 + zerolatency 的效果非常非常糊：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/wemeet/h264_1.png&quot; alt=&quot;Blurry stream in H264&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;和朋友讨论了之后发现是默认码率的问题。GStreamer 的 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/x264/index.html#x264enc:bitrate&quot;&gt;x264enc 的默认码率&lt;/a&gt;是 2048 Kbps。这个码率用在摄像头上大概可以勉强看清人脸，然后在屏幕共享的场合就很不够用了。尤其是这里还开了 zerolatency，把很多非实时场景下能用的优化都关掉了，所以需求的码率更高。&lt;/p&gt;
+
+&lt;p&gt;（其实可能可以妥协少量的延迟来做一些帧间优化，但是我不太熟悉怎么去调参数，所以就跳过吧）&lt;/p&gt;
+
+&lt;p&gt;将码率调高之后画质的问题有所改善，但是还是不怎么跟手。如果只是共享 slides 之类的话可能问题不算很大，不过如果要以很低的延迟共享游戏的屏幕流的话，恐怕都不太合适。&lt;/p&gt;
+
+&lt;p&gt;以下是 MJPEG, H.264 (30000 Kbps) 和不编码/解码的时候延迟与 CPU 使用量的直观对比，其中右下角是 xvimagesink：&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/YeZQ-kd2_mA&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;MJPEG&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/E2uFver-_Jc&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;H.264 (30000 Kbps)&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/MXF5kQh9jvM&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;直接输出&lt;/p&gt;
+
+&lt;p&gt;如果开个游戏的话，延迟带来的效果就更加显著：&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/c-p4l0GqAKo&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;MJPEG，&lt;a href=&quot;https://store.steampowered.com/app/400910/&quot;&gt;某个（被）弹幕（打的）游戏&lt;/a&gt;的 screencast&lt;/p&gt;
+
+&lt;p&gt;所以显然转码和解码会带来一定的开销，并且这样的开销有的时候无法忽略——不过如果需要考虑网络传输的开销的话，MJPEG 相比来讲仍然是一个比较均衡的方案，所以仍然需要视场景选择。&lt;/p&gt;
+
+&lt;p&gt;有读者可能会问：为什么不用硬件加速？GStreamer 确实支持基于 VAAPI 的硬件加速，但是它的 &lt;a href=&quot;https://gstreamer.freedesktop.org/documentation/vaapi/vaapih264enc.html&quot;&gt;H.264 硬件加速编码器&lt;/a&gt;不支持 zerolatency，实际效果反而更卡；而 MJPEG 我没有找到相关的硬件加速方案，不过 VAAPI 支持其他类型的编解码加速，这就需要有兴趣的人自己测试了。&lt;/p&gt;
+
+&lt;p&gt;另外再次需要注意的是，这里考虑的是一个极端的场合（需要很小的延迟）。在直播之类的场景下反而 H.264（以及其他更先进的编码）是更好的选择，因为几秒的延迟已经足够做优化，并且这个时候也可以用上硬件编码。&lt;/p&gt;
+
+&lt;h3 id=&quot;网络传输-2&quot;&gt;网络传输 (2)&lt;/h3&gt;
+
+&lt;p&gt;这个问题听起来很简单——毕竟前面已经知道怎么在 GStreamer 里面使用 UDP/TCP 来传输视频流了，那么直接用上不就行了？让我们先拿个视频文件试试吧！&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 发送端 (UDP)
+&amp;gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! jpegenc ! rtpjpegpay ! udpsink host=127.0.0.1 port=5000  # MJPEG
+&amp;gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! x264enc tune=zerolatency bitrate=30000 ! rtph264pay ! udpsink host=127.0.0.1 port=5000  # H.265
+&amp;gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! rtpvrawpay ! udpsink host=127.0.0.1 port=5000  # RAW
+# 接收端 (UDP)
+&amp;gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,encoding-name=(string)JPEG' ! rtpjpegdepay ! jpegdec ! videoconvert ! autovideosink  # MJPEG
+&amp;gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,encoding-name=(string)H264' ! rtph264depay ! avdec_h264 ! videoconvert ! autovideosink  # H.265
+&amp;gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,sampling=(string)YCbCr-4:2:0,width=(string)1920,height=(string)1012,depth=(string)8' ! rtpvrawdepay ! videoconvert ! autovideosink  # RAW
+# emmm 一个麻烦的事情是，如果要用 rtp 传 raw stream，你要想办法知道这个 rtp 的属性
+# 可以在发送端调高 GST_DEBUG 来判断 video/x-raw 的属性，但是有时候需要一些额外的知识
+# 比如说我用来测试的视频里面的像素格式是 &quot;I420&quot;，它对应的 rtp sampling 是 &quot;YCbCr-4:2:0&quot;
+# 这是一个大坑点，不去搜资料是很难知道的
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;结果……emmmm……（&lt;a href=&quot;https://www.bilibili.com/video/BV1Ab41197eT/&quot;&gt;视频来源&lt;/a&gt;）&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/pEqO3zchRFs&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;MJPEG，没错不是你这里卡住了&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/9T82V-qzGiY&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;H.264，不少 artifacts&lt;/p&gt;
+
+&lt;div class=&quot;center&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube-nocookie.com/embed/TdL_9TbpWjc&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p class=&quot;center&quot;&gt;直接传会出现大量的细线&lt;/p&gt;
+
+&lt;p&gt;TCP 是没有这个问题的。有经验的读者应该能猜到是什么问题了，不过既然 UDP 在 lo 上有问题，那么我们就需要检查相关的丢包情况了。以 MJPEG 为例，观察 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/net/udp&lt;/code&gt;，可以发现在卡顿的时候是有丢包的情况的：&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; cat /proc/net/udp
+   sl  local_address rem_address   st tx_queue rx_queue tr tm-&amp;gt;when retrnsmt   uid  timeout inode ref pointer drops
+ 2609: 00000000:1388 00000000:0000 07 00000000:00000000 00:00000000 00000000  1000        0 696929 2 0000000057310d4f 11233
+ # 这一行最后一个数值不断增长。以下省略
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;搜索可以发现需要增加接收端的缓冲区大小：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;sysctl net.core.rmem_max
+&lt;span class=&quot;go&quot;&gt;net.core.rmem_max = 212992
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;修改到一个更大的值
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;sysctl &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; net.core.rmem_max&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;10485760
+&lt;span class=&quot;go&quot;&gt;net.core.rmem_max = 10485760
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;并且接收端的 udpsrc 也需要做配置：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;类似于这样
+&lt;span class=&quot;gp&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gst-launch-1.0 udpsrc &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5000 buffer-size&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;10485760 &lt;span class=&quot;nv&quot;&gt;caps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'application/x-rtp,encoding-name=(string)JPEG'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; rtpjpegdepay &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; jpegdec &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; videoconvert &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; autovideosink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;（至于定多少就需要自己慢慢调了）&lt;/p&gt;
+
+&lt;h3 id=&quot;x11docker-的使用&quot;&gt;x11docker 的使用&lt;/h3&gt;
+
+&lt;p&gt;x11docker 需要一段时间自己摸索，并且为了好用，桌面环境的容器需要在 x11docker 已有的容器基础上自己打包（&lt;a href=&quot;https://github.com/taoky/scripts/blob/master/.not_used/x11docker/wemeet/Dockerfile&quot;&gt;一个可供参考的 Dockerfile&lt;/a&gt;）。&lt;/p&gt;
+
+&lt;p&gt;然后 x11docker 需要自己选一个 X server 的实现。尽管官方文档推荐 Xephyr，但是实际上根据我本地的测试，它对 XVideo 扩展的支持相当差，xvimagesink 无法正常播放视频。有可能这也是 &lt;a href=&quot;https://github.com/mviereck/x11docker/blob/93a2793e62a9fd5e5bb0ed9ffd67467463ed8003/x11docker#LL4070C9-L4070C9&quot;&gt;x11docker 把 xephyr 的 XVideo 关了&lt;/a&gt;的原因。&lt;/p&gt;
+
+&lt;p&gt;令人惊讶的是，用 weston 里面跑一个 xwayland 的方式出人意料地不错（唯一的缺点是不能调 weston 的窗口大小），XVideo 是正常的，里面的桌面环境跑起来也没有问题。尽管 x11docker 默认会启动一个 X 后端的 weston（很奇怪，而且&lt;a href=&quot;https://gitlab.freedesktop.org/wayland/weston/-/issues/746&quot;&gt;我这里鼠标移动会出问题&lt;/a&gt;），不过直接改 x11docker 脚本，强制 weston 以 wayland 后端启动就能缓解。&lt;/p&gt;
+
+&lt;p&gt;所以为什么这里 xwayland 就能让它成功屏幕共享？我的推测是，xwayland 在正常使用的时候都是以 rootless 模式启动的 (Run Xwayland rootless, so that X clients integrate seamlessly with Wayland clients in a Wayland desktop)，这个模式下可能是无法正常获取整个屏幕的信息的。而这里 xwayland 以 non-rootless 模式启动，所以屏幕的信息是完整可以被应用获取的。&lt;/p&gt;
+
+&lt;p&gt;最后的启动命令大概是这个样子：&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;x11docker --gpu -I --weston-xwayland --size=1920x1080 --home --clipboard --desktop --pulseaudio=host --webcam --sudouser -i local/wemeet-x11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;不过我最后没有用这个方案，原因是某会议软件在这个环境里面拒绝启动麦克风，原因不明，我也懒得拿个 IDA 去逆向。刚好之前试过 Flatpak 版本除了屏幕共享都是正常的，所以之后我实际采用的方案可能已经能猜到了。&lt;/p&gt;
+
+&lt;h2 id=&quot;扭曲的最终方案&quot;&gt;扭曲的最终方案&lt;/h2&gt;
+
+&lt;p&gt;所以我们可以：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;先开个 nested weston（别的 wayland compositor 应该也成）&lt;/li&gt;
+  &lt;li&gt;在 weston 里面开个 non-rootless 的 xwayland&lt;/li&gt;
+  &lt;li&gt;在 xwayland 里面开个窗口管理器（我这里用 mutter，但是随便找一个就行）&lt;/li&gt;
+  &lt;li&gt;然后也在这个 xwayland 里面开某会议软件&lt;/li&gt;
+  &lt;li&gt;最后把 xdp-screen-cast 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/wemeet/illustration.png&quot; alt=&quot;Solution graph&quot; /&gt;&lt;/p&gt;
+
+&lt;p class=&quot;center&quot;&gt;之前画的流程示意图，里面可能有的组件关系不够准确，但是我懒得改了。&lt;/p&gt;
+
+&lt;p&gt;启动脚本很简单，其中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Xwayland&lt;/code&gt; 的参数是从 x11docker 抄的：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh -e&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Start weston&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting weston&quot;&lt;/span&gt;
+weston &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;/weston.ini &lt;span class=&quot;nt&quot;&gt;--socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 &amp;amp;
+
+&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
+
+&lt;span class=&quot;c&quot;&gt;# Start xwayland&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting Xwayland&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;WAYLAND_DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 Xwayland :114 &lt;span class=&quot;nt&quot;&gt;-ac&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-retro&lt;/span&gt; +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XINERAMA &lt;span class=&quot;nt&quot;&gt;-xinerama&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; MIT-SHM +extension Composite +extension COMPOSITE &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XTEST &lt;span class=&quot;nt&quot;&gt;-tst&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-dpms&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; off &amp;amp;
+
+&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
+
+&lt;span class=&quot;c&quot;&gt;# Start mutter and wemeet&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting mutter&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 mutter &lt;span class=&quot;nt&quot;&gt;--x11&lt;/span&gt; &amp;amp;
+
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting wemeet&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 flatpak run com.tencent.wemeet
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其中 weston.ini 的内容也是从 x11docker 抄来的：&lt;/p&gt;
+
+&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;[core]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;desktop-shell.so&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;backend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wayland-backend.so&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;idle-time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;[shell]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;panel-location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;none&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;panel-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;none&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;locking&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;false&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;background-color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;0xff002244&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;animation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;fade&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;startup-animation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;fade&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;[keyboard]&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;[output]&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;WL1&lt;/span&gt;
+&lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1920x1080&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这个方案的另一个问题是：剪贴板不能直接交互，以及输入法也用不了了。一个 workaround 是用剪贴板代替输入法：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;不是不能用&quot;&lt;/span&gt; | xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :114
+&lt;span class=&quot;c&quot;&gt;# 从 :0 的剪贴板复制到 :114&lt;/span&gt;
+xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :0 | xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :114
+&lt;span class=&quot;c&quot;&gt;# 从 :114 的剪贴板复制到 :0&lt;/span&gt;
+xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :114 | xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;
+
+&lt;p&gt;我用这个方案开过了几次会，还挺舒服的，相比于开个 VM 也更流畅。&lt;/p&gt;
+
+&lt;p&gt;其实如果某会议软件搞个 Web 版本就没这么多破事了。&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="wemeet" />
+      
+        <category term="wayland" />
+      
+        <category term="gstreamer" />
+      
+        <category term="streaming" />
+      
+
+      
+        <summary type="html">众所周知，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。</summary>
+      
+
+      
+      
+    </entry>
+  
   
   
     <entry>
@@ -12008,82 +12548,6 @@ a.out:
 
       
         <summary type="html">《你的名字。》（下简称「君名」）第一次是我在 12 月 2 日和爸妈去电影院看的。记得那天高三破天荒全校第一个放假。一开始是几周前看到一帮人在安利之后想去看的，然后在那天下午看了一遍预告片，感觉……不知道它到底想讲一个什么故事。我很担心君名的风格适不适合我，但最后还是因为好奇心拉着爸妈去看了（虽然我爸更想看《神奇动物在哪里》）。毕竟我没有女票，也没有住得近、一下子就能约出来的朋友，一个人去看也不太可能会被批准的啊 -_-。</summary>
-      
-
-      
-      
-    </entry>
-  
-  
-  
-    <entry>
-      
-      <title type="html">无标题</title>
-      
-      
-      <link href="https://blog.taoky.moe/2017-01-17/untitled.html" rel="alternate" type="text/html" title="无标题" />
-      
-      <published>2017-01-17T00:00:00+00:00</published>
-      <updated>2017-01-17T00:00:00+00:00</updated>
-      <id>https://blog.taoky.moe/2017-01-17/untitled</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2017-01-17/untitled.html">&lt;p&gt;/*&lt;/p&gt;
-
-&lt;p&gt;这是一篇风格随意的自编小说，灵感源于敝校期末作文讲义第一篇文章的标题。已经有 1 年没有在博客上写什么东西了。趁这个机会让它「苏醒」一下吧。&lt;/p&gt;
-
-&lt;p&gt;献给所有有着「作文写作困难症」的同学。&lt;/p&gt;
-
-&lt;p&gt;*/&lt;/p&gt;
-
-&lt;p&gt;他新建了一个文档。
-&lt;!--more--&gt;
-空窗口。标题栏写着「Untitled」，窗口的左上角是红绿灯式的窗口控制按钮——分别是红色的关闭、黄色的最小化、绿色的全屏。但他暂时还不想去碰它们中的任何一个。他只将窗口拉到中央，看着右上角的「0 Words」，又看着闪烁着的光标。发呆。&lt;/p&gt;
-
-&lt;p&gt;他是怎么新建这个文档的呢？文件管理器里右键只有「新建文件夹」。他当然不会把文件夹当作文档的啊，因为它们不是文件——等一下，他想起来，在 Unix 的「哲学」体系中，没有什么东西不是文件啊，显示器是，打印机是，他自己应该也是的吧。文件是「绳结」啊，所以文件夹是文件，所以自己错了。他连忙下意识按了几下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete&lt;/code&gt; 键，可屏幕上什么反应都没有。他只能听到细小的模拟打字机音效的声音。&lt;/p&gt;
-
-&lt;p&gt;而这细小的「嚓嚓」声把他拉回了现实。他望了望那张纸，上面写着他所需要遵循的各类要求。于是，他脑海中出现了一个中心主题结点，在它的周围围绕着各种各样稀奇古怪的名词，但他，用了不知多少个五分钟，却找不到一条与结点相连的边。那些名词一点一点散去，最终一切消失殆尽，除了那个中心主题结点。这张图（如果在数学上还算是的话）只有结点，还只有一个，而且没有边。真是无聊。&lt;/p&gt;
-
-&lt;p&gt;他瞪大眼睛看着屏幕，看着最顶上的菜单栏，嘴唇轻微颤动着：「File. Edit. Paragraph. Format. View. Themes. Window. Help. Help. Help…」他最终在「Help」选单处陷入了一个死循环。他还真的去点了点。他渴望帮助，但这里的帮助，却不是他想要的。&lt;/p&gt;
-
-&lt;p&gt;他要疯了。他想撕掉那张纸，可没法撕掉。他想关闭这个空荡荡的文本界面，于是大拇指按下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Command (⌘)&lt;/code&gt; ，食指碰到了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Q&lt;/code&gt; 键，却停了下来。他冷静了一些。他瞄了眼时间，距离他新建文档，已经有一个小时过去了。也许他应该选择一个更加「心无杂念」的界面。因此，他移动指针到「全屏」按钮，手指在触控板上一点。一个看烦了的动画效果。全屏了。这是真正的空白，除却那个依旧在原位闪烁的光标之外。&lt;/p&gt;
-
-&lt;p&gt;可那个结点，那个中心主题结点，又出现了，好像是印在电脑屏幕上一样。他不想再去看那个结点了。他手指在触控板上用力回旋着，想甩掉那个点，可他只获得了一个放大了的指针。或许他应该听一会儿音乐吧，他想。轻拍了一下 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;F8&lt;/code&gt; 键，音乐就开始播放了。那个按键上面是一个等边三角形，和两个矩形，以特定的方式排列，就拥有了播放与暂停的隐喻。他听着音乐，继续发呆。他现在能且仅能做这件事情了。&lt;/p&gt;
-
-&lt;p&gt;所以已经过去了三个小时，他什么都没——好像这么说有失偏颇，毕竟他还是在电脑以为无人操作，将屏幕变暗的时候，蹭了蹭触控板的。死线要到了，他不能再这么下去了。他关闭了全屏。开始真正郑重其事地把手放在键盘上。&lt;/p&gt;
-
-&lt;p&gt;然后呢？&lt;/p&gt;
-
-&lt;p&gt;他把那张纸扔在了一旁不看。脑子里终于出现了一个框架，虽然简陋，而且不合「主题」。&lt;/p&gt;
-
-&lt;p&gt;他终于开始输入了第一句有意义的句子：&lt;/p&gt;
-
-&lt;p&gt;「他新建了一个文档。」&lt;/p&gt;
-
-&lt;p&gt;（完）&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      
-        <author>
-            <name>taoky</name>
-          
-          
-        </author>
-      
-
-      
-        <category term="小说" />
-      
-
-      
-        <category term="作品" />
-      
-
-      
-        <summary type="html">/*</summary>
       
 
       

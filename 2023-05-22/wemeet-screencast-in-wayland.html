@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记</title>
+  <meta name="description" content="众所周知，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://blog.taoky.moe/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+
+  <link href="/assets/fonts/bitter.css" rel="stylesheet">
+  
+  
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8N496PNK2G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-8N496PNK2G');
+    </script>
+  
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky&#39;s blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path
+              d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="https://www.taoky.moe/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记</h1>
+    
+    <p class="post-meta"><time datetime="2023-05-22T20:00:00+00:00" itemprop="datePublished">May 22, 2023</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/wemeet/">wemeet</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/wayland/">wayland</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/gstreamer/">gstreamer</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/streaming/">streaming</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#不太好的方案">不太好的方案</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#虚拟摄像头">虚拟摄像头？</a></li>
+<li class="toc-entry toc-h3"><a href="#xwaylandvideobridge">xwaylandvideobridge?</a></li>
+<li class="toc-entry toc-h3"><a href="#windows-vm--obsrdp">Windows VM + OBS/RDP?</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#proposal">Proposal</a></li>
+<li class="toc-entry toc-h2"><a href="#x11docker--gstreamer">x11docker &amp; GStreamer?</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#gstreamer-101">GStreamer 101</a></li>
+<li class="toc-entry toc-h3"><a href="#gstreamer-与网络传输-1">GStreamer 与网络传输 (1)</a></li>
+<li class="toc-entry toc-h3"><a href="#视频编码">视频编码？</a></li>
+<li class="toc-entry toc-h3"><a href="#网络传输-2">网络传输 (2)</a></li>
+<li class="toc-entry toc-h3"><a href="#x11docker-的使用">x11docker 的使用</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#扭曲的最终方案">扭曲的最终方案</a></li>
+<li class="toc-entry toc-h2"><a href="#总结">总结</a></li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p><a href="https://aur.archlinux.org/packages/wemeet-bin">众所周知</a>，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。</p>
+
+<!--more-->
+
+<details>
+<summary>如果你看不到本文的视频……</summary>
+<p>我也传了一份到 A 站上：<a href="https://www.acfun.cn/v/ac41424863">https://www.acfun.cn/v/ac41424863</a></p>
+
+<p>为什么不是传到 B 站上？我其实一开始想这么搞，但是发现现在 B 站的投稿已经没有分 P 功能了（我上次上传视频得好几年以前了），然后合集功能还要「达到一定电磁力」（这玩意和用户等级还是两个不同的东西）才能用。我又不想在别人的 timeline 上蹦出七个怪视频，所以就算了。B 站的产品经理可能脑子有大病吧。</p>
+
+<p>A 站的快手服务器好像有点问题，我这里太大的视频传的时候会卡住，但是至少分 P 功能还在，不是不能用。</p>
+
+<p>而 YouTube 对应的功能是「播放列表」，而且我可以设置视频不列出在频道里面，所以没有问题。而且原始录制的视频有点大，直接塞个 video 标签，然后让人一开页面就下载几百兆的东西显然不是什么明智的选择。</p>
+
+<p>不过说句题外话，A 站好像也挺惨的，我之前注册账号主要是为了看《摇曳露营》，然后被搞出先审后播之后就没新番了，在竞争上处于明显的劣势。</p>
+</details>
+
+<h2 id="不太好的方案">不太好的方案</h2>
+
+<h3 id="虚拟摄像头">虚拟摄像头？</h3>
+
+<p>这种方法似乎是在使用 native 客户端的前提下最可行的。我<strong>没有测试过</strong>这种方案（因为不想装 dkms），但是有一点不能忽略的是：<strong>摄像头的视频编码和屏幕共享的视频编码参数肯定是不同的</strong>。摄像头拍到的人脸糊一点，artifacts 多一点，其实问题都不算大；但是屏幕共享糊一点的话，屏幕上的字都看不清楚了，这在很多场景下都是不能接受的。</p>
+
+<h3 id="xwaylandvideobridge"><a href="https://blog.davidedmundson.co.uk/blog/xwaylandvideobridge/">xwaylandvideobridge</a>?</h3>
+
+<p>看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它解决的是使用了 <a href="https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html">XRecord 扩展</a>的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。</p>
+
+<h3 id="windows-vm--obsrdp">Windows VM + OBS/RDP?</h3>
+
+<p>大概也算是一种勉强能用的方案。OBS + rtmp 推流会有 2s 的延迟，如果走 RDP 延迟会好一些（GNOME 用的是 <a href="https://gitlab.gnome.org/GNOME/gnome-remote-desktop/">gnome-remote-desktop</a>，其他的桌面环境应该有类似的方案）。但是：</p>
+
+<ul>
+  <li>更耗电；</li>
+  <li>如果是 KVM 用户，且没有显卡虚拟化，只有 QXL 2D 加速，那么投屏的时候 Windows 的 CPU 占用率会奇高。</li>
+</ul>
+
+<h2 id="proposal">Proposal</h2>
+
+<p>调研过 Wayland 的 Portal 投屏的用户可能都看过这个 snippet: <a href="https://gitlab.gnome.org/-/snippets/19">https://gitlab.gnome.org/-/snippets/19</a>。</p>
+
+<p>它的工作原理是：</p>
+
+<ol>
+  <li>和对应的 DBus 接口通信，拿到一个 pipewire 的 fd（well，我不关心具体是怎么调用这个 portal 的）；</li>
+  <li>用 GStreamer 打开这个 fd，然后经过一个 pipeline 之后用 <code class="language-plaintext highlighter-rouge">xvimagesink</code> 播放（显示在弹出的窗口中）。</li>
+</ol>
+
+<p>而 <code class="language-plaintext highlighter-rouge">xvimagesink</code> 是一个使用 <a href="https://www.x.org/releases/current/doc/man/man3/Xv.3.xhtml">XVideo 扩展</a> 显示视频流的 X11 窗口，所以理论上我们可以在一个独立的 X display 里面运行某会议软件，然后让 <code class="language-plaintext highlighter-rouge">xvimagesink</code> 播放到这个 display 里面，这样的话就可以识别到了。</p>
+
+<h2 id="x11docker--gstreamer">x11docker &amp; GStreamer?</h2>
+
+<p>如果要说再跑一个 X session 的话，x11docker 应该是一个不错的选择，基于容器隔离，并且有一大堆自定义的参数可以选择。然后接下来的问题就是怎么把 GStreamer 的视频流传输到 x11docker 的 X display 里面。由于用户权限等问题，直接在外面 <code class="language-plaintext highlighter-rouge">DISPLAY</code> 感觉不太像是一个靠谱的主意，因此我当时的想法是，通过网络把视频流传到容器里面的 GStreamer，然后由它显示出来。</p>
+
+<p>这不是最终的解决方案，如果只想看解决方案，可以直接拉到下一大节。</p>
+
+<h3 id="gstreamer-101">GStreamer 101</h3>
+
+<p>GStreamer 我感觉资料不多，并且诡异的是，在我搜索的时候，可以在 StackOverflow 上找到一些 GStreamer 标签的问题，但是它们大多不约而同没有任何人回答。所以我觉得可能有必要写一下我在倒腾的时候的一些认识，虽然我不能保证它们完全正确。</p>
+
+<p>首先我们基本不需要去写代码，大部分工作都可以通过构建 <a href="https://gstreamer.freedesktop.org/documentation/tutorials/basic/concepts.html?gi-language=c#walkthrough">pipeline</a> 解决。GStreamer 的 pipeline 有一点像 Unix 的管道机制。开头是一个生产多媒体流的 “source”，中间会经过一些 “filter” 对多媒体流做一些处理，最后 “sink” 是这个流的消费者。这些组成 pipeline 的源部件被称为「元素」（Element）。</p>
+
+<p>我们可以用 <code class="language-plaintext highlighter-rouge">gst-launch-1.0</code> 做简单的测试用途。一个最简单的例子是：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gst-launch-1.0 videotestsrc ! autovideosink
+</span></code></pre></div></div>
+
+<p>这里 <a href="https://gstreamer.freedesktop.org/documentation/videotestsrc/index.html"><code class="language-plaintext highlighter-rouge">videotestsrc</code></a> 是产生测试图像信号的 source，而 <a href="https://gstreamer.freedesktop.org/documentation/autodetect/autovideosink.html"><code class="language-plaintext highlighter-rouge">autovideosink</code></a> 是 sink，会根据平台选择最合适的 video sink 展示给用户。</p>
+
+<p>之后可以放一点我们自己的视频。<code class="language-plaintext highlighter-rouge">filesrc location=path/to/file</code> 是从文件中读取数据的 source，于是这样就可以了吗？</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gst-launch-1.0 filesrc location=./test.mp4 ! autovideosink
+</span></code></pre></div></div>
+
+<p>执行会发现：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+
+(gst-launch-1.0:1107112): GStreamer-Video-CRITICAL **: 13:46:40.380: gst_video_info_to_caps: assertion 'info-&gt;finfo != NULL' failed
+ERROR: from element /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage: Internal error: can't allocate images
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-base/sys/xvimage/xvimagesink.c(1169): gst_xv_image_sink_show_frame (): /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage:
+We don't have a bufferpool negotiated
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+ERROR: from element /GstPipeline:pipeline0/GstFileSrc:filesrc0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3132): gst_base_src_loop (): /GstPipeline:pipeline0/GstFileSrc:filesrc0:
+streaming stopped, reason error (-5)
+ERROR: pipeline doesn't want to preroll.
+Freeing pipeline ...
+</code></pre></div></div>
+
+<p>这是因为 <code class="language-plaintext highlighter-rouge">filesrc</code> 产生的数据类型和视频文件的编码一致，而 <code class="language-plaintext highlighter-rouge">autovideosink</code>（实际上是 <a href="https://gstreamer.freedesktop.org/documentation/xvimagesink/index.html"><code class="language-plaintext highlighter-rouge">xvimagesink</code></a>）接收的数据类型是 <code class="language-plaintext highlighter-rouge">video/x-raw</code>，所以我们需要添加一个解码的 filter: <a href="https://gstreamer.freedesktop.org/documentation/playback/decodebin.html"><code class="language-plaintext highlighter-rouge">decodebin</code></a>。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! autovideosink
+</span></code></pre></div></div>
+
+<p>对于上面的 <code class="language-plaintext highlighter-rouge">xdp-screen-cast</code> 的 snippet，我们可以看到它的 pipeline 是：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipewiresrc fd=%d path=%u ! videoconvert ! xvimagesink
+</code></pre></div></div>
+
+<p>这里 <code class="language-plaintext highlighter-rouge">videoconvert</code> 是用来在 raw 视频流之间做色彩空间转换的。但是 <code class="language-plaintext highlighter-rouge">pipewiresrc</code> 输出的视频流到底是什么样的呢？<code class="language-plaintext highlighter-rouge">pipewiresrc</code> 不是 GStreamer 官方的插件，所以如果要看它的文档，需要使用 <code class="language-plaintext highlighter-rouge">gst-inspect-1.0</code>。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gst-inspect-1.0 pipewiresrc
+</span></code></pre></div></div>
+
+<p>虽然看不到有效的信息：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Pad Templates:
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      ANY
+
+Clocking Interaction:
+  element is supposed to provide a clock but returned NULL
+Element has no URI handling capabilities.
+
+Pads:
+  SRC: 'src'
+    Pad Template: 'src'
+</code></pre></div></div>
+
+<p>估计它的输出的类型和 pipewire 源有关系，我们可以修改 <code class="language-plaintext highlighter-rouge">xdp-screen-cast</code> 的代码，加上一些用来输出相关信息的代码。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gst_command</span> <span class="o">=</span> <span class="s">"pipewiresrc fd=%d path=%u name=pwsrc0 ! videoconvert ! xvimagesink"</span>
+<span class="n">gst_command</span> <span class="o">=</span> <span class="n">gst_command</span> <span class="o">%</span> <span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">node_id</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Gst</span><span class="p">.</span><span class="n">parse_launch</span><span class="p">(</span><span class="n">gst_command</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pad_func</span><span class="p">(</span><span class="n">pad</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">user_data</span><span class="p">):</span>
+    <span class="n">caps</span> <span class="o">=</span> <span class="n">pad</span><span class="p">.</span><span class="n">get_current_caps</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">caps</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Video stream type:"</span><span class="p">,</span> <span class="n">caps</span><span class="p">.</span><span class="n">to_string</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"No caps available"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Gst</span><span class="p">.</span><span class="n">PadProbeReturn</span><span class="p">.</span><span class="n">PASS</span>
+
+<span class="n">pwsrc</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="s">"pwsrc0"</span><span class="p">)</span>
+<span class="n">srcpad</span> <span class="o">=</span> <span class="n">pwsrc</span><span class="p">.</span><span class="n">get_static_pad</span><span class="p">(</span><span class="s">"src"</span><span class="p">)</span>
+<span class="n">srcpad</span><span class="p">.</span><span class="n">add_probe</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">PadProbeType</span><span class="p">.</span><span class="n">EVENT_DOWNSTREAM</span><span class="p">,</span> <span class="n">pad_func</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="n">pipeline</span><span class="p">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">State</span><span class="p">.</span><span class="n">PLAYING</span><span class="p">)</span>
+<span class="c1"># ...
+</span></code></pre></div></div>
+
+<p>这里我们给 <code class="language-plaintext highlighter-rouge">pipewiresrc</code> 加上了一个名字 <code class="language-plaintext highlighter-rouge">pwsrc0</code>，然后在播放这个 pipeline 之前获取了它的 “src” pad，然后为这个 pad 加上了一个 probe，这个类似钩子的东西会调用 <code class="language-plaintext highlighter-rouge">pad_func()</code> 函数，函数内会输出 “pad” 的 “caps”。</p>
+
+<p>这里，<a href="https://gstreamer.freedesktop.org/documentation/tutorials/basic/media-formats-and-pad-capabilities.html?gi-language=c#pads">“pad”</a> 可以看作是让数据输入或者输出元素的通道，而 pad 的 “caps” (capabilities) 则代表了哪些类型的数据可以被对应的 pad 处理。在上面的代码中我们添加的 <a href="https://gstreamer.freedesktop.org/documentation/additional/design/probes.html?gi-language=c">probe</a> 则是一类用来通知应用程序数据流状态的 callback。而 <a href="https://gstreamer.freedesktop.org/documentation/plugin-development/advanced/events.html?gi-language=c#downstream-events">“EVENT_DOWNSTREAM”</a> 则代表在这个 pipeline 中从上游 (source) 到下游 (sink) 的事件。</p>
+
+<p>执行可以看到：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session /org/freedesktop/portal/desktop/session/1_5365/u1 created
+sources selected
+streams:
+stream 144
+No caps available
+Video stream type: video/x-raw, format=(string)BGRx, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144
+Video stream type: video/x-raw, format=(string)BGRx, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144
+</code></pre></div></div>
+
+<p>由此可以知道，这里 <code class="language-plaintext highlighter-rouge">pipewiresrc</code> 的输出是一个 1920*1080 大小的，像素格式为 BGRx 的 raw 视频流。对 <code class="language-plaintext highlighter-rouge">xvimagesink</code> 做相似的修改，可以观察到输出的视频流是：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Video stream type: video/x-raw, width=(int)1920, height=(int)1200, framerate=(fraction)0/1, max-framerate=(fraction)15729223/262144, format=(string)YV12
+</code></pre></div></div>
+
+<p>因此 <code class="language-plaintext highlighter-rouge">videoconvert</code> 在中间将 BGRx 转换为了 YV12 的格式。同样的，如果你有摄像头，也可以试一下下面这个 pipeline：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! autovideosink
+</span></code></pre></div></div>
+
+<p>另外，调试的时候可以加 <code class="language-plaintext highlighter-rouge">GST_DEBUG="3"</code> 环境变量以输出错误信息（增大数字可以输出更多的信息）。</p>
+
+<h3 id="gstreamer-与网络传输-1">GStreamer 与网络传输 (1)</h3>
+
+<p>如果两端都安装了 GStreamer，那么可以比较方便地实现网络传输视频流。以 UDP 为例子，发送端需要将数据流扔给 <code class="language-plaintext highlighter-rouge">udpsink</code>，而接收端需要从 <code class="language-plaintext highlighter-rouge">udpsrc</code> 读取这个数据流。但是直接 naively 加上是不工作的：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> udpsink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="go">Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+Redistribute latency...
+New clock: GstSystemClock
+</span><span class="gp">WARNING: from element /GstPipeline:pipeline0/GstUDPSink:udpsink0: Attempting to send a UDP packets larger than maximum size (614400 &gt;</span><span class="w"> </span>65507<span class="o">)</span>
+<span class="go">Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/gst/udp/gstmultiudpsink.c(684): gst_multiudpsink_send_messages (): /GstPipeline:pipeline0/GstUDPSink:udpsink0:
+Reason: Error sending message: Message too long
+</span><span class="gp">WARNING: from element /GstPipeline:pipeline0/GstUDPSink:udpsink0: Attempting to send a UDP packets larger than maximum size (614400 &gt;</span><span class="w"> </span>65507<span class="o">)</span>
+<span class="go">Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/gst/udp/gstmultiudpsink.c(684): gst_multiudpsink_send_messages (): /GstPipeline:pipeline0/GstUDPSink:udpsink0:
+Reason: Error sending message: Message too long
+</span><span class="gp">#</span><span class="w"> </span>以下省略
+</code></pre></div></div>
+
+<p>UDP 的单个包大小有上限。那么有人会说，能不能用 TCP 呢？</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> tcpserversink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="go">Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+Redistribute latency...
+New clock: GstSystemClock
+0:00:04.3 / 99:99:99.
+</span><span class="gp">#</span><span class="w"> </span>好像没问题？开个新窗口看看接收端
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 tcpclientsrc <span class="nv">port</span><span class="o">=</span>5000 <span class="o">!</span> autovideosink
+<span class="go">Setting pipeline to PAUSED ...
+Pipeline is PREROLLING ...
+
+</span><span class="gp">(gst-launch-1.0:1188556): GStreamer-Video-CRITICAL **: 02:14:55.643: gst_video_info_to_caps: assertion 'info-&gt;</span>finfo <span class="o">!=</span> NULL<span class="s1">' failed
+</span><span class="go">ERROR: from element /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage: Internal error: can't allocate images
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-base/sys/xvimage/xvimagesink.c(1169): gst_xv_image_sink_show_frame (): /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstXvImageSink:autovideosink0-actual-sink-xvimage:
+We don't have a bufferpool negotiated
+ERROR: pipeline doesn't want to preroll.
+ERROR: from element /GstPipeline:pipeline0/GstTCPClientSrc:tcpclientsrc0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3132): gst_base_src_loop (): /GstPipeline:pipeline0/GstTCPClientSrc:tcpclientsrc0:
+streaming stopped, reason error (-5)
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+Freeing pipeline ...
+</span></code></pre></div></div>
+
+<p>即使能发出去，接收端也无法正常播放，因为它对视频流的属性一无所知。即使我们加上了相关的属性，得到的视频流输出也是没法用的：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>发送端？
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> videoconvert <span class="o">!</span> video/x-raw,format<span class="o">=</span>BGRx,width<span class="o">=</span>100,height<span class="o">=</span>100,framerate<span class="o">=</span>24/1 <span class="o">!</span> tcpserversink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="gp">#</span><span class="w"> </span>接收端？
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 tcpclientsrc <span class="nv">port</span><span class="o">=</span>5000 <span class="o">!</span> video/x-raw,format<span class="o">=</span>BGRx,width<span class="o">=</span>100,height<span class="o">=</span>100,framerate<span class="o">=</span>24/1 <span class="o">!</span> videoconvert <span class="o">!</span> autovideosink
+</code></pre></div></div>
+
+<p>得到的输出是绿屏，可能的原因是这里接收端没有足够多的信息判断每一帧怎么划分。</p>
+
+<p>对于 UDP，为了让视频流能够正确在网络通讯中存活，一般的做法是用 RTP 包一层。发送的时候用 <a href="https://gstreamer.freedesktop.org/documentation/rtp/rtpvrawpay.html"><code class="language-plaintext highlighter-rouge">rtpvrawpay</code></a> 包，接收的时候用 <a href="https://gstreamer.freedesktop.org/documentation/rtp/rtpvrawdepay.html"><code class="language-plaintext highlighter-rouge">rtpvrawdepay</code></a> 解包。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>发送端
+<span class="gp">#</span><span class="w"> </span>RTP 不支持上面例子的 BGRx，所以这里换成了 BGR
+<span class="gp">#</span><span class="w"> </span>因为 videotestsrc 支持很多格式，所以 format 随便填一个应该就行
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> videoconvert <span class="o">!</span> video/x-raw,format<span class="o">=</span>BGR,width<span class="o">=</span>100,height<span class="o">=</span>100,framerate<span class="o">=</span>24/1 <span class="o">!</span> rtpvrawpay <span class="o">!</span> udpsink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="gp">#</span><span class="w"> </span>接收端
+<span class="gp">#</span><span class="w"> </span>rtpvrawdepay 要求上游给属性，这里 udpsrc 接收到的是 rtp 包（而不是直接的 raw），所以得按照 rtp 的格式写
+<span class="gp">#</span><span class="w"> </span>caps 对类型的要求比较严格，如果 width/height 不声明为 <span class="sb">`</span>string<span class="sb">`</span> 会报错，而且得加上 GST_DEBUG 才能知道是这里的问题
+<span class="gp">#</span><span class="w"> </span>只能参考文档猜字符串要怎么写，有些默认值这里省略了，其他的教程可能会写进去
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 udpsrc <span class="nv">port</span><span class="o">=</span>5000 <span class="nv">caps</span><span class="o">=</span><span class="s1">'application/x-rtp,sampling=(string)BGR,width=(string)100,height=(string)100,depth=(string)8'</span> <span class="o">!</span> rtpvrawdepay <span class="o">!</span> videoconvert <span class="o">!</span> autovideosink
+</code></pre></div></div>
+
+<p>这也太麻烦了，如果搜过会发现，好像编码成 H.264 之后就不用写（猜）这么一长串格式了：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>发送端
+<span class="gp">#</span><span class="w"> </span>这里 <span class="nv">tune</span><span class="o">=</span>zerolatency 先加上了，否则延迟可能难以接受
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> videoconvert <span class="o">!</span> x264enc <span class="nv">tune</span><span class="o">=</span>zerolatency <span class="o">!</span> rtph264pay <span class="o">!</span> udpsink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="gp">#</span><span class="w"> </span>接收端
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 udpsrc <span class="nv">port</span><span class="o">=</span>5000 <span class="nv">caps</span><span class="o">=</span><span class="s1">'application/x-rtp,encoding-name=(string)H264'</span> <span class="o">!</span> rtph264depay <span class="o">!</span> avdec_h264 <span class="o">!</span> videoconvert <span class="o">!</span> autovideosink
+</code></pre></div></div>
+
+<p>或者 MJPEG 也可以：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>发送端
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 videotestsrc <span class="o">!</span> videoconvert <span class="o">!</span> jpegenc <span class="o">!</span> rtpjpegpay <span class="o">!</span> udpsink <span class="nv">host</span><span class="o">=</span>127.0.0.1 <span class="nv">port</span><span class="o">=</span>5000
+<span class="gp">#</span><span class="w"> </span>接收端
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 udpsrc <span class="nv">port</span><span class="o">=</span>5000 <span class="nv">caps</span><span class="o">=</span><span class="s1">'application/x-rtp,encoding-name=(string)JPEG'</span> <span class="o">!</span> rtpjpegdepay <span class="o">!</span> jpegdec <span class="o">!</span> videoconvert <span class="o">!</span> autovideosink
+</code></pre></div></div>
+
+<p>而对于 TCP，因为 TCP 是流式的（它关心的只是怎么传输一个字节流），而不是像 UDP 那样一个包一个包界限分明，但是 RTP 依赖于 UDP 的这个性质，所以 TCP 下需要用某种编码包一层，或者用 GDP (GStreamer Data Protocol) 包一层：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 发送端
+&gt; gst-launch-1.0 videotestsrc ! videoconvert ! video/x-raw,format=BGRx,width=100,height=100,framerate=24/1 ! gdppay ! tcpserversink host=127.0.0.1 port=5000
+# 接收端
+&gt; gst-launch-1.0 tcpclientsrc port=5000 ! gdpdepay ! video/x-raw,format=BGRx,width=100,height=100,framerate=24/1 ! videoconvert ! autovideosink
+</code></pre></div></div>
+
+<h3 id="视频编码">视频编码？</h3>
+
+<p>看起来视频编码是一个不错的主意，但是我们需要考虑两点问题：</p>
+
+<ul>
+  <li>视频编码的质量、延迟</li>
+  <li>视频编码的性能开销</li>
+</ul>
+
+<p>带宽占用可能也是一个值得关注的问题，不过我们这里的场景是本地传输，所以甚至直接传 raw stream 都是可以接受的。</p>
+
+<p>我们可以在 pipeline 中添加先编码然后直接解码后输出到 <code class="language-plaintext highlighter-rouge">xvimagesink</code> 的过程。rtp pay 和 depay 的损耗几乎可以忽略不计，所以这里就不放了。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># H.264
+pipewiresrc fd=%d path=%u ! videoconvert ! x264enc tune=zerolatency ! avdec_h264 ! videoconvert ! xvimagesink
+# MJPEG
+pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
+</code></pre></div></div>
+
+<p>首先可以发现的是，默认参数下，H.264 + zerolatency 的效果非常非常糊：</p>
+
+<p><img src="/pictures/wemeet/h264_1.png" alt="Blurry stream in H264" /></p>
+
+<p>和朋友讨论了之后发现是默认码率的问题。GStreamer 的 <a href="https://gstreamer.freedesktop.org/documentation/x264/index.html#x264enc:bitrate">x264enc 的默认码率</a>是 2048 Kbps。这个码率用在摄像头上大概可以勉强看清人脸，然后在屏幕共享的场合就很不够用了。尤其是这里还开了 zerolatency，把很多非实时场景下能用的优化都关掉了，所以需求的码率更高。</p>
+
+<p>（其实可能可以妥协少量的延迟来做一些帧间优化，但是我不太熟悉怎么去调参数，所以就跳过吧）</p>
+
+<p>将码率调高之后画质的问题有所改善，但是还是不怎么跟手。如果只是共享 slides 之类的话可能问题不算很大，不过如果要以很低的延迟共享游戏的屏幕流的话，恐怕都不太合适。</p>
+
+<p>以下是 MJPEG, H.264 (30000 Kbps) 和不编码/解码的时候延迟与 CPU 使用量的直观对比，其中右下角是 xvimagesink：</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/YeZQ-kd2_mA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">MJPEG</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/E2uFver-_Jc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">H.264 (30000 Kbps)</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/MXF5kQh9jvM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">直接输出</p>
+
+<p>如果开个游戏的话，延迟带来的效果就更加显著：</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/c-p4l0GqAKo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">MJPEG，<a href="https://store.steampowered.com/app/400910/">某个（被）弹幕（打的）游戏</a>的 screencast</p>
+
+<p>所以显然转码和解码会带来一定的开销，并且这样的开销有的时候无法忽略——不过如果需要考虑网络传输的开销的话，MJPEG 相比来讲仍然是一个比较均衡的方案，所以仍然需要视场景选择。</p>
+
+<p>有读者可能会问：为什么不用硬件加速？GStreamer 确实支持基于 VAAPI 的硬件加速，但是它的 <a href="https://gstreamer.freedesktop.org/documentation/vaapi/vaapih264enc.html">H.264 硬件加速编码器</a>不支持 zerolatency，实际效果反而更卡；而 MJPEG 我没有找到相关的硬件加速方案，不过 VAAPI 支持其他类型的编解码加速，这就需要有兴趣的人自己测试了。</p>
+
+<p>另外再次需要注意的是，这里考虑的是一个极端的场合（需要很小的延迟）。在直播之类的场景下反而 H.264（以及其他更先进的编码）是更好的选择，因为几秒的延迟已经足够做优化，并且这个时候也可以用上硬件编码。</p>
+
+<h3 id="网络传输-2">网络传输 (2)</h3>
+
+<p>这个问题听起来很简单——毕竟前面已经知道怎么在 GStreamer 里面使用 UDP/TCP 来传输视频流了，那么直接用上不就行了？让我们先拿个视频文件试试吧！</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 发送端 (UDP)
+&gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! jpegenc ! rtpjpegpay ! udpsink host=127.0.0.1 port=5000  # MJPEG
+&gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! x264enc tune=zerolatency bitrate=30000 ! rtph264pay ! udpsink host=127.0.0.1 port=5000  # H.265
+&gt; gst-launch-1.0 filesrc location=./test.mp4 ! decodebin ! videoconvert ! rtpvrawpay ! udpsink host=127.0.0.1 port=5000  # RAW
+# 接收端 (UDP)
+&gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,encoding-name=(string)JPEG' ! rtpjpegdepay ! jpegdec ! videoconvert ! autovideosink  # MJPEG
+&gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,encoding-name=(string)H264' ! rtph264depay ! avdec_h264 ! videoconvert ! autovideosink  # H.265
+&gt; gst-launch-1.0 udpsrc port=5000 caps='application/x-rtp,sampling=(string)YCbCr-4:2:0,width=(string)1920,height=(string)1012,depth=(string)8' ! rtpvrawdepay ! videoconvert ! autovideosink  # RAW
+# emmm 一个麻烦的事情是，如果要用 rtp 传 raw stream，你要想办法知道这个 rtp 的属性
+# 可以在发送端调高 GST_DEBUG 来判断 video/x-raw 的属性，但是有时候需要一些额外的知识
+# 比如说我用来测试的视频里面的像素格式是 "I420"，它对应的 rtp sampling 是 "YCbCr-4:2:0"
+# 这是一个大坑点，不去搜资料是很难知道的
+</code></pre></div></div>
+
+<p>结果……emmmm……（<a href="https://www.bilibili.com/video/BV1Ab41197eT/">视频来源</a>）</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/pEqO3zchRFs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">MJPEG，没错不是你这里卡住了</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/9T82V-qzGiY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">H.264，不少 artifacts</p>
+
+<div class="center">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/TdL_9TbpWjc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>
+</div>
+
+<p class="center">直接传会出现大量的细线</p>
+
+<p>TCP 是没有这个问题的。有经验的读者应该能猜到是什么问题了，不过既然 UDP 在 lo 上有问题，那么我们就需要检查相关的丢包情况了。以 MJPEG 为例，观察 <code class="language-plaintext highlighter-rouge">/proc/net/udp</code>，可以发现在卡顿的时候是有丢包的情况的：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; cat /proc/net/udp
+   sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when retrnsmt   uid  timeout inode ref pointer drops
+ 2609: 00000000:1388 00000000:0000 07 00000000:00000000 00:00000000 00000000  1000        0 696929 2 0000000057310d4f 11233
+ # 这一行最后一个数值不断增长。以下省略
+</code></pre></div></div>
+
+<p>搜索可以发现需要增加接收端的缓冲区大小：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;</span><span class="w"> </span>sysctl net.core.rmem_max
+<span class="go">net.core.rmem_max = 212992
+</span><span class="gp">#</span><span class="w"> </span>修改到一个更大的值
+<span class="gp">&gt;</span><span class="w"> </span><span class="nb">sudo </span>sysctl <span class="nt">-w</span> net.core.rmem_max<span class="o">=</span>10485760
+<span class="go">net.core.rmem_max = 10485760
+</span></code></pre></div></div>
+
+<p>并且接收端的 udpsrc 也需要做配置：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>类似于这样
+<span class="gp">&gt;</span><span class="w"> </span>gst-launch-1.0 udpsrc <span class="nv">port</span><span class="o">=</span>5000 buffer-size<span class="o">=</span>10485760 <span class="nv">caps</span><span class="o">=</span><span class="s1">'application/x-rtp,encoding-name=(string)JPEG'</span> <span class="o">!</span> rtpjpegdepay <span class="o">!</span> jpegdec <span class="o">!</span> videoconvert <span class="o">!</span> autovideosink
+</code></pre></div></div>
+
+<p>（至于定多少就需要自己慢慢调了）</p>
+
+<h3 id="x11docker-的使用">x11docker 的使用</h3>
+
+<p>x11docker 需要一段时间自己摸索，并且为了好用，桌面环境的容器需要在 x11docker 已有的容器基础上自己打包（<a href="https://github.com/taoky/scripts/blob/master/.not_used/x11docker/wemeet/Dockerfile">一个可供参考的 Dockerfile</a>）。</p>
+
+<p>然后 x11docker 需要自己选一个 X server 的实现。尽管官方文档推荐 Xephyr，但是实际上根据我本地的测试，它对 XVideo 扩展的支持相当差，xvimagesink 无法正常播放视频。有可能这也是 <a href="https://github.com/mviereck/x11docker/blob/93a2793e62a9fd5e5bb0ed9ffd67467463ed8003/x11docker#LL4070C9-L4070C9">x11docker 把 xephyr 的 XVideo 关了</a>的原因。</p>
+
+<p>令人惊讶的是，用 weston 里面跑一个 xwayland 的方式出人意料地不错（唯一的缺点是不能调 weston 的窗口大小），XVideo 是正常的，里面的桌面环境跑起来也没有问题。尽管 x11docker 默认会启动一个 X 后端的 weston（很奇怪，而且<a href="https://gitlab.freedesktop.org/wayland/weston/-/issues/746">我这里鼠标移动会出问题</a>），不过直接改 x11docker 脚本，强制 weston 以 wayland 后端启动就能缓解。</p>
+
+<p>所以为什么这里 xwayland 就能让它成功屏幕共享？我的推测是，xwayland 在正常使用的时候都是以 rootless 模式启动的 (Run Xwayland rootless, so that X clients integrate seamlessly with Wayland clients in a Wayland desktop)，这个模式下可能是无法正常获取整个屏幕的信息的。而这里 xwayland 以 non-rootless 模式启动，所以屏幕的信息是完整可以被应用获取的。</p>
+
+<p>最后的启动命令大概是这个样子：</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">x11docker --gpu -I --weston-xwayland --size=1920x1080 --home --clipboard --desktop --pulseaudio=host --webcam --sudouser -i local/wemeet-x11
+</span></code></pre></div></div>
+
+<p>不过我最后没有用这个方案，原因是某会议软件在这个环境里面拒绝启动麦克风，原因不明，我也懒得拿个 IDA 去逆向。刚好之前试过 Flatpak 版本除了屏幕共享都是正常的，所以之后我实际采用的方案可能已经能猜到了。</p>
+
+<h2 id="扭曲的最终方案">扭曲的最终方案</h2>
+
+<p>所以我们可以：</p>
+
+<ol>
+  <li>先开个 nested weston（别的 wayland compositor 应该也成）</li>
+  <li>在 weston 里面开个 non-rootless 的 xwayland</li>
+  <li>在 xwayland 里面开个窗口管理器（我这里用 mutter，但是随便找一个就行）</li>
+  <li>然后也在这个 xwayland 里面开某会议软件</li>
+  <li>最后把 xdp-screen-cast 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销</li>
+</ol>
+
+<p><img src="/pictures/wemeet/illustration.png" alt="Solution graph" /></p>
+
+<p class="center">之前画的流程示意图，里面可能有的组件关系不够准确，但是我懒得改了。</p>
+
+<p>启动脚本很简单，其中 <code class="language-plaintext highlighter-rouge">Xwayland</code> 的参数是从 x11docker 抄的：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh -e</span>
+
+<span class="c"># Start weston</span>
+<span class="nb">echo</span> <span class="s2">"Starting weston"</span>
+weston <span class="nt">-c</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/weston.ini <span class="nt">--socket</span><span class="o">=</span>wayland-114 &amp;
+
+<span class="nb">sleep </span>3
+
+<span class="c"># Start xwayland</span>
+<span class="nb">echo</span> <span class="s2">"Starting Xwayland"</span>
+<span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-114 Xwayland :114 <span class="nt">-ac</span> <span class="nt">-retro</span> +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource <span class="nt">-extension</span> XINERAMA <span class="nt">-xinerama</span> <span class="nt">-extension</span> MIT-SHM +extension Composite +extension COMPOSITE <span class="nt">-extension</span> XTEST <span class="nt">-tst</span> <span class="nt">-dpms</span> <span class="nt">-s</span> off &amp;
+
+<span class="nb">sleep </span>3
+
+<span class="c"># Start mutter and wemeet</span>
+<span class="nb">echo</span> <span class="s2">"Starting mutter"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 mutter <span class="nt">--x11</span> &amp;
+
+<span class="nb">echo</span> <span class="s2">"Starting wemeet"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 flatpak run com.tencent.wemeet
+</code></pre></div></div>
+
+<p>其中 weston.ini 的内容也是从 x11docker 抄来的：</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[core]</span>
+<span class="py">shell</span><span class="p">=</span><span class="s">desktop-shell.so</span>
+<span class="py">backend</span><span class="p">=</span><span class="s">wayland-backend.so</span>
+<span class="py">idle-time</span><span class="p">=</span><span class="s">0</span>
+<span class="nn">[shell]</span>
+<span class="py">panel-location</span><span class="p">=</span><span class="s">none</span>
+<span class="py">panel-position</span><span class="p">=</span><span class="s">none</span>
+<span class="py">locking</span><span class="p">=</span><span class="s">false</span>
+<span class="py">background-color</span><span class="p">=</span><span class="s">0xff002244</span>
+<span class="py">animation</span><span class="p">=</span><span class="s">fade</span>
+<span class="py">startup-animation</span><span class="p">=</span><span class="s">fade</span>
+<span class="nn">[keyboard]</span>
+<span class="nn">[output]</span>
+<span class="py">name</span><span class="p">=</span><span class="s">WL1</span>
+<span class="py">mode</span><span class="p">=</span><span class="s">1920x1080</span>
+</code></pre></div></div>
+
+<p>这个方案的另一个问题是：剪贴板不能直接交互，以及输入法也用不了了。一个 workaround 是用剪贴板代替输入法：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">"不是不能用"</span> | xclip <span class="nt">-selection</span> clipboard <span class="nt">-i</span> <span class="nt">-display</span> :114
+<span class="c"># 从 :0 的剪贴板复制到 :114</span>
+xclip <span class="nt">-selection</span> clipboard <span class="nt">-o</span> <span class="nt">-display</span> :0 | xclip <span class="nt">-selection</span> clipboard <span class="nt">-i</span> <span class="nt">-display</span> :114
+<span class="c"># 从 :114 的剪贴板复制到 :0</span>
+xclip <span class="nt">-selection</span> clipboard <span class="nt">-o</span> <span class="nt">-display</span> :114 | xclip <span class="nt">-selection</span> clipboard <span class="nt">-i</span> <span class="nt">-display</span> :0
+</code></pre></div></div>
+
+<h2 id="总结">总结</h2>
+
+<p>我用这个方案开过了几次会，还挺舒服的，相比于开个 VM 也更流畅。</p>
+
+<p>其实如果某会议软件搞个 Web 版本就没这么多破事了。</p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr />
+<h3>Comments</h3>
+<p id="comment_darkmode_warning" style="display: none;">Note: Disqus 完整评论组件不以暗黑模式显示。</p>
+<div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
+<script>
+// https://blog.skk.moe/post/prevent-disqus-from-slowing-your-site/
+function loadDisqus() {
+    var dsqjs = new DisqusJS({
+        shortname: 'taokyblog',
+        siteName: 'taoky\'s blog',
+        // identifier: '',
+        // url: '',
+        // title: '',
+        api: '//blog.taoky.moe/api/',
+        apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+        nocomment: '无评论.',
+        admin: 'taoky',
+        adminLabel: 'taoky'
+    });
+}
+
+// 通过检查 window 对象确认是否在浏览器中运行
+var runningOnBrowser = typeof window !== "undefined";
+// 通过检查 scroll 事件 API 和 User-Agent 来匹配爬虫
+var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+// 检查当前浏览器是否支持 IntersectionObserver API
+var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+
+// 一个小 hack，将耗时任务包裹在 setTimeout(() => { }, 1) 中，可以推迟到 Event Loop 的任务队列中、等待主调用栈清空后才执行，在绝大部分浏览器中都有效
+// 其实这个 hack 本来是用于优化骨架屏显示的。一些浏览器总是等 JavaScript 执行完了才开始页面渲染，导致骨架屏起不到降低 FCP 的优化效果，所以通过 hack 将耗时函数放到骨架屏渲染完成后再进行。
+setTimeout(function () {
+  if (!isBot && supportsIntersectionObserver) {
+    // 当前环境不是爬虫、并且浏览器兼容 IntersectionObserver API
+    var disqus_observer = new IntersectionObserver(function(entries) {
+      // 当前视窗中已出现 Disqus 评论框所在位置
+      if (entries[0].isIntersecting) {
+        // 加载 Disqus
+        loadDisqus();
+        // 停止当前的 Observer
+        disqus_observer.disconnect();
+      }
+    }, { threshold: [0] });
+    // 设置让 Observer 观察 #disqus_thread 元素
+    disqus_observer.observe(document.getElementById('disqus_thread'));
+  } else {
+    // 当前环境是爬虫、或当前浏览器其不兼容 IntersectionObserver API
+    // 直接加载 Disqus
+    loadDisqus();
+  }
+}, 1);
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
+</script>
+<noscript>Disqus comment requires JavaScript.</a></noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://blog.taoky.moe/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
