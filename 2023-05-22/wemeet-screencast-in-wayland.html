@@ -1119,7 +1119,9 @@
 
 <h3 id="xwaylandvideobridge"><a href="https://blog.davidedmundson.co.uk/blog/xwaylandvideobridge/">xwaylandvideobridge</a>?</h3>
 
-<p>看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它解决的是使用了 <a href="https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html">XRecord 扩展</a>的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。</p>
+<p>看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它<del>解决的是使用了 <a href="https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html">XRecord 扩展</a>的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。</del> 使用 XRecord 扩展来判断程序是否在录屏，但是这里似乎检测不到。</p>
+
+<p>AUR 的评论区里前几天有人说可以，我不太确定可信度（可能是我打开的方式不对？），如果有人测试过可行的话可以告诉我一下。</p>
 
 <h3 id="windows-vm--obsrdp">Windows VM + OBS/RDP?</h3>
 
@@ -1570,6 +1572,12 @@ weston <span class="nt">-c</span> <span class="si">$(</span><span class="nb">pwd
 <span class="py">name</span><span class="p">=</span><span class="s">WL1</span>
 <span class="py">mode</span><span class="p">=</span><span class="s">1920x1080</span>
 </code></pre></div></div>
+
+<p>显示效果如下：</p>
+
+<p><img src="/pictures/wemeet/weston.png" alt="Weston + XWayland + Mutter" /></p>
+
+<p>特别地，在里面跑的 flatpak 应用需要开启后台运行权限，否则跑了几秒之后就会被杀掉。</p>
 
 <p>这个方案的另一个问题是：剪贴板不能直接交互，以及输入法也用不了了。一个 workaround 是用剪贴板代替输入法：</p>
 
