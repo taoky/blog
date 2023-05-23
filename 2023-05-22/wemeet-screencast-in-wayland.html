@@ -1119,9 +1119,9 @@
 
 <h3 id="xwaylandvideobridge"><a href="https://blog.davidedmundson.co.uk/blog/xwaylandvideobridge/">xwaylandvideobridge</a>?</h3>
 
-<p>看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它<del>解决的是使用了 <a href="https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html">XRecord 扩展</a>的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。</del> 使用 XRecord 扩展来判断程序是否在录屏，但是这里似乎检测不到。</p>
+<p>看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它<del>解决的是使用了 <a href="https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html">XRecord 扩展</a>的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。</del> 使用 XRecord 扩展来判断程序是否在录屏（使用 X 混成扩展重定向窗口内容），但是这里似乎检测不到。</p>
 
-<p>AUR 的评论区里前几天有人说可以，我不太确定可信度（可能是我打开的方式不对？），如果有人测试过可行的话可以告诉我一下。</p>
+<p><del>AUR 的评论区里前几天有人说可以，我不太确定可信度（可能是我打开的方式不对？），如果有人测试过可行的话可以告诉我一下。</del> 问了一下，确实是不行的。</p>
 
 <h3 id="windows-vm--obsrdp">Windows VM + OBS/RDP?</h3>
 
@@ -1523,7 +1523,7 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
   <li>在 weston 里面开个 non-rootless 的 xwayland</li>
   <li>在 xwayland 里面开个窗口管理器（我这里用 mutter，但是随便找一个就行）</li>
   <li>然后也在这个 xwayland 里面开某会议软件</li>
-  <li>最后把 xdp-screen-cast 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销</li>
+  <li>最后把 <a href="https://gitlab.gnome.org/-/snippets/19">xdp-screen-cast</a> 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销</li>
 </ol>
 
 <p><img src="/pictures/wemeet/illustration.png" alt="Solution graph" /></p>

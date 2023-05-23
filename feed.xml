@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-05-23T05:27:21+00:00</updated>
+  <updated>2023-05-23T06:41:02+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -61,9 +61,9 @@
 
 &lt;h3 id=&quot;xwaylandvideobridge&quot;&gt;&lt;a href=&quot;https://blog.davidedmundson.co.uk/blog/xwaylandvideobridge/&quot;&gt;xwaylandvideobridge&lt;/a&gt;?&lt;/h3&gt;
 
-&lt;p&gt;看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它&lt;del&gt;解决的是使用了 &lt;a href=&quot;https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html&quot;&gt;XRecord 扩展&lt;/a&gt;的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。&lt;/del&gt; 使用 XRecord 扩展来判断程序是否在录屏，但是这里似乎检测不到。&lt;/p&gt;
+&lt;p&gt;看起来很完美，但是在这里唯一的问题是：它不能用（至少我本地测试是如此）。因为它&lt;del&gt;解决的是使用了 &lt;a href=&quot;https://www.x.org/releases/X11R7.7/doc/libXtst/recordlib.html&quot;&gt;XRecord 扩展&lt;/a&gt;的软件的录屏问题，但是某会议软件似乎并没有使用 XRecord 扩展。&lt;/del&gt; 使用 XRecord 扩展来判断程序是否在录屏（使用 X 混成扩展重定向窗口内容），但是这里似乎检测不到。&lt;/p&gt;
 
-&lt;p&gt;AUR 的评论区里前几天有人说可以，我不太确定可信度（可能是我打开的方式不对？），如果有人测试过可行的话可以告诉我一下。&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;AUR 的评论区里前几天有人说可以，我不太确定可信度（可能是我打开的方式不对？），如果有人测试过可行的话可以告诉我一下。&lt;/del&gt; 问了一下，确实是不行的。&lt;/p&gt;
 
 &lt;h3 id=&quot;windows-vm--obsrdp&quot;&gt;Windows VM + OBS/RDP?&lt;/h3&gt;
 
@@ -465,7 +465,7 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
   &lt;li&gt;在 weston 里面开个 non-rootless 的 xwayland&lt;/li&gt;
   &lt;li&gt;在 xwayland 里面开个窗口管理器（我这里用 mutter，但是随便找一个就行）&lt;/li&gt;
   &lt;li&gt;然后也在这个 xwayland 里面开某会议软件&lt;/li&gt;
-  &lt;li&gt;最后把 xdp-screen-cast 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销&lt;/li&gt;
+  &lt;li&gt;最后把 &lt;a href=&quot;https://gitlab.gnome.org/-/snippets/19&quot;&gt;xdp-screen-cast&lt;/a&gt; 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/wemeet/illustration.png&quot; alt=&quot;Solution graph&quot; /&gt;&lt;/p&gt;
