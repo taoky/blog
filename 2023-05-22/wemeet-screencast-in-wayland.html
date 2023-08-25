@@ -1516,12 +1516,19 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 
 <h2 id="扭曲的最终方案">扭曲的最终方案</h2>
 
+<p><strong>Update 1 (2023-08-25): xorg-xwayland 更新到 23.2.0 之后 rootful 模式处理大小的方式出现了变化，因此下面的内容有修改：</strong></p>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">Xwayland</code> 需要添加一个 <code class="language-plaintext highlighter-rouge">-fullscreen</code> 参数，否则启动的 X 的大小不对；</strong></li>
+  <li><strong>mutter 换成了 openbox，因为 mutter 开出来之后会自己把分辨率调到 5120x2880，然后窗口就特别小，不知道是什么原因。</strong></li>
+</ol>
+
 <p>所以我们可以：</p>
 
 <ol>
   <li>先开个 nested weston（别的 wayland compositor 应该也成）</li>
   <li>在 weston 里面开个 non-rootless 的 xwayland</li>
-  <li>在 xwayland 里面开个窗口管理器（我这里用 mutter，但是随便找一个就行）</li>
+  <li>在 xwayland 里面开个窗口管理器（我这里用 <del>mutter</del> openbox，理论上随便找一个就行）</li>
   <li>然后也在这个 xwayland 里面开某会议软件</li>
   <li>最后把 <a href="https://gitlab.gnome.org/-/snippets/19">xdp-screen-cast</a> 输出（ximagesink）也开在这个 non-rootless 的 xwayland 里面，而且顺便还省去了 TCP/UDP 网络栈的开销</li>
 </ol>
@@ -1542,13 +1549,13 @@ weston <span class="nt">-c</span> <span class="si">$(</span><span class="nb">pwd
 
 <span class="c"># Start xwayland</span>
 <span class="nb">echo</span> <span class="s2">"Starting Xwayland"</span>
-<span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-114 Xwayland :114 <span class="nt">-ac</span> <span class="nt">-retro</span> +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource <span class="nt">-extension</span> XINERAMA <span class="nt">-xinerama</span> <span class="nt">-extension</span> MIT-SHM +extension Composite +extension COMPOSITE <span class="nt">-extension</span> XTEST <span class="nt">-tst</span> <span class="nt">-dpms</span> <span class="nt">-s</span> off &amp;
+<span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-114 Xwayland :114 <span class="nt">-ac</span> <span class="nt">-retro</span> +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource <span class="nt">-extension</span> XINERAMA <span class="nt">-xinerama</span> <span class="nt">-extension</span> MIT-SHM +extension Composite +extension COMPOSITE <span class="nt">-extension</span> XTEST <span class="nt">-tst</span> <span class="nt">-dpms</span> <span class="nt">-s</span> off <span class="nt">-fullscreen</span> &amp;
 
 <span class="nb">sleep </span>3
 
-<span class="c"># Start mutter and wemeet</span>
-<span class="nb">echo</span> <span class="s2">"Starting mutter"</span>
-<span class="nv">DISPLAY</span><span class="o">=</span>:114 mutter <span class="nt">--x11</span> &amp;
+<span class="c"># Start openbox and wemeet</span>
+<span class="nb">echo</span> <span class="s2">"Starting openbox"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 openbox &amp;
 
 <span class="nb">echo</span> <span class="s2">"Starting wemeet"</span>
 <span class="nv">DISPLAY</span><span class="o">=</span>:114 flatpak run com.tencent.wemeet
@@ -1577,9 +1584,11 @@ weston <span class="nt">-c</span> <span class="si">$(</span><span class="nb">pwd
 
 <p><img src="/pictures/wemeet/weston.png" alt="Weston + XWayland + Mutter" /></p>
 
+<p>（换成 openbox 之后长得丑一些，X server 默认的黑白背景还在，不过也不是不能用）</p>
+
 <p>特别地，在里面跑的 flatpak 应用需要开启后台运行权限，否则跑了几秒之后就会被杀掉。</p>
 
-<p>这个方案的另一个问题是：剪贴板不能直接交互，以及输入法也用不了了。一个 workaround 是用剪贴板代替输入法：</p>
+<p>这个方案的另一个问题是：剪贴板不能直接交互， <del>以及输入法也用不了了</del> 输入法能用，不过 popup 位置有时候不对。一个 workaround 是用 <del>剪贴板代替输入法</del> <code class="language-plaintext highlighter-rouge">xclip</code> 替代剪贴板操作：</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">"不是不能用"</span> | xclip <span class="nt">-selection</span> clipboard <span class="nt">-i</span> <span class="nt">-display</span> :114
 <span class="c"># 从 :0 的剪贴板复制到 :114</span>
