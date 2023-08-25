@@ -1523,6 +1523,12 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
   <li><strong>mutter 换成了 openbox，因为 mutter 开出来之后会自己把分辨率调到 5120x2880，然后窗口就特别小，不知道是什么原因。</strong></li>
 </ol>
 
+<p>Update 2 (2023-08-26): 最新版的 xorg-xwayland 做了 libdecor 的适配调整，添加了 resize 的支持，所以另一种思路是在编译 xorg-xwayland 时加上 libdecor 支持，然后扔掉 weston，直接启动 Xwayland。不过 Arch 编译的版本没有加 libdecor，所以我<a href="https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor">打了个 AUR 包</a>自己用，加上 git 版带 GTK plugin 的 libdecor，显示的效果还挺不错。此外 <a href="https://wiki.archlinux.org/title/Openbox#Configuration">openbox 修改配置也很方便</a>，可以在它的菜单中配置在这个新的 X Display 里面可能要用到的东西。可以参考：<a href="https://github.com/taoky/scripts/blob/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/x11/wemeet/start.sh">我现在使用的启动脚本</a> 和 <a href="https://github.com/taoky/scripts/tree/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/dotfile/.config/openbox">我的 openbox 配置</a>。</p>
+
+<p><img src="/pictures/wemeet/xwayland-standalone.png" alt="Standalone xwayland screenshot" /></p>
+
+<hr />
+
 <p>所以我们可以：</p>
 
 <ol>
