@@ -10,7 +10,7 @@
   
   
   <title>偷懒（且不太正确）的暗黑模式配置</title>
-  <meta name="description" content="Update (2023/10/20): 摸了，直接用 DarkReader 了。">
+  <meta name="description" content="这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 Orion 浏览器的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个快速为页面配置暗黑模式的脚本（MIT License）：">
   
 
   <link rel="stylesheet" href="/assets/main.css">
@@ -21,7 +21,7 @@
 
   <link rel="stylesheet" href="/assets/typo.css">
 <link rel="stylesheet" href="/assets/fonts.css">
-
+<link rel="stylesheet" href="/assets/dark.css">
 
   <link href="/assets/fonts/bitter.css" rel="stylesheet">
   
@@ -692,9 +692,7 @@
   
 
   <div class="post-content" itemprop="articleBody">
-    <p>Update (2023/10/20): 摸了，直接用 <a href="https://github.com/darkreader/darkreader#using-dark-reader-for-a-website">DarkReader</a> 了。</p>
-
-<p>这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 <a href="https://browser.kagi.com/">Orion 浏览器</a>的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个<a href="https://github.com/OrionBrowser/DarkMode">快速为页面配置暗黑模式的脚本</a>（MIT License）：</p>
+    <p>这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 <a href="https://browser.kagi.com/">Orion 浏览器</a>的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个<a href="https://github.com/OrionBrowser/DarkMode">快速为页面配置暗黑模式的脚本</a>（MIT License）：</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">odmcss</span> <span class="o">=</span> <span class="s2">`
 :root {
@@ -925,15 +923,6 @@ License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0
 
 </footer>
 
-<script src="/assets/darkreader.min.js"></script>
-
-<script>
-    DarkReader.auto({
-        brightness: 100,
-        contrast: 90,
-        sepia: 10
-    });
-</script>
 
   </body>
 
