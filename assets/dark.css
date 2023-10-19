@@ -637,4 +637,9 @@
     fill: var(--darkreader-neutral-background) !important;
     }
     embed[type="application/pdf"][src="about:blank"] { filter: invert(100%) contrast(90%); }
+
+    /* workaround for disqus */
+    iframe[src*="disqus.com"] {
+        color-scheme: light;
+    }
 }
