@@ -1412,51 +1412,51 @@ $11 = {
 
 <p>但是要怎么方便地看出 sources 里面的内容？glib gdb 插件提供的 <code class="language-plaintext highlighter-rouge">gforeach</code> 似乎不支持这样的功能，而且 gdb 也不支持一次执行多条调试语句。于是我想出了一个歪主意：写个脚本和 GDB 交互。我用 pwntools 略熟悉一些，所以脚本就用它写了（可以看成是高配版的 <a href="https://man7.org/linux/man-pages/man1/expect.1.html">expect(1)</a>，大概吧？）。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="n">argparse</span>
 
-<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
-<span class="n">parser</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'file'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">'file to run'</span><span class="p">)</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="n">parse_args</span><span class="p">()</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="nc">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="sh">'</span><span class="s">file</span><span class="sh">'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="sh">'</span><span class="s">file to run</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="nf">parse_args</span><span class="p">()</span>
 
 <span class="c1"># context.log_level = "debug"
-</span><span class="n">p</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="sa">f</span><span class="s">'gdb -c </span><span class="si">{</span><span class="n">args</span><span class="p">.</span><span class="nb">file</span><span class="si">}</span><span class="s">'</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="n">p</span> <span class="o">=</span> <span class="nf">process</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">gdb -c </span><span class="si">{</span><span class="n">args</span><span class="p">.</span><span class="nb">file</span><span class="si">}</span><span class="sh">'</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="c1"># 我的 GDB 加载了 https://github.com/cyrus-and/gdb-dashboard
 # 所以 prompt 和标准的有所不同
-</span><span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
-<span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"set style enabled off"</span><span class="p">)</span>
-<span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
-<span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"up"</span><span class="p">)</span>
-<span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">)</span>
+</span><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt;&gt;</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">set style enabled off</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt;&gt;</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">up</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt;&gt;</span><span class="sh">"</span><span class="p">)</span>
 <span class="c1"># p.sendline("up")
 # p.recvuntil("&gt;&gt;&gt;")
-</span><span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="s">"print -elements unlimited -- context-&gt;sources"</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">)</span>
+</span><span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">print -elements unlimited -- context-&gt;sources</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt;&gt;</span><span class="sh">"</span><span class="p">).</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">)</span>
 
 <span class="n">address</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">number</span> <span class="o">=</span> <span class="s">""</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+<span class="n">number</span> <span class="o">=</span> <span class="sh">""</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
     <span class="n">current_char</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">"="</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="sh">"</span><span class="s">=</span><span class="sh">"</span><span class="p">:</span>
         <span class="n">state</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">","</span> <span class="ow">or</span> <span class="n">current_char</span> <span class="o">==</span> <span class="s">"["</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">current_char</span> <span class="o">==</span> <span class="sh">"</span><span class="s">,</span><span class="sh">"</span> <span class="ow">or</span> <span class="n">current_char</span> <span class="o">==</span> <span class="sh">"</span><span class="s">[</span><span class="sh">"</span><span class="p">:</span>
         <span class="n">state</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">number</span><span class="p">:</span>
-            <span class="n">address</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
-            <span class="n">number</span> <span class="o">=</span> <span class="s">""</span>
+            <span class="n">address</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="sh">""</span>
     <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">current_char</span><span class="p">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">or</span> <span class="n">current_char</span><span class="p">.</span><span class="n">isalpha</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">current_char</span><span class="p">.</span><span class="nf">isdigit</span><span class="p">()</span> <span class="ow">or</span> <span class="n">current_char</span><span class="p">.</span><span class="nf">isalpha</span><span class="p">():</span>
             <span class="n">number</span> <span class="o">+=</span> <span class="n">current_char</span>
 
 <span class="c1"># print(address)
 </span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">address</span><span class="p">:</span>
-    <span class="n">p</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">f</span><span class="s">"print *(GSource *)</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">"&gt;&gt;&gt;"</span><span class="p">).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-8"</span><span class="p">))</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">print *(GSource *)</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt;&gt;</span><span class="sh">"</span><span class="p">).</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">))</span>
 
-<span class="n">p</span><span class="p">.</span><span class="n">interactive</span><span class="p">()</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>果不其然：</p>
@@ -1574,9 +1574,9 @@ js/ui/unlockDialog.js
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">connection</span> <span class="o">=</span> <span class="nn">Connection</span><span class="p">::</span><span class="nf">session</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">proxy</span> <span class="o">=</span> <span class="nn">mutter</span><span class="p">::</span><span class="nn">IdleMonitorProxyBlocking</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">connection</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
-    <span class="k">for</span> <span class="mi">_</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="mi">10000</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="mi">10000</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">res</span> <span class="o">=</span> <span class="n">proxy</span><span class="nf">.add_idle_watch</span><span class="p">(</span><span class="mi">110000</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
-        <span class="c">// println!("{:?}", res);</span>
+        <span class="c1">// println!("{:?}", res);</span>
     <span class="p">}</span>
     <span class="k">loop</span> <span class="p">{</span>
         <span class="nf">sleep</span><span class="p">(</span><span class="nn">Duration</span><span class="p">::</span><span class="nf">from_secs</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>

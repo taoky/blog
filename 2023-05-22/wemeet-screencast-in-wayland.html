@@ -1223,24 +1223,24 @@ Pads:
 
 <p>估计它的输出的类型和 pipewire 源有关系，我们可以修改 <code class="language-plaintext highlighter-rouge">xdp-screen-cast</code> 的代码，加上一些用来输出相关信息的代码。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gst_command</span> <span class="o">=</span> <span class="s">"pipewiresrc fd=%d path=%u name=pwsrc0 ! videoconvert ! xvimagesink"</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gst_command</span> <span class="o">=</span> <span class="sh">"</span><span class="s">pipewiresrc fd=%d path=%u name=pwsrc0 ! videoconvert ! xvimagesink</span><span class="sh">"</span>
 <span class="n">gst_command</span> <span class="o">=</span> <span class="n">gst_command</span> <span class="o">%</span> <span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">node_id</span><span class="p">)</span>
 
-<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Gst</span><span class="p">.</span><span class="n">parse_launch</span><span class="p">(</span><span class="n">gst_command</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Gst</span><span class="p">.</span><span class="nf">parse_launch</span><span class="p">(</span><span class="n">gst_command</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">pad_func</span><span class="p">(</span><span class="n">pad</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">user_data</span><span class="p">):</span>
-    <span class="n">caps</span> <span class="o">=</span> <span class="n">pad</span><span class="p">.</span><span class="n">get_current_caps</span><span class="p">()</span>
+    <span class="n">caps</span> <span class="o">=</span> <span class="n">pad</span><span class="p">.</span><span class="nf">get_current_caps</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">caps</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">"Video stream type:"</span><span class="p">,</span> <span class="n">caps</span><span class="p">.</span><span class="n">to_string</span><span class="p">())</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Video stream type:</span><span class="sh">"</span><span class="p">,</span> <span class="n">caps</span><span class="p">.</span><span class="nf">to_string</span><span class="p">())</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">"No caps available"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">No caps available</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Gst</span><span class="p">.</span><span class="n">PadProbeReturn</span><span class="p">.</span><span class="n">PASS</span>
 
-<span class="n">pwsrc</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="s">"pwsrc0"</span><span class="p">)</span>
-<span class="n">srcpad</span> <span class="o">=</span> <span class="n">pwsrc</span><span class="p">.</span><span class="n">get_static_pad</span><span class="p">(</span><span class="s">"src"</span><span class="p">)</span>
-<span class="n">srcpad</span><span class="p">.</span><span class="n">add_probe</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">PadProbeType</span><span class="p">.</span><span class="n">EVENT_DOWNSTREAM</span><span class="p">,</span> <span class="n">pad_func</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">pwsrc</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">.</span><span class="nf">get_by_name</span><span class="p">(</span><span class="sh">"</span><span class="s">pwsrc0</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">srcpad</span> <span class="o">=</span> <span class="n">pwsrc</span><span class="p">.</span><span class="nf">get_static_pad</span><span class="p">(</span><span class="sh">"</span><span class="s">src</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">srcpad</span><span class="p">.</span><span class="nf">add_probe</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">PadProbeType</span><span class="p">.</span><span class="n">EVENT_DOWNSTREAM</span><span class="p">,</span> <span class="n">pad_func</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
-<span class="n">pipeline</span><span class="p">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">State</span><span class="p">.</span><span class="n">PLAYING</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="p">.</span><span class="nf">set_state</span><span class="p">(</span><span class="n">Gst</span><span class="p">.</span><span class="n">State</span><span class="p">.</span><span class="n">PLAYING</span><span class="p">)</span>
 <span class="c1"># ...
 </span></code></pre></div></div>
 

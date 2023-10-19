@@ -704,15 +704,15 @@ iframe, img, image, video, [style*="background-image"] {
 `</span><span class="p">;</span>
 
 <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">orion-browser-dark-theme</span><span class="dl">"</span><span class="p">;</span>
-<span class="nx">ee</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-<span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">!=</span> <span class="nx">ee</span><span class="p">)</span> <span class="nx">ee</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">ee</span><span class="p">);</span>
+<span class="nx">ee</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+<span class="k">if </span><span class="p">(</span><span class="kc">null</span> <span class="o">!=</span> <span class="nx">ee</span><span class="p">)</span> <span class="nx">ee</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nf">removeChild</span><span class="p">(</span><span class="nx">ee</span><span class="p">);</span>
 <span class="k">else</span> <span class="p">{</span>
-  <span class="nx">style</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">style</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">style</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">style</span><span class="dl">'</span><span class="p">);</span>
   <span class="nx">style</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">text/css</span><span class="dl">"</span><span class="p">;</span>
   <span class="nx">style</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">)</span> <span class="nx">style</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">odmcss</span><span class="p">;</span>
-  <span class="k">else</span> <span class="nx">style</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">odmcss</span><span class="p">));</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">style</span><span class="p">);</span>
+  <span class="k">if </span><span class="p">(</span><span class="nx">style</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">)</span> <span class="nx">style</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">odmcss</span><span class="p">;</span>
+  <span class="k">else</span> <span class="nx">style</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nf">createTextNode</span><span class="p">(</span><span class="nx">odmcss</span><span class="p">));</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">style</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 

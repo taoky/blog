@@ -878,8 +878,8 @@
 
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="s">"rubbish"</span><span class="nf">.to_string</span><span class="p">();</span>
-<span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="k">drop</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="c">// 之后 s 就不能被使用了。</span>
+<span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="nf">drop</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="c1">// 之后 s 就不能被使用了。</span>
 </code></pre></div>    </div>
   </li>
   <li>
@@ -988,8 +988,8 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 <p>Pattern matching 的一种形式是用 <code class="language-plaintext highlighter-rouge">match</code>，看起来像是 switch-case，但是语法更强大一些：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="nn">std</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">input</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nf">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"Error reading line: {}"</span><span class="p">,</span> <span class="n">e</span><span class="p">),</span>  <span class="c">// 这里变量 e 就是 Err() 里面包裹的内容</span>
-    <span class="mi">_</span> <span class="k">=&gt;</span> <span class="p">{}</span>  <span class="c">// 不与其他任何规则匹配时执行这一条规则</span>
+    <span class="nf">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"Error reading line: {}"</span><span class="p">,</span> <span class="n">e</span><span class="p">),</span>  <span class="c1">// 这里变量 e 就是 Err() 里面包裹的内容</span>
+    <span class="n">_</span> <span class="k">=&gt;</span> <span class="p">{}</span>  <span class="c1">// 不与其他任何规则匹配时执行这一条规则</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1000,13 +1000,13 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">http_error</span><span class="p">(</span><span class="n">status</span><span class="p">):</span>
     <span class="n">match</span> <span class="n">status</span><span class="p">:</span>
         <span class="n">case</span> <span class="mi">400</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">"Bad request"</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">Bad request</span><span class="sh">"</span>
         <span class="n">case</span> <span class="mi">404</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">"Not found"</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">Not found</span><span class="sh">"</span>
         <span class="n">case</span> <span class="mi">418</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">"I'm a teapot"</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">I</span><span class="sh">'</span><span class="s">m a teapot</span><span class="sh">"</span>
         <span class="n">case</span> <span class="n">_</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">"Something's wrong with the internet"</span>
+            <span class="k">return</span> <span class="sh">"</span><span class="s">Something</span><span class="sh">'</span><span class="s">s wrong with the internet</span><span class="sh">"</span>
 </code></pre></div></div>
 
 <p>但是这样还是有点繁琐。使用 <code class="language-plaintext highlighter-rouge">cargo clippy</code> 检查项目风格的时候 clippy 也会跟你抱怨：</p>
@@ -1038,9 +1038,9 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 
 <p>文档中还提到的几个 <code class="language-plaintext highlighter-rouge">unwrap</code> 的变形，可以用来在出错时给变量设置一个「默认值」</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c">// 若出错，则返回 0</span>
-<span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or_else</span><span class="p">(|</span><span class="mi">_</span><span class="p">|</span> <span class="p">{</span><span class="mi">0</span><span class="p">});</span>  <span class="c">// 若出错，则执行参数里的这个函数（闭包/lambda），这里这个闭包接受一个不会用到的值，直接返回 0</span>
-<span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or_default</span><span class="p">();</span>  <span class="c">// 若出错，返回这个类型的默认值。对于 i32 而言，默认值就是 0</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1">// 若出错，则返回 0</span>
+<span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or_else</span><span class="p">(|</span><span class="n">_</span><span class="p">|</span> <span class="p">{</span><span class="mi">0</span><span class="p">});</span>  <span class="c1">// 若出错，则执行参数里的这个函数（闭包/lambda），这里这个闭包接受一个不会用到的值，直接返回 0</span>
+<span class="k">let</span> <span class="n">choice</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="n">input</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap_or_default</span><span class="p">();</span>  <span class="c1">// 若出错，返回这个类型的默认值。对于 i32 而言，默认值就是 0</span>
 </code></pre></div></div>
 
 <p>或者有的时候，还是希望它能直接 panic，只是你不喜欢默认的错误信息，那就 <code class="language-plaintext highlighter-rouge">expect()</code>：</p>
@@ -1060,11 +1060,11 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 
 <p>于是最后的 if-else 似乎可以改成更加直观的 pattern matching 了（直接用 <code class="language-plaintext highlighter-rouge">i32</code> 当然也能改，但是看起来会有点奇怪）。直接写的话就像这样子：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">match</span> <span class="n">choice</span> <span class="p">{</span>
     <span class="nn">Language</span><span class="p">::</span><span class="n">English</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Hello, world!"</span><span class="p">),</span>
     <span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"你好，世界！"</span><span class="p">),</span>
-    <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
+    <span class="n">_</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1075,7 +1075,7 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">choice</span> <span class="o">=</span> <span class="k">match</span> <span class="n">choice</span> <span class="p">{</span>
     <span class="mi">0</span> <span class="k">=&gt;</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">),</span>
     <span class="mi">1</span> <span class="k">=&gt;</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">),</span>
-    <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
+    <span class="n">_</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
 <span class="p">};</span>
 
 <span class="k">match</span> <span class="n">choice</span> <span class="p">{</span>
@@ -1089,24 +1089,24 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 
 <p>但是是否可以做得更好？比如说，让这个转换变成 <code class="language-plaintext highlighter-rouge">Language</code> 这个 enum 的一个方法？参考 <a href="https://stackoverflow.com/a/57578431">https://stackoverflow.com/a/57578431</a>，我们可以给 <code class="language-plaintext highlighter-rouge">Language</code> 实现 <code class="language-plaintext highlighter-rouge">TryFrom</code> trait，然后 <code class="language-plaintext highlighter-rouge">choice.try_into()</code> 就能进行转换：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="n">TryFrom</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="nb">TryFrom</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Error</span> <span class="o">=</span> <span class="p">();</span>
 
-    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">,</span> <span class="k">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="n">value</span> <span class="p">{</span>
             <span class="mi">0</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">),</span>
             <span class="mi">1</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 
 <span class="k">match</span> <span class="n">choice</span><span class="nf">.try_into</span><span class="p">()</span> <span class="p">{</span>
     <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Hello, world!"</span><span class="p">),</span>
     <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"你好，世界！"</span><span class="p">),</span>
-    <span class="nf">Err</span><span class="p">(</span><span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
+    <span class="nf">Err</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1115,14 +1115,14 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <p>Rust 中没有面向对象的继承，对应的，类似的功能由 trait 机制实现。Trait 定义了一些需要实现的函数，用户通过 <code class="language-plaintext highlighter-rouge">impl &lt;trait&gt; for &lt;struct&gt;</code> 的语法实现这些功能。可以看一下标准库里 <code class="language-plaintext highlighter-rouge">TryFrom</code> trait 的代码：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">trait</span> <span class="n">TryFrom</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">Sized</span> <span class="p">{</span>
-    <span class="c">/// The type returned in the event of a conversion error.</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">trait</span> <span class="nb">TryFrom</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">:</span> <span class="nb">Sized</span> <span class="p">{</span>
+    <span class="cd">/// The type returned in the event of a conversion error.</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"try_from"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.34.0"</span><span class="nd">)]</span>
     <span class="k">type</span> <span class="n">Error</span><span class="p">;</span>
 
-    <span class="c">/// Performs the conversion.</span>
+    <span class="cd">/// Performs the conversion.</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"try_from"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.34.0"</span><span class="nd">)]</span>
-    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">,</span> <span class="k">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
   </li>
@@ -1133,9 +1133,9 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <p>最后一个问题：为什么给 <code class="language-plaintext highlighter-rouge">Language</code> 实现 <code class="language-plaintext highlighter-rouge">TryFrom&lt;i32&gt;</code> 之后就能在 <code class="language-plaintext highlighter-rouge">i32</code> 身上用 <code class="language-plaintext highlighter-rouge">try_into()</code> 了？参考<a href="https://doc.rust-lang.org/std/primitive.i32.html#impl-TryInto%3CU%3E">文档</a>，因为 <code class="language-plaintext highlighter-rouge">TryInto</code> trait 是 <code class="language-plaintext highlighter-rouge">i32</code> 的 blanket implementation（指适用于所有类型的 trait 实现），它的定义是：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span> <span class="n">TryInto</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">T</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span> <span class="nb">TryInto</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">T</span>
 <span class="k">where</span>
-    <span class="n">U</span><span class="p">:</span> <span class="o">~</span><span class="k">const</span> <span class="n">TryFrom</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+    <span class="n">U</span><span class="p">:</span> <span class="o">~</span><span class="k">const</span> <span class="nb">TryFrom</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 </code></pre></div>    </div>
 
     <p>所以 <code class="language-plaintext highlighter-rouge">Language</code> 实现了 <code class="language-plaintext highlighter-rouge">TryFrom&lt;i32&gt;</code> 之后，U = Language, T = i32，T 的 <code class="language-plaintext highlighter-rouge">TryInto&lt;U&gt;</code> 也就有实现了。</p>
@@ -1144,14 +1144,14 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 
 <p>使用 <code class="language-plaintext highlighter-rouge">TryFrom</code> 的另一个好处是，可以为其他的类型实现转换，比如说字符串：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="n">TryFrom</span><span class="o">&lt;&amp;</span><span class="nb">str</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="nb">TryFrom</span><span class="o">&lt;&amp;</span><span class="nb">str</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Error</span> <span class="o">=</span> <span class="p">();</span>
 
-    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">,</span> <span class="k">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="n">value</span> <span class="p">{</span>
             <span class="s">"en"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">),</span>
             <span class="s">"zh"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -1159,24 +1159,24 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 
 <p>在结束本小段之前，一句题外话：<code class="language-plaintext highlighter-rouge">Result</code> 和 <code class="language-plaintext highlighter-rouge">Option</code> 事实上也是枚举类型：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">enum</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">/// Contains the success value</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">enum</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="cd">/// Contains the success value</span>
     <span class="nd">#[lang</span> <span class="nd">=</span> <span class="s">"Ok"</span><span class="nd">]</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span>
     <span class="nf">Ok</span><span class="p">(</span><span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span> <span class="n">T</span><span class="p">),</span>
 
-    <span class="c">/// Contains the error value</span>
+    <span class="cd">/// Contains the error value</span>
     <span class="nd">#[lang</span> <span class="nd">=</span> <span class="s">"Err"</span><span class="nd">]</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span>
     <span class="nf">Err</span><span class="p">(</span><span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span> <span class="n">E</span><span class="p">),</span>
 <span class="p">}</span>
 
 <span class="k">pub</span> <span class="k">enum</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">/// No value</span>
+    <span class="cd">/// No value</span>
     <span class="nd">#[lang</span> <span class="nd">=</span> <span class="s">"None"</span><span class="nd">]</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span>
     <span class="nb">None</span><span class="p">,</span>
-    <span class="c">/// Some value `T`</span>
+    <span class="cd">/// Some value `T`</span>
     <span class="nd">#[lang</span> <span class="nd">=</span> <span class="s">"Some"</span><span class="nd">]</span>
     <span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span>
     <span class="nf">Some</span><span class="p">(</span><span class="nd">#[stable(feature</span> <span class="nd">=</span> <span class="s">"rust1"</span><span class="nd">,</span> <span class="nd">since</span> <span class="nd">=</span> <span class="s">"1.0.0"</span><span class="nd">)]</span> <span class="n">T</span><span class="p">),</span>
@@ -1192,14 +1192,14 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <span class="n">Chinese</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="k">impl</span> <span class="n">TryFrom</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
+<span class="k">impl</span> <span class="nb">TryFrom</span><span class="o">&lt;</span><span class="nb">i32</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">Language</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Error</span> <span class="o">=</span> <span class="p">();</span>
 
-    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">try_from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">,</span> <span class="k">Self</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="n">value</span> <span class="p">{</span>
             <span class="mi">0</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">),</span>
             <span class="mi">1</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(()),</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -1217,7 +1217,7 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <span class="k">match</span> <span class="n">choice</span><span class="nf">.try_into</span><span class="p">()</span> <span class="p">{</span>
         <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Hello, world!"</span><span class="p">),</span>
         <span class="nf">Ok</span><span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"你好，世界！"</span><span class="p">),</span>
-        <span class="nf">Err</span><span class="p">(</span><span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
+        <span class="nf">Err</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nd">println!</span><span class="p">(</span><span class="s">"Unrecogized choice"</span><span class="p">),</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -1240,7 +1240,7 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
 <p><code class="language-plaintext highlighter-rouge">main</code> 中对应的代码就可以改成：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="n">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.enumerate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.enumerate</span><span class="p">()</span> <span class="p">{</span>
         <span class="nd">println!</span><span class="p">(</span><span class="s">"{}: {}"</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="na">.1</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
@@ -1263,17 +1263,17 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <p>对于一个可迭代的值，最简单的循环写法是：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">METADATA</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">METADATA</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
 
     <p>它等价于：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">METADATA</span><span class="nf">.into_iter</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c">// i 类型为 (Language, &amp;str, &amp;str)</span>
-    <span class="c">// ...</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">METADATA</span><span class="nf">.into_iter</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// i 类型为 (Language, &amp;str, &amp;str)</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
 
@@ -1282,14 +1282,14 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <p>PS: <code class="language-plaintext highlighter-rouge">into_iter()</code> 不一定会转移变量的 ownership。</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c">// i 类型为 &amp;(Language, &amp;str, &amp;str)</span>
-    <span class="c">// ...</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// i 类型为 &amp;(Language, &amp;str, &amp;str)</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">METADATA</span><span class="nf">.iter_mut</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c">// i 类型为 &amp;mut (Language, &amp;str, &amp;str)</span>
-    <span class="c">// ...</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">METADATA</span><span class="nf">.iter_mut</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// i 类型为 &amp;mut (Language, &amp;str, &amp;str)</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
 
@@ -1311,11 +1311,11 @@ warning: `helloworld` (bin "helloworld") generated 1 warning
     <p>如果数组的 index 超出范围，会在运行时 panic。Rust 编译器无法检测这样的错误：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="c">// if choice &lt; METADATA.len() {</span>
-<span class="c">//     println!("{}", METADATA[choice].2);</span>
-<span class="c">// } else {</span>
-<span class="c">//     println!("Invalid choice");</span>
-<span class="c">// }</span>
+<div class="highlight"><pre class="highlight"><code><span class="c1">// if choice &lt; METADATA.len() {</span>
+<span class="c1">//     println!("{}", METADATA[choice].2);</span>
+<span class="c1">// } else {</span>
+<span class="c1">//     println!("Invalid choice");</span>
+<span class="c1">// }</span>
 <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">METADATA</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="na">.2</span><span class="p">);</span>
 </code></pre></div>    </div>
 
@@ -1344,7 +1344,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 <p>关于问题一，可以试试把数组换成 vector：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">const</span> <span class="n">METADATA</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="n">Language</span><span class="p">,</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">,</span> <span class="s">"English"</span><span class="p">,</span> <span class="s">"Hello, world!"</span><span class="p">),</span>
     <span class="p">(</span><span class="nn">Language</span><span class="p">::</span><span class="n">Chinese</span><span class="p">,</span> <span class="s">"中文"</span><span class="p">,</span> <span class="s">"你好，世界！"</span><span class="p">)</span>
@@ -1403,13 +1403,13 @@ error: could not compile `helloworld` due to previous error
 
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="s">"naive!"</span><span class="nf">.to_string</span><span class="p">();</span>
-<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">s</span><span class="nf">.clone</span><span class="p">();</span>  <span class="c">// 显式复制（Clone），之后 x 和 s 就是两个没关系的变量了。</span>
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>          <span class="c">// 「移动」语义，因为 String 不是简单结构，没有 Copy trait，所以 s 就「移动」到了 y，s 之后就无法使用了。</span>
-<span class="c">// let z = s;       // 编译错误！</span>
+<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">s</span><span class="nf">.clone</span><span class="p">();</span>  <span class="c1">// 显式复制（Clone），之后 x 和 s 就是两个没关系的变量了。</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>          <span class="c1">// 「移动」语义，因为 String 不是简单结构，没有 Copy trait，所以 s 就「移动」到了 y，s 之后就无法使用了。</span>
+<span class="c1">// let z = s;       // 编译错误！</span>
 <span class="k">let</span> <span class="n">x</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>          <span class="c">// 因为 i32 是简单的类型，实现了 Copy trait，所以此时发生了隐式的复制（Copy），y 和 x 值都是 1</span>
-<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>          <span class="c">// 可以编译</span>
-<span class="k">let</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">x</span><span class="nf">.clone</span><span class="p">();</span> <span class="c">// 当然，实现了 Copy 就必然实现了 Clone</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>          <span class="c1">// 因为 i32 是简单的类型，实现了 Copy trait，所以此时发生了隐式的复制（Copy），y 和 x 值都是 1</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>          <span class="c1">// 可以编译</span>
+<span class="k">let</span> <span class="n">zz</span> <span class="o">=</span> <span class="n">x</span><span class="nf">.clone</span><span class="p">();</span> <span class="c1">// 当然，实现了 Copy 就必然实现了 Clone</span>
 </code></pre></div>    </div>
   </li>
   <li>
@@ -1424,7 +1424,7 @@ error: could not compile `helloworld` due to previous error
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">;</span>
-    <span class="c">// println!("{}", x);  // 编译错误！</span>
+    <span class="c1">// println!("{}", x);  // 编译错误！</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
@@ -1464,7 +1464,7 @@ error: could not compile `helloworld` due to previous error
 
 <p>然后 <code class="language-plaintext highlighter-rouge">METADATA</code> 就可以这么定义：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">const</span> <span class="n">METADATA</span><span class="p">:</span> <span class="p">[</span><span class="n">LangMeta</span><span class="p">;</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">LangMeta</span> <span class="p">{</span>
         <span class="n">lang</span><span class="p">:</span> <span class="nn">Language</span><span class="p">::</span><span class="n">English</span><span class="p">,</span>
@@ -1481,7 +1481,7 @@ error: could not compile `helloworld` due to previous error
 
 <p>这里会发现字符串需要从 <code class="language-plaintext highlighter-rouge">&amp;str</code> 转换成 <code class="language-plaintext highlighter-rouge">String</code>。可以字符串后面都加上 <code class="language-plaintext highlighter-rouge">.to_string()</code>，但是为什么不能直接改结构体定义呢？因为已知数据在运行时都不会变化，<code class="language-plaintext highlighter-rouge">&amp;str</code> 似乎可行：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">struct</span> <span class="n">LangMeta</span> <span class="p">{</span>
     <span class="n">lang</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span>
@@ -1495,8 +1495,8 @@ error: could not compile `helloworld` due to previous error
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">LangMeta</span> <span class="p">{</span>
     <span class="n">lang</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">greeting</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">'static</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">greeting</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">'static</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1511,12 +1511,12 @@ error: could not compile `helloworld` due to previous error
 <span class="p">}</span>
 
 <span class="k">struct</span> <span class="n">LangMeta</span> <span class="p">{</span>
-    <span class="c">// enum 没有用到，但是还是留着</span>
-    <span class="c">// 使用以下的语法可以 suppress warning</span>
+    <span class="c1">// enum 没有用到，但是还是留着</span>
+    <span class="c1">// 使用以下的语法可以 suppress warning</span>
     <span class="nd">#[allow(dead_code)]</span>
     <span class="n">lang</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">greeting</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">'static</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">greeting</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">'static</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">const</span> <span class="n">METADATA</span><span class="p">:</span> <span class="p">[</span><span class="n">LangMeta</span><span class="p">;</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -1543,7 +1543,7 @@ error: could not compile `helloworld` due to previous error
 <span class="p">];</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="n">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.enumerate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">in</span> <span class="n">METADATA</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.enumerate</span><span class="p">()</span> <span class="p">{</span>
         <span class="nd">println!</span><span class="p">(</span><span class="s">"{}: {}"</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="py">.name</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
@@ -1609,7 +1609,7 @@ error: could not compile `helloworld` due to previous error
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">walkdir</span><span class="p">::</span><span class="n">WalkDir</span><span class="p">;</span>
 
-<span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">entry</span><span class="o">?</span><span class="nf">.path</span><span class="p">()</span><span class="nf">.display</span><span class="p">());</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -1627,8 +1627,8 @@ error: could not compile `helloworld` due to previous error
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">error</span><span class="p">::</span><span class="n">Error</span><span class="p">;</span>
 
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"foo"</span><span class="p">)</span> <span class="p">{</span>
         <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">entry</span><span class="o">?</span><span class="nf">.path</span><span class="p">()</span><span class="nf">.display</span><span class="p">());</span>
     <span class="p">}</span>
     <span class="nf">Ok</span><span class="p">(())</span>
@@ -1667,7 +1667,7 @@ error: could not compile `helloworld` due to previous error
     <span class="nd">println!</span><span class="p">(</span><span class="s">"(static) {:}"</span><span class="p">,</span> <span class="n">m</span><span class="nf">.name</span><span class="p">());</span>
 <span class="p">}</span>
 
-<span class="k">fn</span> <span class="nf">showname_dynamic</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">dyn</span> <span class="n">Magi</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">showname_dynamic</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">dyn</span> <span class="n">Magi</span><span class="p">)</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"(dynmaic) {:}"</span><span class="p">,</span> <span class="n">m</span><span class="nf">.name</span><span class="p">());</span>
 <span class="p">}</span>
 
@@ -1690,7 +1690,7 @@ error: could not compile `helloworld` due to previous error
             <span class="nf">showname_static</span><span class="p">(</span><span class="o">&amp;</span><span class="n">homura</span><span class="p">);</span>
             <span class="nf">showname_dynamic</span><span class="p">(</span><span class="o">&amp;</span><span class="n">homura</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"unrecognized input"</span><span class="p">),</span>
+        <span class="n">_</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"unrecognized input"</span><span class="p">),</span>
     <span class="p">};</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
@@ -1699,13 +1699,13 @@ error: could not compile `helloworld` due to previous error
 
 <p>看类型可以知道 <code class="language-plaintext highlighter-rouge">entry?.path()</code> 返回 <code class="language-plaintext highlighter-rouge">std::path::Path</code>，阅读 <a href="https://doc.rust-lang.org/nightly/std/path/struct.Path.html">https://doc.rust-lang.org/nightly/std/path/struct.Path.html</a> 可以得到我们需要的方法。于是可以一下子写出这样的代码：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="o">?</span><span class="nf">.path</span><span class="p">();</span>
         <span class="k">match</span> <span class="n">path</span><span class="nf">.file_name</span><span class="p">()</span> <span class="p">{</span>
             <span class="nf">Some</span><span class="p">(</span><span class="s">"distinfo"</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">path</span><span class="p">);</span>
     <span class="p">}</span>
@@ -1715,11 +1715,11 @@ error: could not compile `helloworld` due to previous error
 
 <p>第一个问题是 <code class="language-plaintext highlighter-rouge">path.file_name()</code> 类型是 <code class="language-plaintext highlighter-rouge">Option&lt;&amp;OsStr&gt;</code>，但是我们的 <code class="language-plaintext highlighter-rouge">Some("distinfo")</code> 的类型是 <code class="language-plaintext highlighter-rouge">Option&lt;&amp;'static str&gt;</code>。参考 <a href="https://stackoverflow.com/questions/42101070/how-to-match-a-file-extension-represented-as-an-osstr">https://stackoverflow.com/questions/42101070/how-to-match-a-file-extension-represented-as-an-osstr</a>，由于<a href="https://fasterthanli.me/articles/i-want-off-mr-golangs-wild-ride">文件名不一定是合法的 UTF-8 字符串</a>，而 Rust 的字符串是 UTF-8，两者不能完全保证对应，所以分成不同的类型是可以理解的。因为我们明确知道 ports 里没有乱七八糟的文件名，所以对应的修改方法：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">let</span> <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="o">?</span><span class="nf">.path</span><span class="p">();</span>
 <span class="k">match</span> <span class="n">path</span><span class="nf">.file_name</span><span class="p">()</span><span class="nf">.and_then</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">ffi</span><span class="p">::</span><span class="nn">OsStr</span><span class="p">::</span><span class="n">to_str</span><span class="p">)</span> <span class="p">{</span>
     <span class="nf">Some</span><span class="p">(</span><span class="s">"distinfo"</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
-    <span class="mi">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
+    <span class="n">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1749,7 +1749,7 @@ error: could not compile `ports-distinfo-parse` due to previous error
 <span class="k">let</span> <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="nf">.path</span><span class="p">();</span>
 <span class="k">match</span> <span class="n">path</span><span class="nf">.file_name</span><span class="p">()</span><span class="nf">.and_then</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">ffi</span><span class="p">::</span><span class="nn">OsStr</span><span class="p">::</span><span class="n">to_str</span><span class="p">)</span> <span class="p">{</span>
     <span class="nf">Some</span><span class="p">(</span><span class="s">"distinfo"</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
-    <span class="mi">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
+    <span class="n">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -1763,21 +1763,21 @@ error: could not compile `ports-distinfo-parse` due to previous error
 
 <span class="k">use</span> <span class="nn">walkdir</span><span class="p">::</span><span class="n">WalkDir</span><span class="p">;</span>
 
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">?</span><span class="p">;</span>
         <span class="k">let</span> <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="nf">.path</span><span class="p">();</span>
         <span class="k">match</span> <span class="n">path</span><span class="nf">.file_name</span><span class="p">()</span><span class="nf">.and_then</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">ffi</span><span class="p">::</span><span class="nn">OsStr</span><span class="p">::</span><span class="n">to_str</span><span class="p">)</span> <span class="p">{</span>
             <span class="nf">Some</span><span class="p">(</span><span class="s">"distinfo"</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">let</span> <span class="n">file</span> <span class="o">=</span> <span class="nn">File</span><span class="p">::</span><span class="nf">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
         <span class="k">let</span> <span class="n">lines</span> <span class="o">=</span> <span class="nn">io</span><span class="p">::</span><span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="nf">.lines</span><span class="p">();</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">lines</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="k">in</span> <span class="n">lines</span> <span class="p">{</span>
             <span class="k">if</span> <span class="k">let</span> <span class="nf">Ok</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">=</span> <span class="n">line</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="n">line</span><span class="nf">.starts_with</span><span class="p">(</span><span class="s">"SHA256"</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c">// extract filename and sha256</span>
-                    <span class="c">// ...</span>
+                    <span class="c1">// extract filename and sha256</span>
+                    <span class="c1">// ...</span>
                     <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -1823,11 +1823,11 @@ error: could not compile `ports-distinfo-parse` due to previous error
 <p>当然，我们这里的需求用 vector 就可以解决。直接改的话会写出这样的代码：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-<span class="c">// ...</span>
-<span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">lines</span> <span class="p">{</span>
+<span class="c1">// ...</span>
+<span class="k">for</span> <span class="n">line</span> <span class="k">in</span> <span class="n">lines</span> <span class="p">{</span>
     <span class="k">if</span> <span class="k">let</span> <span class="nf">Ok</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">=</span> <span class="n">line</span> <span class="p">{</span>
         <span class="k">if</span> <span class="n">line</span><span class="nf">.starts_with</span><span class="p">(</span><span class="s">"SHA256"</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c">// extract filename and sha256</span>
+            <span class="c1">// extract filename and sha256</span>
             <span class="k">let</span> <span class="n">caps</span> <span class="o">=</span> <span class="n">re</span><span class="nf">.captures</span><span class="p">(</span><span class="o">&amp;</span><span class="n">line</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
             <span class="k">let</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">caps</span><span class="nf">.get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.as_str</span><span class="p">();</span>
             <span class="k">let</span> <span class="n">sha256</span> <span class="o">=</span> <span class="n">caps</span><span class="nf">.get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.as_str</span><span class="p">();</span>
@@ -1848,7 +1848,7 @@ error: could not compile `ports-distinfo-parse` due to previous error
 <p>在全部处理完成之后再排序输出：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span><span class="nf">.sort</span><span class="p">();</span>
-<span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">result</span> <span class="p">{</span>
+<span class="k">for</span> <span class="n">item</span> <span class="k">in</span> <span class="n">result</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{} {}"</span><span class="p">,</span> <span class="n">item</span><span class="na">.1</span><span class="p">,</span> <span class="n">item</span><span class="na">.0</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -1879,22 +1879,22 @@ error: could not compile `ports-distinfo-parse` due to previous error
 <span class="k">use</span> <span class="nn">regex</span><span class="p">::</span><span class="n">Regex</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">walkdir</span><span class="p">::</span><span class="n">WalkDir</span><span class="p">;</span>
 
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">re</span> <span class="o">=</span> <span class="nn">Regex</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">r"SHA256 \((.+)\) = (\w+)"</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"/tmp/ports"</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">?</span><span class="p">;</span>
         <span class="k">let</span> <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="nf">.path</span><span class="p">();</span>
         <span class="k">match</span> <span class="n">path</span><span class="nf">.file_name</span><span class="p">()</span><span class="nf">.and_then</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">ffi</span><span class="p">::</span><span class="nn">OsStr</span><span class="p">::</span><span class="n">to_str</span><span class="p">)</span> <span class="p">{</span>
             <span class="nf">Some</span><span class="p">(</span><span class="s">"distinfo"</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
+            <span class="n">_</span> <span class="k">=&gt;</span> <span class="k">continue</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">let</span> <span class="n">file</span> <span class="o">=</span> <span class="nn">File</span><span class="p">::</span><span class="nf">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
         <span class="k">let</span> <span class="n">lines</span> <span class="o">=</span> <span class="nn">io</span><span class="p">::</span><span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="nf">.lines</span><span class="p">();</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="n">in</span> <span class="n">lines</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="k">in</span> <span class="n">lines</span> <span class="p">{</span>
             <span class="k">if</span> <span class="k">let</span> <span class="nf">Ok</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">=</span> <span class="n">line</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="n">line</span><span class="nf">.starts_with</span><span class="p">(</span><span class="s">"SHA256"</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c">// extract filename and sha256</span>
+                    <span class="c1">// extract filename and sha256</span>
                     <span class="k">let</span> <span class="n">caps</span> <span class="o">=</span> <span class="n">re</span><span class="nf">.captures</span><span class="p">(</span><span class="o">&amp;</span><span class="n">line</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
                     <span class="k">let</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">caps</span><span class="nf">.get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.as_str</span><span class="p">();</span>
                     <span class="k">let</span> <span class="n">sha256</span> <span class="o">=</span> <span class="n">caps</span><span class="nf">.get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.as_str</span><span class="p">();</span>
@@ -1905,7 +1905,7 @@ error: could not compile `ports-distinfo-parse` due to previous error
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span><span class="nf">.sort</span><span class="p">();</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">result</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="k">in</span> <span class="n">result</span> <span class="p">{</span>
         <span class="nd">println!</span><span class="p">(</span><span class="s">"{} {}"</span><span class="p">,</span> <span class="n">item</span><span class="na">.1</span><span class="p">,</span> <span class="n">item</span><span class="na">.0</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="nf">Ok</span><span class="p">(())</span>
@@ -1921,22 +1921,22 @@ error: could not compile `ports-distinfo-parse` due to previous error
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Parser,</span> <span class="nd">Debug)]</span>
 <span class="nd">#[clap(author,</span> <span class="nd">version,</span> <span class="nd">about,</span> <span class="nd">long_about</span> <span class="nd">=</span> <span class="nd">None)]</span>
 <span class="k">struct</span> <span class="n">Args</span> <span class="p">{</span>
-    <span class="c">/// Path of ports</span>
+    <span class="cd">/// Path of ports</span>
     <span class="nd">#[clap(short,</span> <span class="nd">long)]</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">String</span>
 <span class="p">}</span>
 
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 <span class="k">let</span> <span class="n">args</span> <span class="o">=</span> <span class="nn">Args</span><span class="p">::</span><span class="nf">parse</span><span class="p">();</span>
-<span class="c">// ...</span>
-<span class="k">for</span> <span class="n">entry</span> <span class="n">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+<span class="c1">// ...</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="k">in</span> <span class="nn">WalkDir</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>与此同时我们需要添加依赖，和之前 regex 和 walkdir 不同，为了使用以上的语法，我们需要设定 crate 需要使用的 feature，就像这样子：</p>
 
-<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">clap</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"3"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="nn">["derive"]</span> <span class="p">}</span>
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">clap</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"3"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span><span class="s">"derive"</span><span class="p">]</span> <span class="p">}</span>
 </code></pre></div></div>
 
 <p>试运行：</p>
@@ -1974,14 +1974,14 @@ OPTIONS:
     <span class="nn">process</span><span class="p">::{</span><span class="n">Command</span><span class="p">,</span> <span class="n">Stdio</span><span class="p">},</span>
 <span class="p">};</span>
 
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">process</span> <span class="o">=</span> <span class="nn">Command</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"ls"</span><span class="p">)</span>
         <span class="nf">.stdout</span><span class="p">(</span><span class="nn">Stdio</span><span class="p">::</span><span class="nf">piped</span><span class="p">())</span>
         <span class="nf">.stderr</span><span class="p">(</span><span class="nn">Stdio</span><span class="p">::</span><span class="nf">piped</span><span class="p">())</span>
         <span class="nf">.spawn</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
     <span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">process</span><span class="py">.stdout</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="py">.stderr</span><span class="nf">.unwrap</span><span class="p">();</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
     <span class="nf">Ok</span><span class="p">(())</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2014,11 +2014,11 @@ OPTIONS:
 
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">program</span> <span class="o">=</span> <span class="s">"ls"</span><span class="p">;</span>
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 <span class="k">let</span> <span class="n">pid</span> <span class="o">=</span> <span class="n">process</span><span class="nf">.id</span><span class="p">();</span>
 <span class="k">let</span> <span class="n">displayed_name</span> <span class="o">=</span> <span class="nd">format!</span><span class="p">(</span><span class="s">"[{}] {}"</span><span class="p">,</span> <span class="n">program</span><span class="p">,</span> <span class="n">pid</span><span class="p">);</span>
-<span class="c">// ...</span>
-<span class="c">// 编译不通过！</span>
+<span class="c1">// ...</span>
+<span class="c1">// 编译不通过！</span>
 <span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
     <span class="n">reader</span><span class="nf">.lines</span><span class="p">()</span><span class="nf">.filter_map</span><span class="p">(|</span><span class="n">line</span><span class="p">|</span> <span class="n">line</span><span class="nf">.ok</span><span class="p">())</span><span class="nf">.for_each</span><span class="p">(|</span><span class="n">line</span><span class="p">|</span> <span class="p">{</span>
@@ -2084,9 +2084,9 @@ error: could not compile `executor-threaded` due to previous error
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">displayed_name</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nd">format!</span><span class="p">(</span><span class="s">"[{}] {}"</span><span class="p">,</span> <span class="n">program</span><span class="p">,</span> <span class="n">pid</span><span class="p">));</span>
 <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="o">&amp;</span><span class="n">displayed_name</span><span class="p">);</span>
-<span class="c">// ... 1st move</span>
+<span class="c1">// ... 1st move</span>
 <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="o">&amp;</span><span class="n">displayed_name</span><span class="p">);</span>
-<span class="c">// ... 2nd move</span>
+<span class="c1">// ... 2nd move</span>
 </code></pre></div>    </div>
 
     <p>当然这里没有这个必要。</p>
@@ -2153,7 +2153,7 @@ error: could not compile `executor-threaded` due to previous error
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">os</span><span class="p">::</span><span class="nn">unix</span><span class="p">::</span><span class="nn">process</span><span class="p">::</span><span class="n">ExitStatusExt</span><span class="p">;</span>
 
-<span class="c">// 编译不通过！</span>
+<span class="c1">// 编译不通过！</span>
 <span class="k">let</span> <span class="n">return_code</span> <span class="o">=</span> <span class="n">process</span><span class="nf">.wait</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
 <span class="nn">std</span><span class="p">::</span><span class="nn">process</span><span class="p">::</span><span class="nf">exit</span><span class="p">(</span><span class="k">match</span> <span class="n">return_code</span><span class="nf">.code</span><span class="p">()</span> <span class="p">{</span>
     <span class="nf">Some</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="n">code</span><span class="p">,</span>
@@ -2178,7 +2178,7 @@ error: could not compile `executor-threaded` due to previous error
     <p>此外可以注意到，<code class="language-plaintext highlighter-rouge">match</code> 语句在这里是一个完整的表达式，可以直接作为函数的参数，类似的例子诸如替代三元运算符的：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="c">// 替代 (y &gt; 1) ? (y * 2) : (y - 5)</span>
+<div class="highlight"><pre class="highlight"><code><span class="c1">// 替代 (y &gt; 1) ? (y * 2) : (y - 5)</span>
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">{</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">5</span> <span class="p">};</span>
 </code></pre></div>    </div>
 
@@ -2210,7 +2210,7 @@ error: could not compile `executor-threaded` due to previous error
     <span class="nn">process</span><span class="p">::{</span><span class="n">exit</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Stdio</span><span class="p">},</span>
 <span class="p">};</span>
 
-<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">matches</span> <span class="o">=</span> <span class="nn">ClapCommand</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"executor"</span><span class="p">)</span>
         <span class="nf">.trailing_var_arg</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
         <span class="nf">.allow_hyphen_values</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
@@ -2237,7 +2237,7 @@ error: could not compile `executor-threaded` due to previous error
     <span class="k">let</span> <span class="n">displayed_name</span> <span class="o">=</span> <span class="nd">format!</span><span class="p">(</span><span class="s">"{:?} {}"</span><span class="p">,</span> <span class="n">program</span><span class="p">,</span> <span class="n">pid</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">process</span><span class="py">.stdout</span><span class="nf">.take</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="py">.stderr</span><span class="nf">.take</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
-    <span class="c">// thread for stdout and stderr</span>
+    <span class="c1">// thread for stdout and stderr</span>
     <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="n">displayed_name</span><span class="nf">.clone</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
@@ -2283,18 +2283,18 @@ error: could not compile `executor-threaded` due to previous error
 <p>首先把 <code class="language-plaintext highlighter-rouge">main()</code> 改成 <code class="language-plaintext highlighter-rouge">async</code> 的（需要 attributes feature，<a href="https://docs.rs/async-std/latest/async_std/#examples">https://docs.rs/async-std/latest/async_std/#examples</a>）：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[async_std::main]</span>
-<span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="n">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+<span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>然后 <code class="language-plaintext highlighter-rouge">std::thread::spawn</code> 的对应物是 <code class="language-plaintext highlighter-rouge">async_std::task::spawn</code>，所以我们需要：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">task</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
-    <span class="c">// async func</span>
+    <span class="c1">// async func</span>
 <span class="p">});</span>
 <span class="k">let</span> <span class="n">stderr</span> <span class="o">=</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">task</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
-    <span class="c">// async func</span>
+    <span class="c1">// async func</span>
 <span class="p">});</span>
 <span class="n">stdout</span><span class="k">.await</span><span class="p">;</span>
 <span class="n">stderr</span><span class="k">.await</span><span class="p">;</span>
@@ -2304,7 +2304,7 @@ error: could not compile `executor-threaded` due to previous error
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">process</span><span class="p">::{</span><span class="n">exit</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Stdio</span><span class="p">};</span>
 
-<span class="c">// 创建进程的代码不需要更改</span>
+<span class="c1">// 创建进程的代码不需要更改</span>
 <span class="k">let</span> <span class="n">return_code</span> <span class="o">=</span> <span class="n">process</span><span class="nf">.status</span><span class="p">()</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
 </code></pre></div></div>
 
@@ -2344,8 +2344,8 @@ error: could not compile `executor-threaded` due to previous error
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">QueenState</span> <span class="p">{</span>
     <span class="n">board</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;&gt;</span><span class="p">,</span>
     <span class="n">col</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="n">diag</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">,</span>     <span class="c">// x - y</span>
-    <span class="n">antidiag</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="c">// x + y</span>
+    <span class="n">diag</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">,</span>     <span class="c1">// x - y</span>
+    <span class="n">antidiag</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1">// x + y</span>
     <span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2354,13 +2354,13 @@ error: could not compile `executor-threaded` due to previous error
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">macro_rules!</span> <span class="n">diag_index</span> <span class="p">{</span>
     <span class="p">(</span><span class="nv">$row</span><span class="p">:</span> <span class="n">expr</span><span class="p">,</span> <span class="nv">$col</span><span class="p">:</span> <span class="n">expr</span><span class="p">,</span> <span class="nv">$n</span><span class="p">:</span> <span class="n">expr</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-        <span class="c">// $row - $col + $n - 1</span>
+        <span class="c1">// $row - $col + $n - 1</span>
         <span class="nv">$row</span> <span class="o">+</span> <span class="nv">$n</span> <span class="o">-</span> <span class="nv">$col</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">};</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">QueenState</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
         <span class="n">QueenState</span> <span class="p">{</span>
             <span class="n">board</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="nb">None</span><span class="p">;</span> <span class="n">n</span><span class="p">],</span>
             <span class="n">col</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="kc">false</span><span class="p">;</span> <span class="n">n</span><span class="p">],</span>
@@ -2370,9 +2370,9 @@ error: could not compile `executor-threaded` due to previous error
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="c">// fn diag_index(&amp;self, row: usize, col: usize) -&gt; usize {</span>
-    <span class="c">//     row - col + self.n - 1</span>
-    <span class="c">// }</span>
+    <span class="c1">// fn diag_index(&amp;self, row: usize, col: usize) -&gt; usize {</span>
+    <span class="c1">//     row - col + self.n - 1</span>
+    <span class="c1">// }</span>
 
     <span class="k">fn</span> <span class="nf">put</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="p">{</span>
         <span class="nd">debug_assert!</span><span class="p">(</span><span class="k">self</span><span class="py">.board</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">==</span> <span class="nb">None</span><span class="p">);</span>
@@ -2409,7 +2409,7 @@ error: could not compile `executor-threaded` due to previous error
     <p>这边定义了宏 <code class="language-plaintext highlighter-rouge">diag_index</code> 用来计算左上到右下对角线是否有重复的数组（<code class="language-plaintext highlighter-rouge">self.diag</code>）的 index。定义成 method 直接使用的话会有 borrow 的问题：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">fn</span> <span class="nf">diag_index</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span> <span class="p">{</span>
     <span class="n">row</span> <span class="o">-</span> <span class="n">col</span> <span class="o">+</span> <span class="k">self</span><span class="py">.n</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="p">}</span>
@@ -2419,7 +2419,7 @@ error: could not compile `executor-threaded` due to previous error
     <span class="nd">debug_assert!</span><span class="p">(</span><span class="n">row</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.n</span> <span class="o">&amp;&amp;</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.n</span><span class="p">);</span>
     <span class="k">self</span><span class="py">.board</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="n">col</span><span class="p">);</span>
     <span class="k">self</span><span class="py">.col</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
-    <span class="c">// self.diag[diag_index!(row, col, self.n)] = true;</span>
+    <span class="c1">// self.diag[diag_index!(row, col, self.n)] = true;</span>
     <span class="k">self</span><span class="py">.diag</span><span class="p">[</span><span class="k">self</span><span class="nf">.diag_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
     <span class="k">self</span><span class="py">.antidiag</span><span class="p">[</span><span class="n">row</span> <span class="o">+</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
 <span class="p">}</span>
@@ -2447,7 +2447,7 @@ error: could not compile `nqueen-channel` due to previous error
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nd">macro_rules!</span> <span class="n">diag_index</span> <span class="p">{</span>
     <span class="p">(</span><span class="nv">$row</span><span class="p">:</span> <span class="n">expr</span><span class="p">,</span> <span class="nv">$col</span><span class="p">:</span> <span class="n">expr</span><span class="p">,</span> <span class="nv">$n</span><span class="p">:</span> <span class="n">expr</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-        <span class="c">// $row - $col + $n - 1</span>
+        <span class="c1">// $row - $col + $n - 1</span>
         <span class="nv">$row</span> <span class="o">+</span> <span class="nv">$n</span> <span class="o">-</span> <span class="nv">$col</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">};</span>
 <span class="p">}</span>
@@ -2475,11 +2475,11 @@ error: could not compile `nqueen-channel` due to previous error
         <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="n">n</span> <span class="p">{</span>
             <span class="nd">println!</span><span class="p">(</span>
                 <span class="s">"{:?}"</span><span class="p">,</span>
-                <span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="mi">_</span><span class="o">&gt;&gt;</span><span class="p">()</span>
+                <span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;&gt;</span><span class="p">()</span>
             <span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">n</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">n</span> <span class="p">{</span>
             <span class="k">if</span> <span class="n">state</span><span class="nf">.check</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="p">{</span>
                 <span class="n">state</span><span class="nf">.put</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">);</span>
                 <span class="nf">dfs</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
@@ -2530,7 +2530,7 @@ error: could not compile `nqueen-channel` due to previous error
     <span class="nd">debug_assert!</span><span class="p">(</span><span class="n">starting_col</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">);</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">state</span> <span class="o">=</span> <span class="nn">QueenState</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
     <span class="n">state</span><span class="nf">.put</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">starting_col</span><span class="p">);</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
     <span class="nf">dfs</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">state</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="p">}</span>
 
@@ -2538,16 +2538,16 @@ error: could not compile `nqueen-channel` due to previous error
     <span class="k">const</span> <span class="n">SIZE</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
     <span class="k">const</span> <span class="n">THREAD</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">handles</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[];</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">)</span><span class="o">..</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">);</span>
         <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="n">range</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">range</span> <span class="p">{</span>
                 <span class="nf">queen</span><span class="p">(</span><span class="n">SIZE</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">});</span>
         <span class="n">handles</span><span class="nf">.push</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="k">for</span> <span class="n">handle</span> <span class="n">in</span> <span class="n">handles</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">handle</span> <span class="k">in</span> <span class="n">handles</span> <span class="p">{</span>
         <span class="n">handle</span><span class="nf">.join</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -2561,14 +2561,14 @@ error: could not compile `nqueen-channel` due to previous error
 <p>其中 <code class="language-plaintext highlighter-rouge">tx</code> 是给计算线程的发送端（Sender），<code class="language-plaintext highlighter-rouge">rx</code> 是主线程的接收端（Receiver）。但是光加这一行会报错，因为无法推断 <code class="language-plaintext highlighter-rouge">Sender&lt;&gt;</code> 和 <code class="language-plaintext highlighter-rouge">Receiver&lt;&gt;</code> 里面的类型是什么。我们先修改 <code class="language-plaintext highlighter-rouge">queen()</code>，加上 <code class="language-plaintext highlighter-rouge">tx</code> 参数：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">queen</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">starting_col</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">tx</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Sender</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
     <span class="k">fn</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">QueenState</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">tx</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Sender</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="n">n</span> <span class="p">{</span>
-            <span class="k">let</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="mi">_</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+            <span class="k">let</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;&gt;</span><span class="p">();</span>
             <span class="n">tx</span><span class="nf">.send</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="c">// ...</span>
+        <span class="c1">// ...</span>
     <span class="p">}</span>
     <span class="nf">dfs</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">state</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tx</span><span class="p">);</span>
 <span class="p">}</span>
@@ -2578,11 +2578,11 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p>之后在直觉上可能会这么写：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
-<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">)</span><span class="o">..</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="n">range</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">range</span> <span class="p">{</span>
             <span class="nf">queen</span><span class="p">(</span><span class="n">SIZE</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tx</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
@@ -2592,11 +2592,11 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p>但是这是错误的：<code class="language-plaintext highlighter-rouge">move</code> 导致第一次创建线程的时候 <code class="language-plaintext highlighter-rouge">tx</code> 被移入。我们需要每次 <code class="language-plaintext highlighter-rouge">clone</code> <code class="language-plaintext highlighter-rouge">tx</code>：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">)</span><span class="o">..</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">tx</span> <span class="o">=</span> <span class="n">tx</span><span class="nf">.clone</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="n">range</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">range</span> <span class="p">{</span>
             <span class="nf">queen</span><span class="p">(</span><span class="n">SIZE</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tx</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
@@ -2606,7 +2606,7 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p>最后在 <code class="language-plaintext highlighter-rouge">rx</code> 这里等待输出。由于 <code class="language-plaintext highlighter-rouge">tx</code> 和线程的生命周期一致，不需要 <code class="language-plaintext highlighter-rouge">join</code> 了：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">received</span> <span class="n">in</span> <span class="n">rx</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">received</span> <span class="k">in</span> <span class="n">rx</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">received</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2623,8 +2623,8 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p>还记得在本文开头一块提到过的 <code class="language-plaintext highlighter-rouge">std::mem::drop</code> 吗？是它上场的时候了：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="k">drop</span><span class="p">(</span><span class="n">tx</span><span class="p">);</span>
-<span class="k">for</span> <span class="n">received</span> <span class="n">in</span> <span class="n">rx</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">std</span><span class="p">::</span><span class="nn">mem</span><span class="p">::</span><span class="nf">drop</span><span class="p">(</span><span class="n">tx</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">received</span> <span class="k">in</span> <span class="n">rx</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">received</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2651,11 +2651,11 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p><code class="language-plaintext highlighter-rouge">result</code> 的类型是 <code class="language-plaintext highlighter-rouge">Arc&lt;Mutex&lt;Vec&lt;Vec&lt;usize&gt;&gt;&gt;&gt;</code>。类似地，在每次循环的时候也要 clone：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">THREAD</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">range</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">)</span><span class="o">..</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">SIZE</span> <span class="o">/</span> <span class="n">THREAD</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">result</span><span class="nf">.clone</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">thread</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">move</span> <span class="p">||</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="n">in</span> <span class="n">range</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">range</span> <span class="p">{</span>
             <span class="nf">queen</span><span class="p">(</span><span class="n">SIZE</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">vec</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
@@ -2666,15 +2666,15 @@ error: could not compile `nqueen-channel` due to previous error
 <p><code class="language-plaintext highlighter-rouge">queen</code> 函数也需要修改：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">queen</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">starting_col</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">vec</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Arc</span><span class="o">&lt;</span><span class="n">Mutex</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;&gt;&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
     <span class="k">fn</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">QueenState</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">vec</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Arc</span><span class="o">&lt;</span><span class="n">Mutex</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;&gt;&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="n">n</span> <span class="p">{</span>
             <span class="n">vec</span><span class="nf">.lock</span><span class="p">()</span>
                 <span class="nf">.unwrap</span><span class="p">()</span>
-                <span class="nf">.push</span><span class="p">(</span><span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="mi">_</span><span class="o">&gt;&gt;</span><span class="p">());</span>
+                <span class="nf">.push</span><span class="p">(</span><span class="n">state</span><span class="py">.board</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.unwrap</span><span class="p">())</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;&gt;</span><span class="p">());</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="c">// ...</span>
+        <span class="c1">// ...</span>
     <span class="p">}</span>
     <span class="nf">dfs</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">state</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vec</span><span class="p">);</span>
 <span class="p">}</span>
@@ -2684,11 +2684,11 @@ error: could not compile `nqueen-channel` due to previous error
 
 <p>最后等待线程执行结束，然后输出：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">handle</span> <span class="n">in</span> <span class="n">handles</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">handle</span> <span class="k">in</span> <span class="n">handles</span> <span class="p">{</span>
     <span class="n">handle</span><span class="nf">.join</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
 <span class="p">}</span>
 <span class="k">let</span> <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="nf">.lock</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
-<span class="k">for</span> <span class="n">item</span> <span class="n">in</span> <span class="n">result</span><span class="nf">.iter</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">for</span> <span class="n">item</span> <span class="k">in</span> <span class="n">result</span><span class="nf">.iter</span><span class="p">()</span> <span class="p">{</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">item</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -2713,10 +2713,10 @@ error: could not compile `nqueen-channel` due to previous error
         <span class="n">cnt</span><span class="nf">.fetch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nn">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">result</span><span class="nf">.load</span><span class="p">(</span><span class="nn">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">));</span>
 </code></pre></div></div>
 
@@ -2743,10 +2743,10 @@ error: could not compile `nqueen-channel` due to previous error
         <span class="n">cnt</span><span class="nf">.fetch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nn">Ordering</span><span class="p">::</span><span class="n">AcqRel</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">result</span><span class="nf">.load</span><span class="p">(</span><span class="nn">Ordering</span><span class="p">::</span><span class="n">Acquire</span><span class="p">));</span>
 </code></pre></div></div>
 
@@ -2761,11 +2761,11 @@ is known as <em>metaprogramming</em></p>
 
 <p>利用宏我们可以实现一些在原本 Rust 语法中比较麻烦的事情，甚至是定义自己的 DSL，像<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2018&amp;gist=cdab97d0a7f71d9a13568c97ad3faf3a">这个例子</a>（作者未知，如果知道作者是谁的话可以告诉我 😂）里展示的一样，使用效果：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">定义价格规则</span><span class="o">!</span><span class="p">(</span>
-    <span class="err">买</span> <span class="mi">0</span> <span class="o">-</span> <span class="mi">5</span> <span class="err">件</span><span class="p">,</span> <span class="err">单价</span> <span class="mf">5.0</span> <span class="err">元</span><span class="p">,</span>
-    <span class="err">买</span> <span class="mi">6</span> <span class="o">-</span> <span class="mi">10</span> <span class="err">件</span><span class="p">,</span> <span class="err">单价</span> <span class="mf">4.0</span> <span class="err">元</span><span class="p">,</span>
-    <span class="err">买</span> <span class="mi">11</span> <span class="o">-</span> <span class="mi">20</span> <span class="err">件</span><span class="p">,</span> <span class="err">单价</span> <span class="mf">3.0</span> <span class="err">元</span><span class="p">,</span>
-    <span class="err">超过</span> <span class="mi">20</span> <span class="err">件统统</span> <span class="mf">2.5</span> <span class="err">元</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">定义价格规则!</span><span class="p">(</span>
+    <span class="n">买</span> <span class="mi">0</span> <span class="o">-</span> <span class="mi">5</span> <span class="n">件</span><span class="p">,</span> <span class="n">单价</span> <span class="mf">5.0</span> <span class="n">元</span><span class="p">,</span>
+    <span class="n">买</span> <span class="mi">6</span> <span class="o">-</span> <span class="mi">10</span> <span class="n">件</span><span class="p">,</span> <span class="n">单价</span> <span class="mf">4.0</span> <span class="n">元</span><span class="p">,</span>
+    <span class="n">买</span> <span class="mi">11</span> <span class="o">-</span> <span class="mi">20</span> <span class="n">件</span><span class="p">,</span> <span class="n">单价</span> <span class="mf">3.0</span> <span class="n">元</span><span class="p">,</span>
+    <span class="n">超过</span> <span class="mi">20</span> <span class="n">件统统</span> <span class="mf">2.5</span> <span class="n">元</span>
 <span class="p">);</span>
 </code></pre></div></div>
 
@@ -2845,17 +2845,17 @@ is known as <em>metaprogramming</em></p>
 
 <p>然后使用方法如下：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// https://github.com/crossterm-rs/crossterm/blob/0b4a06a97fd946dbe11d6eaa9b5db0b319bfb555/src/style.rs#L384</span>
-<span class="nd">csi!</span><span class="p">(</span><span class="s">"0m"</span><span class="p">)</span>  <span class="c">// ESC [0m, 恢复正常</span>
-<span class="c">// https://github.com/redox-os/termion/blob/8054e082b01c3f45f89f0db96bc374f1e378deb1/src/color.rs#L53</span>
-<span class="nd">csi!</span><span class="p">(</span><span class="s">"38;5;"</span><span class="p">,</span> $<span class="n">value</span><span class="p">,</span> <span class="s">"m"</span><span class="p">)</span> <span class="c">// ESC [38;5;$valuem, 设置前景色</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// https://github.com/crossterm-rs/crossterm/blob/0b4a06a97fd946dbe11d6eaa9b5db0b319bfb555/src/style.rs#L384</span>
+<span class="nd">csi!</span><span class="p">(</span><span class="s">"0m"</span><span class="p">)</span>  <span class="c1">// ESC [0m, 恢复正常</span>
+<span class="c1">// https://github.com/redox-os/termion/blob/8054e082b01c3f45f89f0db96bc374f1e378deb1/src/color.rs#L53</span>
+<span class="nd">csi!</span><span class="p">(</span><span class="s">"38;5;"</span><span class="p">,</span> $<span class="n">value</span><span class="p">,</span> <span class="s">"m"</span><span class="p">)</span> <span class="c1">// ESC [38;5;$valuem, 设置前景色</span>
 
 <span class="nd">println!</span><span class="p">(</span>
     <span class="s">"{}{}Hello, color!{}"</span><span class="p">,</span>
     <span class="nd">csi!</span><span class="p">(</span><span class="s">"38;5;"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"m"</span><span class="p">),</span>
     <span class="nd">csi!</span><span class="p">(</span><span class="s">"48;5;"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"m"</span><span class="p">),</span>
     <span class="nd">csi!</span><span class="p">(</span><span class="s">"0m"</span><span class="p">)</span>
-<span class="p">);</span>  <span class="c">// 黑色背景，绿色文字的显示效果</span>
+<span class="p">);</span>  <span class="c1">// 黑色背景，绿色文字的显示效果</span>
 </code></pre></div></div>
 
 <p>这里宏的参数列表出现了一个新的语法：<code class="language-plaintext highlighter-rouge">$(...),*</code>。意思是按照括号内的方式匹配零个或多个参数。这里的参数是 <code class="language-plaintext highlighter-rouge">$( $l:expr ),*</code>，在宏里面引用匹配到的参数时的用法也类似，是 <code class="language-plaintext highlighter-rouge">$( $l ),*</code>。（如果把 <code class="language-plaintext highlighter-rouge">*</code> 换成 <code class="language-plaintext highlighter-rouge">+</code>，就是匹配一个到多个参数）</p>
@@ -2890,7 +2890,7 @@ is known as <em>metaprogramming</em></p>
 <span class="p">}</span>
 
 <span class="nd">println!</span><span class="p">(</span><span class="s">"{} {}"</span><span class="p">,</span> <span class="nd">func!</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nd">func!</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
-<span class="c">// println!("{} {}", func(1, 2, Some(3)), func(1, 2, None));</span>
+<span class="c1">// println!("{} {}", func(1, 2, Some(3)), func(1, 2, None));</span>
 </code></pre></div></div>
 
 <p>这里的宏定义可以重载（overload）：在编译的时候，编译器会选择合适的方法来进行代码替换。</p>
@@ -2971,13 +2971,13 @@ is known as <em>metaprogramming</em></p>
 
 <span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">capacity</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">capacity</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
         <span class="k">let</span> <span class="k">mut</span> <span class="n">free</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[];</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">capacity</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">capacity</span> <span class="p">{</span>
             <span class="n">free</span><span class="nf">.push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">let</span> <span class="k">mut</span> <span class="n">nodes</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[];</span>
-        <span class="k">for</span> <span class="mi">_</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">capacity</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">capacity</span> <span class="p">{</span>
             <span class="n">nodes</span><span class="nf">.push</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="n">LinkedList</span> <span class="p">{</span>
@@ -2990,7 +2990,7 @@ is known as <em>metaprogramming</em></p>
     <span class="p">}</span>
 
     <span class="k">pub</span> <span class="k">fn</span> <span class="nf">push_front</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">assert</span><span class="o">!</span><span class="p">(</span><span class="k">self</span><span class="py">.len</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.capacity</span><span class="p">);</span>
+        <span class="nd">assert!</span><span class="p">(</span><span class="k">self</span><span class="py">.len</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.capacity</span><span class="p">);</span>
         <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span> <span class="p">{</span>
             <span class="n">value</span><span class="p">,</span>
             <span class="n">next</span><span class="p">:</span> <span class="k">self</span><span class="py">.head</span><span class="p">,</span>
@@ -3024,17 +3024,17 @@ is known as <em>metaprogramming</em></p>
 
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>
-<span class="c">// macros.rs</span>
+<span class="c1">// macros.rs</span>
 <span class="nd">macro_rules!</span> <span class="n">vec</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
     <span class="p">(</span><span class="nv">$elem:expr</span><span class="p">;</span> <span class="nv">$n:expr</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">(</span>
-        <span class="nv">$crate</span><span class="p">::</span><span class="mi">__</span><span class="nd">rust_force_expr!</span><span class="p">(</span><span class="nv">$crate</span><span class="p">::</span><span class="nn">vec</span><span class="p">::</span><span class="nf">from_elem</span><span class="p">(</span><span class="nv">$elem</span><span class="p">,</span> <span class="nv">$n</span><span class="p">))</span>
+        <span class="nv">$crate</span><span class="p">::</span><span class="nd">__rust_force_expr!</span><span class="p">(</span><span class="nv">$crate</span><span class="p">::</span><span class="nn">vec</span><span class="p">::</span><span class="nf">from_elem</span><span class="p">(</span><span class="nv">$elem</span><span class="p">,</span> <span class="nv">$n</span><span class="p">))</span>
     <span class="p">);</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// vec/mod.rs</span>
-<span class="k">pub</span> <span class="k">fn</span> <span class="n">from_elem</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="n">Clone</span><span class="o">&gt;</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="c1">// vec/mod.rs</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="n">from_elem</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span> <span class="nb">Clone</span><span class="o">&gt;</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="o">&lt;</span><span class="n">T</span> <span class="k">as</span> <span class="n">SpecFromElem</span><span class="o">&gt;</span><span class="p">::</span><span class="nf">from_elem</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">Global</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
@@ -3049,7 +3049,7 @@ is known as <em>metaprogramming</em></p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[cfg(test)]</span>
 <span class="k">mod</span> <span class="n">tests</span> <span class="p">{</span>
-    <span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="n">LinkedList</span><span class="p">;</span>
+    <span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">LinkedList</span><span class="p">;</span>
 
     <span class="nd">#[test]</span>
     <span class="k">fn</span> <span class="nf">push_and_pop_front</span><span class="p">()</span> <span class="p">{</span>
@@ -3085,10 +3085,10 @@ is known as <em>metaprogramming</em></p>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">IntoIter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">IntoIter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Item</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>
-    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="c">// access fields of a tuple struct numerically</span>
+    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="c1">// access fields of a tuple struct numerically</span>
         <span class="k">self</span><span class="na">.0</span><span class="nf">.pop</span><span class="p">()</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -3101,22 +3101,22 @@ is known as <em>metaprogramming</em></p>
     <p>vec 的 <code class="language-plaintext highlighter-rouge">IntoIterator</code> 有三种不同的实现：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="n">IntoIterator</span> <span class="k">for</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c">// type Item = &amp;'a T</span>
-<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="n">IntoIterator</span> <span class="k">for</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c">// type Item = &amp;'a mut T</span>
-<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="n">IntoIterator</span> <span class="k">for</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c">// type Item = T</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="nb">IntoIterator</span> <span class="k">for</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c1">// type Item = &amp;'a T</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="nb">IntoIterator</span> <span class="k">for</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c1">// type Item = &amp;'a mut T</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="nb">IntoIterator</span> <span class="k">for</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>  <span class="c1">// type Item = T</span>
 </code></pre></div>    </div>
 
     <p>分别对应以下三种情况：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="o">&amp;</span><span class="n">vec</span> <span class="p">{</span>
-    <span class="c">// x: &amp;T</span>
+<div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">x</span> <span class="k">in</span> <span class="o">&amp;</span><span class="n">vec</span> <span class="p">{</span>
+    <span class="c1">// x: &amp;T</span>
 <span class="p">}</span>
-<span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">vec</span> <span class="p">{</span>
-    <span class="c">// x: &amp;mut T</span>
+<span class="k">for</span> <span class="n">x</span> <span class="k">in</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">vec</span> <span class="p">{</span>
+    <span class="c1">// x: &amp;mut T</span>
 <span class="p">}</span>
-<span class="k">for</span> <span class="n">x</span> <span class="n">in</span> <span class="n">vec</span> <span class="p">{</span>
-    <span class="c">// x: T</span>
+<span class="k">for</span> <span class="n">x</span> <span class="k">in</span> <span class="n">vec</span> <span class="p">{</span>
+    <span class="c1">// x: T</span>
 <span class="p">}</span>
 </code></pre></div>    </div>
 
@@ -3126,9 +3126,9 @@ is known as <em>metaprogramming</em></p>
     <p>「那我 for 的时候好像也没啥问题啊？」，但是实际上在循环结束之后，对应的 vec 就不能再使用了：</p>
 
     <div class="language-rust highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
-<span class="k">for</span> <span class="mi">_</span> <span class="n">in</span> <span class="n">x</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">for</span> <span class="n">_</span> <span class="k">in</span> <span class="n">x</span> <span class="p">{</span> <span class="p">}</span>
 <span class="nd">println!</span><span class="p">(</span><span class="s">"{:?}"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
 </code></pre></div>    </div>
 
@@ -3159,7 +3159,7 @@ note: this function takes ownership of the receiver `self`, which moves `x`
     <span class="n">llist</span><span class="p">:</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c">// ignoring std::iter::IntoIterator for simplicity</span>
+<span class="c1">// ignoring std::iter::IntoIterator for simplicity</span>
 <span class="nd">#[allow(clippy::should_implement_trait)]</span>
 <span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">pub</span> <span class="k">fn</span> <span class="nf">into_iter</span><span class="p">(</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">IntoIter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
@@ -3167,10 +3167,10 @@ note: this function takes ownership of the receiver `self`, which moves `x`
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">IntoIter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">IntoIter</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Item</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>
 
-    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.llist</span><span class="nf">.pop_front</span><span class="p">()</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -3194,10 +3194,10 @@ note: this function takes ownership of the receiver `self`, which moves `x`
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">Iter</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">Iter</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Item</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">T</span><span class="p">;</span>
 
-    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="k">self</span><span class="py">.next</span> <span class="p">{</span>
             <span class="nb">None</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
             <span class="nf">Some</span><span class="p">(</span><span class="n">next</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
@@ -3216,7 +3216,7 @@ note: this function takes ownership of the receiver `self`, which moves `x`
 
 <p>最后一个是 <code class="language-plaintext highlighter-rouge">IterMut</code>。哦，这个我懂，把 <code class="language-plaintext highlighter-rouge">&amp;</code> 全改成 <code class="language-plaintext highlighter-rouge">&amp;mut</code> 就行了嘛：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">IterMut</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="n">llist</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="n">next</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span><span class="p">,</span>
@@ -3231,10 +3231,10 @@ note: this function takes ownership of the receiver `self`, which moves `x`
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">IterMut</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">IterMut</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Item</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="n">T</span><span class="p">;</span>
 
-    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="k">self</span><span class="py">.next</span> <span class="p">{</span>
             <span class="nb">None</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
             <span class="nf">Some</span><span class="p">(</span><span class="n">next</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
@@ -3293,10 +3293,10 @@ error: could not compile `linkedlist-safefake` due to previous error
 
 <p>在 <code class="language-plaintext highlighter-rouge">Iter</code> 的实现中，输入与输出的 lifetime 无关：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">Iter</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">// 相当于……</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">Iter</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="c1">// 相当于……</span>
     <span class="k">fn</span> <span class="n">next</span><span class="o">&lt;</span><span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">'b</span> <span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="nv">'a</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="c">// ...</span>
+        <span class="c1">// ...</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -3307,16 +3307,16 @@ error: could not compile `linkedlist-safefake` due to previous error
 
 <p>UNSAFE!</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">Iterator</span> <span class="k">for</span> <span class="n">IterMut</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nb">Iterator</span> <span class="k">for</span> <span class="n">IterMut</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">type</span> <span class="n">Item</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="n">T</span><span class="p">;</span>
 
-    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">match</span> <span class="k">self</span><span class="py">.next</span> <span class="p">{</span>
             <span class="nb">None</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
             <span class="nf">Some</span><span class="p">(</span><span class="n">next</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-                <span class="c">// let mut node = self.nodes[next].as_mut().unwrap();</span>
-                <span class="c">// self.next = node.next;</span>
-                <span class="c">// Some(&amp;mut node.value)</span>
+                <span class="c1">// let mut node = self.nodes[next].as_mut().unwrap();</span>
+                <span class="c1">// self.next = node.next;</span>
+                <span class="c1">// Some(&amp;mut node.value)</span>
                 <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="py">.llist.nodes</span><span class="p">[</span><span class="n">next</span><span class="p">];</span>
                 <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="nf">.as_mut</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
                 <span class="k">self</span><span class="py">.next</span> <span class="o">=</span> <span class="n">node</span><span class="py">.next</span><span class="p">;</span>
@@ -3349,7 +3349,7 @@ error: could not compile `linkedlist-safefake` due to previous error
     <span class="n">llist</span><span class="nf">.push_front</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="n">llist</span><span class="nf">.push_front</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
     <span class="n">llist</span><span class="nf">.push_front</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-    <span class="c">// 3 -&gt; 2 -&gt; 1</span>
+    <span class="c1">// 3 -&gt; 2 -&gt; 1</span>
     <span class="n">llist</span>
 <span class="p">}</span>
 
@@ -3376,7 +3376,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 <span class="nd">#[test]</span>
 <span class="k">fn</span> <span class="nf">iter_mut</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="n">llist</span><span class="nf">.iter_mut</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">llist</span><span class="nf">.iter_mut</span><span class="p">()</span> <span class="p">{</span>
         <span class="o">*</span><span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.iter_mut</span><span class="p">();</span>
@@ -3390,7 +3390,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 <p>最后，我们希望实现的一个特性是在迭代的同时可以自由插入/删除元素。先在 <code class="language-plaintext highlighter-rouge">LinkedList</code> 上准备好相关代码：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">insert_next_at</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">assert</span><span class="o">!</span><span class="p">(</span><span class="k">self</span><span class="py">.len</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.capacity</span><span class="p">);</span>
+    <span class="nd">assert!</span><span class="p">(</span><span class="k">self</span><span class="py">.len</span> <span class="o">&lt;</span> <span class="k">self</span><span class="py">.capacity</span><span class="p">);</span>
     <span class="k">let</span> <span class="n">next</span> <span class="o">=</span> <span class="k">match</span> <span class="n">current</span> <span class="p">{</span>
         <span class="nb">None</span> <span class="k">=&gt;</span> <span class="k">self</span><span class="py">.head</span><span class="p">,</span>
         <span class="nf">Some</span><span class="p">(</span><span class="n">current</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="k">self</span><span class="py">.nodes</span><span class="p">[</span><span class="n">current</span><span class="p">]</span><span class="nf">.as_ref</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">()</span><span class="py">.next</span><span class="p">,</span>
@@ -3455,7 +3455,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 
 <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
 <span class="k">let</span> <span class="k">mut</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.iter_mut</span><span class="p">();</span>
-<span class="c">// 编译不通过！</span>
+<span class="c1">// 编译不通过！</span>
 <span class="n">llist</span><span class="nf">.insert_next</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 </code></pre></div></div>
 
@@ -3477,11 +3477,11 @@ error: could not compile `linkedlist-safefake` due to previous error
 <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
 <span class="k">let</span> <span class="k">mut</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.iter_mut</span><span class="p">();</span>
 <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">iter</span><span class="nf">.next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">3</span><span class="p">));</span>
-<span class="c">// OK，我想在 3 后面插入一个 10</span>
+<span class="c1">// OK，我想在 3 后面插入一个 10</span>
 <span class="n">iter</span><span class="nf">.insert_next_next</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-<span class="c">// ??????</span>
+<span class="c1">// ??????</span>
 <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">iter</span><span class="nf">.next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">2</span><span class="p">));</span>
-<span class="c">// ????????????</span>
+<span class="c1">// ????????????</span>
 <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">iter</span><span class="nf">.next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">10</span><span class="p">));</span>
 </code></pre></div></div>
 
@@ -3529,7 +3529,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 
 <p>有人会吐槽：<code class="language-plaintext highlighter-rouge">current</code> 会返回可变引用，那么能不能搞出指向相同元素的多个可变引用呢？</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
 <span class="k">let</span> <span class="k">mut</span> <span class="n">cursor</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.cursor_mut</span><span class="p">();</span>
 <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span>
@@ -3584,14 +3584,14 @@ error: could not compile `linkedlist-safefake` due to previous error
     <span class="k">let</span> <span class="k">mut</span> <span class="n">llist</span> <span class="o">=</span> <span class="nf">init_llist</span><span class="p">();</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">cursor</span> <span class="o">=</span> <span class="n">llist</span><span class="nf">.cursor_mut</span><span class="p">();</span>
     <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span>
-    <span class="n">cursor</span><span class="nf">.insert_next</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c">// 3 -&gt; 4 -&gt; 2 -&gt; 1</span>
+    <span class="n">cursor</span><span class="nf">.insert_next</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// 3 -&gt; 4 -&gt; 2 -&gt; 1</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.peek_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">4</span><span class="p">));</span>
     <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.current</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="mi">4</span><span class="p">));</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nb">None</span><span class="p">);</span>
-    <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span> <span class="c">// "ghost start point"</span>
+    <span class="n">cursor</span><span class="nf">.move_next</span><span class="p">();</span> <span class="c1">// "ghost start point"</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nf">Some</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
     <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">cursor</span><span class="nf">.remove_next</span><span class="p">(),</span> <span class="nb">None</span><span class="p">);</span>
@@ -3605,31 +3605,31 @@ error: could not compile `linkedlist-safefake` due to previous error
 
 <p>前面提到，随机数生成器需要用外部的 crate 实现，比如说 rand。</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 用起来大概像这个样子</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 用起来大概像这个样子</span>
 <span class="k">let</span> <span class="k">mut</span> <span class="n">rng</span> <span class="o">=</span> <span class="nn">rand</span><span class="p">::</span><span class="nf">thread_rng</span><span class="p">();</span>
 <span class="k">let</span> <span class="n">y</span><span class="p">:</span> <span class="nb">f64</span> <span class="o">=</span> <span class="n">rng</span><span class="nf">.gen</span><span class="p">();</span>
 </code></pre></div></div>
 
 <p>但是我（为了写算法课概率算法的作业）出现了一个扭曲的需求：我有一些算法函数，它们的参数和返回值需要完全一致，但是有些函数是确定性算法，不需要 rng，有些函数是概率算法，需要 rng：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// O(n), deterministic algorithm</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// O(n), deterministic algorithm</span>
 <span class="k">fn</span> <span class="nf">alg_a</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">StaticLinkedList</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// O(n), probabilistic algorithm</span>
+<span class="c1">// O(n), probabilistic algorithm</span>
 <span class="k">fn</span> <span class="nf">alg_d</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">StaticLinkedList</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// O(sqrt(n)), deterministic algorithm</span>
+<span class="c1">// O(sqrt(n)), deterministic algorithm</span>
 <span class="k">fn</span> <span class="nf">alg_b</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">StaticLinkedList</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="c">// O(sqrt(n)), probabilistic algorithm</span>
+<span class="c1">// O(sqrt(n)), probabilistic algorithm</span>
 <span class="k">fn</span> <span class="nf">alg_c</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">StaticLinkedList</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -3644,7 +3644,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Singleton</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">u64</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">u64</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
         <span class="n">Singleton</span> <span class="p">{</span>
             <span class="n">state</span>
         <span class="p">}</span>
@@ -3666,7 +3666,7 @@ error: could not compile `linkedlist-safefake` due to previous error
 <p>让我们先来试试：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[macro_use]</span>
-<span class="k">extern</span> <span class="n">crate</span> <span class="n">lazy_static</span><span class="p">;</span>
+<span class="k">extern</span> <span class="k">crate</span> <span class="n">lazy_static</span><span class="p">;</span>
 
 <span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">cell</span><span class="p">::</span><span class="n">RefCell</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">mutable_singleton</span><span class="p">::</span><span class="n">Singleton</span><span class="p">;</span>
@@ -3725,7 +3725,7 @@ error: could not compile `mutable-singleton` due to previous error
     <span class="k">static</span> <span class="n">SINGLETON</span><span class="p">:</span> <span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Singleton</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nn">RefCell</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nn">Singleton</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="c">// 不要做 inline，因为我们需要测试 get_singleton() 函数本身的性能</span>
+<span class="c1">// 不要做 inline，因为我们需要测试 get_singleton() 函数本身的性能</span>
 <span class="nd">#[inline(never)]</span>
 <span class="k">fn</span> <span class="nf">get_singleton</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">u64</span> <span class="p">{</span>
     <span class="n">SINGLETON</span><span class="nf">.with</span><span class="p">(|</span><span class="n">s</span><span class="p">|</span> <span class="n">s</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="nf">.get</span><span class="p">())</span>
@@ -3735,7 +3735,7 @@ error: could not compile `mutable-singleton` due to previous error
     <span class="k">let</span> <span class="k">mut</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">const</span> <span class="n">STEPS</span><span class="p">:</span> <span class="nb">i32</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="p">;</span>
     <span class="k">let</span> <span class="n">before</span> <span class="o">=</span> <span class="nn">Instant</span><span class="p">::</span><span class="nf">now</span><span class="p">();</span>
-    <span class="k">for</span> <span class="mi">_</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">STEPS</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">STEPS</span> <span class="p">{</span>
         <span class="n">x</span> <span class="o">=</span> <span class="nf">get_singleton</span><span class="p">();</span>
     <span class="p">}</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
@@ -3973,13 +3973,13 @@ Time: 2706 ms
 
 <p>前面提到的方法的问题是，<code class="language-plaintext highlighter-rouge">static mut</code> 赋的右值必须是 <code class="language-plaintext highlighter-rouge">const</code>，但是你想使用的结构不一定能在编译期就初始化好：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 编译不通过！</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 编译不通过！</span>
 <span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="nn">rngs</span><span class="p">::</span><span class="n">SmallRng</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="n">SeedableRng</span><span class="p">;</span>
 
-<span class="c">// 因为 seed_from_u64 不是 const fn</span>
-<span class="c">// 所以即使「看起来」这个随机数生成器能够在编译期推断出结构的值</span>
-<span class="c">// 那也不行</span>
+<span class="c1">// 因为 seed_from_u64 不是 const fn</span>
+<span class="c1">// 所以即使「看起来」这个随机数生成器能够在编译期推断出结构的值</span>
+<span class="c1">// 那也不行</span>
 <span class="k">static</span> <span class="k">mut</span> <span class="n">RNG</span><span class="p">:</span> <span class="n">SmallRng</span> <span class="o">=</span> <span class="nn">SmallRng</span><span class="p">::</span><span class="nf">seed_from_u64</span><span class="p">(</span><span class="mi">20380119</span><span class="p">);</span>
 </code></pre></div></div>
 
@@ -4002,24 +4002,24 @@ Time: 2706 ms
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Lrng</span> <span class="p">{</span>
-    <span class="c">// 把初始化的事情放 main() 最开始做</span>
+    <span class="c1">// 把初始化的事情放 main() 最开始做</span>
     <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c">// 拿到 rng 可变指针，硬说它是 SmallRng 的可变指针</span>
+        <span class="c1">// 拿到 rng 可变指针，硬说它是 SmallRng 的可变指针</span>
         <span class="k">let</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">self</span><span class="py">.rng</span><span class="nf">.as_mut_ptr</span><span class="p">()</span> <span class="k">as</span> <span class="o">*</span><span class="k">mut</span> <span class="n">SmallRng</span><span class="p">;</span>
         <span class="k">unsafe</span> <span class="p">{</span>
-            <span class="c">// std::ptr::write 和直接 *ptr = xxx 应该都行</span>
+            <span class="c1">// std::ptr::write 和直接 *ptr = xxx 应该都行</span>
             <span class="nn">std</span><span class="p">::</span><span class="nn">ptr</span><span class="p">::</span><span class="nf">write</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="nn">SmallRng</span><span class="p">::</span><span class="nf">from_entropy</span><span class="p">());</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="k">fn</span> <span class="nf">gen_range</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">high</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span> <span class="p">{</span>
         <span class="k">let</span> <span class="n">rng</span> <span class="o">=</span> <span class="k">unsafe</span> <span class="p">{</span>
-            <span class="c">// std::ptr::read 做的事情事实上是……bitwise copy</span>
-            <span class="c">// 因为每次生成随机数都需要修改 rng 的内部状态，所以不能这么写，</span>
-            <span class="c">// 否则每次返回的相同范围的「随机数」都是一样的（</span>
-            <span class="c">// std::ptr::read(&amp;self.rng as *const [u8; SMALLRNG_SIZE] as *const SmallRng)</span>
+            <span class="c1">// std::ptr::read 做的事情事实上是……bitwise copy</span>
+            <span class="c1">// 因为每次生成随机数都需要修改 rng 的内部状态，所以不能这么写，</span>
+            <span class="c1">// 否则每次返回的相同范围的「随机数」都是一样的（</span>
+            <span class="c1">// std::ptr::read(&amp;self.rng as *const [u8; SMALLRNG_SIZE] as *const SmallRng)</span>
             <span class="k">let</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">self</span><span class="py">.rng</span><span class="nf">.as_mut_ptr</span><span class="p">()</span> <span class="k">as</span> <span class="o">*</span><span class="k">mut</span> <span class="n">SmallRng</span><span class="p">;</span>
-            <span class="c">// 对指针解引用之后返回 "rng" 的可变引用</span>
+            <span class="c1">// 对指针解引用之后返回 "rng" 的可变引用</span>
             <span class="o">&amp;</span><span class="k">mut</span> <span class="o">*</span><span class="n">ptr</span>
         <span class="p">};</span>
         <span class="n">rng</span><span class="nf">.gen_range</span><span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="n">high</span><span class="p">)</span>
@@ -4037,11 +4037,11 @@ Time: 2706 ms
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c">// 初始化</span>
+    <span class="c1">// 初始化</span>
     <span class="k">unsafe</span> <span class="p">{</span>
         <span class="n">RNG</span><span class="nf">.init</span><span class="p">();</span>
     <span class="p">}</span>
-    <span class="c">// ...</span>
+    <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 

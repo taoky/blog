@@ -1135,9 +1135,9 @@ cpuset.mems             hugetlb.2MB.rsvd.max      memory.pressure
 
 <p>以及简单的 C 程序测试也出现了相同的 peak 值：</p>
 
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;sys/mman.h&gt;
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;sys/mman.h&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
@@ -1155,9 +1155,9 @@ cpuset.mems             hugetlb.2MB.rsvd.max      memory.pressure
 
 <p>把这个程序做了一些小修改后：</p>
 
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;sys/mman.h&gt;
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;sys/mman.h&gt;</span><span class="cp">
 </span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 <span class="cp">#define PAGESIZE 4096
@@ -1424,8 +1424,8 @@ open: Permission denied
 
 <p><a href="https://github.com/taoky/adventofcode/blob/2f48038b6fda211b3c894b3eff33d32e5cacf6d8/src/resource/cgroup.rs">我用 Rust 完成了功能的实现</a>。在初始化时，如果当前用户是 root，就直接用 Rust 的文件操作 API 在 <code class="language-plaintext highlighter-rouge">/sys/fs/cgroup</code> 下创建需要的节点（而且不需要给程序本身创建子节点，因为 root 可以顺利把生成的进程从其他的节点移动过来），否则就询问用户是否以 <code class="language-plaintext highlighter-rouge">sudo</code> 权限执行初始化脚本：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 或许可以用 Polkit 那一套东西显示更好的权限申请对话框？</span>
-<span class="k">fn</span> <span class="nf">sudo</span><span class="p">(</span><span class="n">script</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span> <span class="n">explanation</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 或许可以用 Polkit 那一套东西显示更好的权限申请对话框？</span>
+<span class="k">fn</span> <span class="nf">sudo</span><span class="p">(</span><span class="n">script</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span> <span class="n">explanation</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="nd">eprint!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">explanation</span><span class="p">);</span>
     <span class="nd">eprintln!</span><span class="p">(</span><span class="s">" Thus the following script will be run with bash by sudo:"</span><span class="p">);</span>
     <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">script</span><span class="p">);</span>
@@ -1447,8 +1447,8 @@ open: Permission denied
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="c">// 糊出来的，所以脚本比较丑</span>
-<span class="k">fn</span> <span class="nf">sudo_initialize_cgroup</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="c1">// 糊出来的，所以脚本比较丑</span>
+<span class="k">fn</span> <span class="nf">sudo_initialize_cgroup</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">uid</span> <span class="o">=</span> <span class="nn">Uid</span><span class="p">::</span><span class="nf">current</span><span class="p">();</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">script</span> <span class="o">=</span> <span class="nd">format!</span><span class="p">(</span>
         <span class="s">r#"
@@ -1468,7 +1468,7 @@ echo {} &gt; /sys/fs/cgroup/adventofcode-2022/day0/cgroup.procs
         <span class="n">uid</span><span class="p">,</span>
         <span class="nn">Pid</span><span class="p">::</span><span class="nf">this</span><span class="p">()</span>
     <span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="n">in</span> <span class="nf">day_part_iterator</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="k">in</span> <span class="nf">day_part_iterator</span><span class="p">()</span> <span class="p">{</span>
         <span class="n">script</span> <span class="o">+=</span> <span class="nd">format!</span><span class="p">(</span>
             <span class="s">"mkdir /sys/fs/cgroup/adventofcode-2022/day{}-{} &amp;&amp; chown {} /sys/fs/cgroup/adventofcode-2022/day{}-{} &amp;&amp; chown {} /sys/fs/cgroup/adventofcode-2022/day{}-{}/cgroup.procs &amp;&amp; echo 0 &gt; /sys/fs/cgroup/adventofcode-2022/day{}-{}/memory.swap.max</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
             <span class="n">day</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">part</span>
@@ -1518,7 +1518,7 @@ echo {} &gt; /sys/fs/cgroup/adventofcode-2022/day0/cgroup.procs
 
 <p>最后的清理工作有一些小坑：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">sudo_cleanup_cgroup</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">sudo_cleanup_cgroup</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">script</span> <span class="o">=</span> <span class="s">r#"
 set -ex
 # move current process to root cgroup tree node
@@ -1581,7 +1581,7 @@ ru_maxrss (since Linux 2.6.32)
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">unsafe</span> <span class="k">fn</span> <span class="n">pre_exec</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="nn">process</span><span class="p">::</span><span class="n">Command</span>
 <span class="k">where</span>
-    <span class="n">F</span><span class="p">:</span> <span class="nf">FnMut</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nn">io</span><span class="p">::</span><span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="o">+</span> <span class="nb">Send</span> <span class="o">+</span> <span class="n">Sync</span> <span class="o">+</span> <span class="nv">'static</span><span class="p">,</span>
+    <span class="n">F</span><span class="p">:</span> <span class="nf">FnMut</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nn">io</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="o">+</span> <span class="nb">Send</span> <span class="o">+</span> <span class="nb">Sync</span> <span class="o">+</span> <span class="k">'static</span><span class="p">,</span>
 </code></pre></div></div>
 
 <p>我之前感觉 fork 的行为和 Rust 的模型是不太匹配的（即使没有 async-signal-safety 的问题）：比如说，<code class="language-plaintext highlighter-rouge">fork()</code> 之后，就可能出现两个进程同时拿着一个 <code class="language-plaintext highlighter-rouge">&amp;mut</code> 的情况，有可能导致问题——但是父进程和子进程默认不共享内存，所以可能这一点不是问题。主要可能带来麻烦的是多线程下的 <code class="language-plaintext highlighter-rouge">fork()</code> 以及有锁的情况。</p>
@@ -1593,8 +1593,8 @@ ru_maxrss (since Linux 2.6.32)
         <span class="nf">waitpid</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="nb">None</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="nn">ForkResult</span><span class="p">::</span><span class="n">Child</span> <span class="k">=&gt;</span> <span class="p">{</span>
-        <span class="c">// spawn cmd, and getrusage(), and send back metrics to parent</span>
-        <span class="k">unsafe</span> <span class="p">{</span> <span class="nn">libc</span><span class="p">::</span><span class="mi">_</span><span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">};</span>
+        <span class="c1">// spawn cmd, and getrusage(), and send back metrics to parent</span>
+        <span class="k">unsafe</span> <span class="p">{</span> <span class="nn">libc</span><span class="p">::</span><span class="nf">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">};</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -1779,16 +1779,16 @@ cpu.pressure            memory.peak          pids.peak
 
 <p>另外，也发现 systemd 不会清理创建失败的 scope，所以要处理一下：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="mi">_</span><span class="n">err</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.reset_failed_unit</span><span class="p">(</span><span class="s">"test-transient.scope"</span><span class="p">);</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">_err</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.reset_failed_unit</span><span class="p">(</span><span class="s">"test-transient.scope"</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p><code class="language-plaintext highlighter-rouge">start_transient_unit()</code> 成功执行时会返回一个 Job 的 path。为了避免竞争问题，肯定要等 job 执行好了才能继续操作，但是并没有直接 “wait job” 的接口。需要先注册 job 被移除的信号，然后等信号：</p>
 
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">removed_jobs</span> <span class="o">=</span> <span class="n">systemd_manager</span><span class="nf">.receive_job_removed</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
 
-<span class="c">// ...</span>
+<span class="c1">// ...</span>
 
-<span class="k">for</span> <span class="n">signal</span> <span class="n">in</span> <span class="n">removed_jobs</span> <span class="p">{</span>
+<span class="k">for</span> <span class="n">signal</span> <span class="k">in</span> <span class="n">removed_jobs</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">args</span> <span class="o">=</span> <span class="n">signal</span><span class="nf">.args</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
     <span class="k">if</span> <span class="n">args</span><span class="py">.job</span> <span class="o">==</span> <span class="n">job</span><span class="nf">.as_ref</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">break</span><span class="p">;</span>
