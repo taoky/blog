@@ -587,6 +587,20 @@ pre > code {
   color: #727272;
 }
 
+.wrapper {
+  max-width: 800px;
+  max-width: -webkit-calc(800px);
+}
+
+@media print {
+  pre {
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+  }
+}
 .site-nav {
   float: right;
   line-height: 54px;
@@ -673,22 +687,6 @@ em {
 
 .center {
   text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(100%);
-    background: #fff;
-  }
-  iframe, img, image, video, [style*=background-image] {
-    filter: invert(95%) hue-rotate(180deg) brightness(105%) contrast(105%);
-  }
-  iframe[src*="disqus.com"] {
-    background-color: #fff;
-  }
-  #comment_darkmode_warning {
-    display: block !important;
-  }
 }
 
 /*# sourceMappingURL=main.css.map */

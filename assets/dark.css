@@ -1,0 +1,640 @@
+/*! Dark reader generated CSS | Licensed under MIT https://github.com/darkreader/darkreader/blob/main/LICENSE */
+
+@media (prefers-color-scheme: dark) {
+    /* User-Agent Style */
+    html {
+        background-color: #181a1b !important;
+    }
+    html {
+        color-scheme: dark !important;
+    }
+    html, body {
+        background-color: #181a1b;
+    }
+    html, body {
+        border-color: #736b5e;
+        color: #e8e6e3;
+    }
+    a {
+        color: #3391ff;
+    }
+    table {
+        border-color: #545b5e;
+    }
+    ::placeholder {
+        color: #b2aba1;
+    }
+    input:-webkit-autofill,
+    textarea:-webkit-autofill,
+    select:-webkit-autofill {
+        background-color: #404400 !important;
+        color: #e8e6e3 !important;
+    }
+    ::-webkit-scrollbar {
+        background-color: #202324;
+        color: #aba499;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #454a4d;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #575e62;
+    }
+    ::-webkit-scrollbar-thumb:active {
+        background-color: #484e51;
+    }
+    ::-webkit-scrollbar-corner {
+        background-color: #181a1b;
+    }
+    ::selection {
+        background-color: #004daa !important;
+        color: #e8e6e3 !important;
+    }
+    ::-moz-selection {
+        background-color: #004daa !important;
+        color: #e8e6e3 !important;
+    }
+
+    /* Invert Style */
+    .jfk-bubble.gtx-bubble, .captcheck_answer_label > input + img, span#closed_text > img[src^="https://www.gstatic.com/images/branding/googlelogo"], span[data-href^="https://www.hcaptcha.com/"] > #icon, #bit-notification-bar-iframe, ::-webkit-calendar-picker-indicator {
+        filter: invert(100%) hue-rotate(180deg) contrast(90%) !important;
+    }
+
+    /* Variables Style */
+    :root {
+    --darkreader-neutral-background: #131516;
+    --darkreader-neutral-text: #d8d4cf;
+    --darkreader-selection-background: #004daa;
+    --darkreader-selection-text: #e8e6e3;
+    }
+
+    /* Modified CSS */
+    body {
+        color: rgb(221, 218, 214);
+        background-color: rgb(25, 27, 28);
+    }
+    a {
+        color: rgb(101, 167, 224);
+        text-decoration-color: initial;
+    }
+    a:visited {
+        color: rgb(127, 181, 229);
+    }
+    a:hover {
+        color: rgb(221, 218, 214);
+        text-decoration-color: initial;
+    }
+    blockquote {
+        color: rgb(158, 150, 137);
+        border-left-color: rgb(54, 59, 61);
+    }
+    blockquote pre,
+    blockquote code {
+        color: rgb(221, 218, 214);
+    }
+    hr {
+        border-color: initial;
+        background-color: rgb(37, 40, 42);
+    }
+    pre,
+    code {
+        border-color: rgb(54, 59, 61);
+        background-color: rgb(28, 30, 31);
+    }
+    pre > code {
+        border-color: initial;
+    }
+    .site-title,
+    .site-title:visited {
+        color: rgb(190, 185, 176);
+    }
+    .site-nav .page-link {
+        color: rgb(221, 218, 214);
+    }
+    .site-footer {
+        color: rgb(158, 150, 137);
+    }
+    .post-list {
+        list-style-image: initial;
+    }
+    .post-list .post-link:hover {
+        text-decoration-color: initial;
+    }
+    .post-list > li:not(:first-child) {
+        border-top-color: rgb(54, 59, 61);
+    }
+    .post-archives {
+        list-style-image: initial;
+    }
+    .post-meta {
+        color: rgb(158, 150, 137);
+    }
+    .post-link,
+    .post-link:visited {
+        color: rgb(221, 218, 214);
+    }
+    .post-link:hover {
+        color: rgb(101, 167, 224);
+    }
+    .post-continue a {
+        text-decoration-color: initial;
+    }
+    .post-continue a,
+    .post-continue a:visited {
+        color: rgb(190, 185, 176);
+        background-color: rgb(37, 40, 42);
+    }
+    .post-continue a:hover {
+        color: rgb(232, 230, 227);
+        background-color: rgb(30, 83, 149);
+    }
+    .pagination {
+        border-top-color: rgb(54, 59, 61);
+        border-bottom-color: rgb(54, 59, 61);
+    }
+    .pagination a,
+    .pagination a:visited {
+        color: rgb(158, 150, 137);
+    }
+    .pagination a:hover {
+        color: rgb(101, 167, 224);
+    }
+    .highlight {
+        background-color: rgb(28, 30, 31);
+    }
+    .highlighter-rouge .highlight {
+        background-color: rgb(28, 30, 31);
+    }
+    .highlight .cm {
+        color: rgb(165, 157, 146);
+    }
+    .highlight .cp {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .c1 {
+        color: rgb(165, 157, 146);
+    }
+    .highlight .cs {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .c,
+    .highlight .cd {
+        color: rgb(165, 157, 146);
+    }
+    .highlight .err {
+        color: rgb(233, 94, 94);
+        background-color: rgb(58, 36, 36);
+    }
+    .highlight .gd {
+        color: rgb(232, 230, 227);
+        background-color: rgb(71, 0, 0);
+    }
+    .highlight .ge {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .gr {
+        color: rgb(255, 85, 85);
+    }
+    .highlight .gh {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .gi {
+        color: rgb(232, 230, 227);
+        background-color: rgb(18, 71, 0);
+    }
+    .highlight .go {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .gp {
+        color: rgb(178, 172, 162);
+    }
+    .highlight .gu {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .gt {
+        color: rgb(255, 85, 85);
+    }
+    .highlight .kc {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .kd {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .kn {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .kp {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .kr {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .kt {
+        color: rgb(139, 166, 197);
+    }
+    .highlight .k,
+    .highlight .kv {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .mf {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .mh {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .il {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .mi {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .mo {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .m,
+    .highlight .mb,
+    .highlight .mx {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .sb {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .sc {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .sd {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .s2 {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .se {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .sh {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .si {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .sx {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .sr {
+        color: rgb(111, 255, 148);
+    }
+    .highlight .s1 {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .ss {
+        color: rgb(255, 97, 216);
+    }
+    .highlight .s {
+        color: rgb(239, 53, 100);
+    }
+    .highlight .na {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .bp {
+        color: rgb(160, 152, 139);
+    }
+    .highlight .nb {
+        color: rgb(90, 213, 255);
+    }
+    .highlight .nc {
+        color: rgb(139, 166, 197);
+    }
+    .highlight .no {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .nd {
+        color: rgb(184, 178, 168);
+    }
+    .highlight .ni {
+        color: rgb(255, 114, 255);
+    }
+    .highlight .ne {
+        color: rgb(255, 97, 97);
+    }
+    .highlight .nf {
+        color: rgb(255, 97, 97);
+    }
+    .highlight .nl {
+        color: rgb(255, 97, 97);
+    }
+    .highlight .nn {
+        color: rgb(178, 172, 162);
+    }
+    .highlight .nt {
+        color: rgb(127, 174, 255);
+    }
+    .highlight .vc {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .vg {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .vi {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .nv {
+        color: rgb(115, 255, 255);
+    }
+    .highlight .ow {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .o {
+        color: rgb(232, 230, 227);
+    }
+    .highlight .w {
+        color: rgb(160, 152, 139);
+    }
+    .site-nav .page-link {
+        color: rgb(221, 218, 214);
+    }
+    @media screen and (max-width: 600px) {
+        .site-nav {
+            background-color: rgb(25, 27, 28);
+            border-color: rgb(54, 59, 61);
+        }
+        .site-nav .menu-icon > svg {
+            fill: rgb(190, 185, 176);
+        }
+    }
+    .user-toc {
+        background-color: rgb(24, 26, 27);
+        border-color: rgb(54, 59, 61);
+    }
+    html {
+        color: rgb(200, 195, 188);
+        background-image: initial;
+        background-color: rgb(24, 26, 27);
+    }
+    fieldset,
+    img {
+        border-color: initial;
+    }
+    blockquote {
+        color: rgb(211, 207, 201);
+        border-left-color: rgb(23, 168, 139);
+    }
+    acronym,
+    abbr {
+        border-bottom-color: initial;
+        text-decoration-color: initial;
+    }
+    del {
+        text-decoration-color: initial;
+    }
+    ul,
+    ol {
+        list-style-image: initial;
+    }
+    a {
+        color: rgb(79, 231, 201);
+    }
+    a:hover {
+        text-decoration-color: initial;
+    }
+    .typo a {
+        border-bottom-color: rgb(23, 168, 139);
+    }
+    .typo a:hover {
+        border-bottom-color: rgb(112, 104, 92);
+        color: rgb(178, 172, 162);
+        text-decoration-color: initial;
+    }
+    ins,
+    a {
+        text-decoration-color: initial;
+    }
+    u,
+    .typo-u {
+        text-decoration-color: initial;
+    }
+    mark {
+        background-image: initial;
+        background-color: rgb(59, 56, 0);
+        border-bottom-color: rgb(117, 74, 0);
+    }
+    pre {
+        background-image: initial;
+        background-color: rgb(28, 30, 31);
+        border-color: rgb(58, 62, 65);
+    }
+    hr {
+        border-color: initial;
+    }
+    small,
+    .typo-small,
+    figcaption {
+        color: rgb(157, 148, 136);
+    }
+    strong,
+    b {
+        color: rgb(232, 230, 227);
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: rgb(232, 230, 227);
+    }
+    .typo ul,
+    .typo-ul {
+        list-style-image: initial;
+    }
+    .typo ol,
+    .typo-ol {
+        list-style-image: initial;
+    }
+    .typo li ul,
+    .typo-ul ul,
+    .typo-ol ul {
+        list-style-image: initial;
+    }
+    .typo table th,
+    .typo table td,
+    .typo-table th,
+    .typo-table td,
+    .typo table caption {
+        border-color: rgb(58, 62, 65);
+        color: rgb(168, 160, 149);
+    }
+    .typo table th,
+    .typo-table th {
+        background-image: initial;
+        background-color: rgb(26, 28, 30);
+    }
+    .typo table thead th,
+    .typo-table thead th {
+        background-image: initial;
+        background-color: rgb(32, 35, 36);
+    }
+    .typo table caption {
+        border-bottom-color: initial;
+    }
+    .typo-em,
+    .typo em,
+    legend,
+    caption {
+        color: rgb(232, 230, 227);
+    }
+    #dsqjs a {
+        text-decoration-color: initial;
+        color: rgb(81, 174, 249);
+    }
+    #dsqjs .dsqjs-bullet::after {
+        color: rgb(197, 192, 184);
+    }
+    #dsqjs .dsqjs-nav {
+        border-bottom-color: rgb(54, 58, 61);
+    }
+    #dsqjs ol,
+    #dsqjs ul {
+        list-style-image: initial;
+    }
+    #dsqjs .dsqjs-no-comment {
+        color: rgb(204, 200, 193);
+    }
+    #dsqjs .dsqjs-nav-tab {
+        color: rgb(162, 153, 141);
+    }
+    #dsqjs .dsqjs-tab-active {
+        color: rgb(204, 200, 193);
+    }
+    #dsqjs .dsqjs-tab-active > span::after {
+        background-color: rgb(6, 87, 166) !important;
+    }
+    #dsqjs .dsqjs-post-list .dsqjs-post-avatar {
+        background-image: initial;
+        background-color: rgb(42, 45, 47);
+    }
+    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-post-author {
+        color: rgb(162, 153, 141);
+    }
+    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-admin-badge {
+        color: rgb(232, 230, 227);
+        background-image: initial;
+        background-color: rgb(83, 98, 107);
+    }
+    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-meta {
+        color: rgb(162, 153, 141);
+    }
+    #dsqjs .dsqjs-post-body {
+        color: rgb(204, 200, 193);
+    }
+    #dsqjs .dsqjs-post-body code {
+        background-image: initial;
+        background-color: rgb(30, 32, 33);
+        color: inherit;
+    }
+    #dsqjs .dsqjs-post-body pre {
+        background-image: initial;
+        background-color: rgb(30, 32, 33);
+    }
+    #dsqjs .dsqjs-post-body blockquote {
+        color: rgb(159, 151, 138);
+        border-left-color: rgb(56, 61, 63);
+    }
+    #dsqjs .dsqjs-load-more {
+        background-image: initial;
+        background-color: rgb(83, 98, 107);
+        color: rgb(232, 230, 227);
+    }
+    #dsqjs footer {
+        border-top-color: rgb(54, 58, 61);
+        color: rgb(178, 172, 162);
+    }
+    #dsqjs .dsqjs-order-radio:checked + .dsqjs-order-label {
+        color: rgb(232, 230, 227);
+        background-color: rgb(91, 99, 103);
+    }
+    #dsqjs .dsqjs-order-label {
+        background-color: rgb(44, 47, 49);
+    }
+    #dsqjs p.dsqjs-has-more a.dsqjs-has-more-btn {
+        color: rgb(162, 153, 141);
+        text-decoration-color: initial;
+    }
+
+    /* Override Style */
+    .vimvixen-hint {
+        background-color: #7b5300 !important;
+        border-color: #d8b013 !important;
+        color: #f3e8c8 !important;
+    }
+    #vimvixen-console-frame {
+        color-scheme: light !important
+    }
+    ::placeholder {
+        opacity: 0.5 !important;
+    }
+    #edge-translate-panel-body,
+    .MuiTypography-body1,
+    .nfe-quote-text {
+        color: var(--darkreader-neutral-text) !important;
+    }
+    gr-main-header {
+        background-color: #0f3a48 !important;
+    }
+    .tou-z65h9k,
+    .tou-mignzq,
+    .tou-1b6i2ox,
+    .tou-lnqlqk {
+        background-color: var(--darkreader-neutral-background) !important;
+    }
+    .tou-75mvi {
+        background-color: #032029 !important;
+    }
+    .tou-ta9e87,
+    .tou-1w3fhi0,
+    .tou-1b8t2us,
+    .tou-py7lfi,
+    .tou-1lpmd9d,
+    .tou-1frrtv8,
+    .tou-17ezmgn {
+        background-color: #0a0a0a !important;
+    }
+    .tou-uknfeu {
+        background-color: #231603 !important;
+    }
+    .tou-6i3zyv {
+        background-color: #19576c !important;
+    }
+    div.mermaid-viewer-control-panel .btn {
+    fill: var(--darkreader-neutral-text);
+    background-color: var(--darkreader-neutral-background);
+    }
+    svg g rect.er {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    svg g rect.er.entityBox {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    svg g rect.er.attributeBoxOdd {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    svg g rect.er.attributeBoxEven {
+    fill-opacity: 0.8 !important;
+    fill: var(--darkreader-selection-background);
+    }
+    svg rect.er.relationshipLabelBox {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    svg g g.nodes rect, svg g g.nodes polygon {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    svg g rect.task {
+    fill: var(--darkreader-selection-background) !important;
+    }
+    svg line.messageLine0, svg line.messageLine1 {
+    stroke: var(--darkreader-neutral-text) !important;
+    }
+    div.mermaid .actor {
+    fill: var(--darkreader-neutral-background) !important;
+    }
+    embed[type="application/pdf"][src="about:blank"] { filter: invert(100%) contrast(90%); }
+}
