@@ -482,83 +482,6 @@
     caption {
         color: rgb(232, 230, 227);
     }
-    #dsqjs a {
-        text-decoration-color: initial;
-        color: rgb(81, 174, 249);
-    }
-    #dsqjs .dsqjs-bullet::after {
-        color: rgb(197, 192, 184);
-    }
-    #dsqjs .dsqjs-nav {
-        border-bottom-color: rgb(54, 58, 61);
-    }
-    #dsqjs ol,
-    #dsqjs ul {
-        list-style-image: initial;
-    }
-    #dsqjs .dsqjs-no-comment {
-        color: rgb(204, 200, 193);
-    }
-    #dsqjs .dsqjs-nav-tab {
-        color: rgb(162, 153, 141);
-    }
-    #dsqjs .dsqjs-tab-active {
-        color: rgb(204, 200, 193);
-    }
-    #dsqjs .dsqjs-tab-active > span::after {
-        background-color: rgb(6, 87, 166) !important;
-    }
-    #dsqjs .dsqjs-post-list .dsqjs-post-avatar {
-        background-image: initial;
-        background-color: rgb(42, 45, 47);
-    }
-    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-post-author {
-        color: rgb(162, 153, 141);
-    }
-    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-admin-badge {
-        color: rgb(232, 230, 227);
-        background-image: initial;
-        background-color: rgb(83, 98, 107);
-    }
-    #dsqjs .dsqjs-post-list .dsqjs-post-header .dsqjs-meta {
-        color: rgb(162, 153, 141);
-    }
-    #dsqjs .dsqjs-post-body {
-        color: rgb(204, 200, 193);
-    }
-    #dsqjs .dsqjs-post-body code {
-        background-image: initial;
-        background-color: rgb(30, 32, 33);
-        color: inherit;
-    }
-    #dsqjs .dsqjs-post-body pre {
-        background-image: initial;
-        background-color: rgb(30, 32, 33);
-    }
-    #dsqjs .dsqjs-post-body blockquote {
-        color: rgb(159, 151, 138);
-        border-left-color: rgb(56, 61, 63);
-    }
-    #dsqjs .dsqjs-load-more {
-        background-image: initial;
-        background-color: rgb(83, 98, 107);
-        color: rgb(232, 230, 227);
-    }
-    #dsqjs footer {
-        border-top-color: rgb(54, 58, 61);
-        color: rgb(178, 172, 162);
-    }
-    #dsqjs .dsqjs-order-radio:checked + .dsqjs-order-label {
-        color: rgb(232, 230, 227);
-        background-color: rgb(91, 99, 103);
-    }
-    #dsqjs .dsqjs-order-label {
-        background-color: rgb(44, 47, 49);
-    }
-    #dsqjs p.dsqjs-has-more a.dsqjs-has-more-btn {
-        color: rgb(162, 153, 141);
-        text-decoration-color: initial;
-    }
 
     /* Override Style */
     .vimvixen-hint {
@@ -637,9 +560,4 @@
     fill: var(--darkreader-neutral-background) !important;
     }
     embed[type="application/pdf"][src="about:blank"] { filter: invert(100%) contrast(90%); }
-
-    /* workaround for disqus */
-    iframe[src*="disqus.com"] {
-        color-scheme: light;
-    }
 }
