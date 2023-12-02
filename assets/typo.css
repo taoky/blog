@@ -243,8 +243,8 @@ strong, b {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: PingFang SC, Source Han Sans CN, Verdana, Helvetica Neue, Microsoft Yahei, Hiragino Sans GB, Microsoft Sans Serif, WenQuanYi Micro Hei, sans-serif;
-  font-weight: 100;
+  font-family: Bitter, Verdana, Helvetica Neue, Cantarell, PingFang SC, Microsoft Sans Serif, Source Han Sans CN, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+  font-weight: 300;
   color: #000;
   line-height: 1.35;
 }
