@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2023-12-02T06:15:00+00:00</updated>
+  <updated>2023-12-05T04:35:47+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -694,6 +694,14 @@ cgroup_mutex            326          [&amp;lt;00000000c1655a73&amp;gt;] proc_cgr
 &lt;p&gt;&lt;img src=&quot;/pictures/judgehost/result2-netdata.png&quot; alt=&quot;Result 2 load shown in netdata&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;此外，测试时发现该服务器的内核（5.15 和 6.3）&lt;strong&gt;仅会在系统负载高的时候&lt;/strong&gt;不停输出 “enoX speed is unknown, defaulting to 1000” 的信息（所以赛前也没人发现网卡的问题），从源代码看相关信息是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_core&lt;/code&gt; 输出的（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;i40e&lt;/code&gt; -&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;irdma&lt;/code&gt; -&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ib_core&lt;/code&gt;），但是调试条件有限，因此其具体原因仍然不明。手动禁用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;irdma&lt;/code&gt; 重启后就不会再出现这个问题了。处理后再测试了两个小时，Linux 6.3.0 内核下 21 个评测 worker load 稳定在 20 到 25，Wall - CPU 时间的值不超过 0.25s，考虑到在不超过 Wall time limit 情况下判断 TLE 是按照 CPU 时间为标准的，内核更新到 6.3 或以上之后应当就足以应对比赛环境了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update 1 (2023/12/05):&lt;/strong&gt; 如果只修改 runguard，让父子进程同步保证 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setrestrictions()&lt;/code&gt; 不计入 Wall time 能解决问题吗？&lt;a href=&quot;https://github.com/taoky/domjudge/commit/56d18b8a71183abf376a51f398c9752ffc0f7f00&quot;&gt;修改了一下 runguard 代码&lt;/a&gt;之后测试，发现问题仍然可能存在：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/pictures/judgehost/cactus_2.png&quot; alt=&quot;Test 2 on Cactus&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;从上面字节最开始的 patch 的内容来看（因为最近没有足够的精力，我没有去抓现场，因此这一段的内容都是推测），问题应该出在缺页处理（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;handle_mm_fault&lt;/code&gt;）的时候需要更新内存 cgroup 的统计数据（可以看我&lt;a href=&quot;https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage.html#%E5%B0%8F%E6%8F%92%E6%9B%B2cgroup-%E5%88%B0%E5%BA%95%E6%98%AF%E6%80%8E%E4%B9%88%E7%BB%9F%E8%AE%A1%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E6%9C%80%E5%A4%A7%E5%80%BC%E7%9A%84&quot;&gt;在一月份的 post&lt;/a&gt;，恰巧提到了这个事情），而更新数据需要 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shrink_slab&lt;/code&gt;，从而需要 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shrinker_rwsem&lt;/code&gt; 的读锁导致的。所以可能只能靠大版本更新内核来缓解问题（或者想办法把上面的 commit backport 到老的内核上）。&lt;/p&gt;
+
+&lt;p&gt;这里感谢坏人 (@shankerwangmiao) 对此的提问与建议。&lt;/p&gt;
 
 &lt;h2 id=&quot;结论&quot;&gt;结论&lt;/h2&gt;
 
