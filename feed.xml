@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-02-08T08:02:04+00:00</updated>
+  <updated>2024-02-27T10:53:07+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -24,6 +24,7 @@
     </author>
   
 
+  
   
   
     <entry>
@@ -744,6 +745,8 @@ cgroup_mutex            326          [&amp;lt;00000000c1655a73&amp;gt;] proc_cgr
       
       
     </entry>
+  
+  
   
   
   
@@ -1490,6 +1493,8 @@ SUBLEVEL = 78
   
   
   
+  
+  
     <entry>
       
       <title type="html">在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记</title>
@@ -2050,6 +2055,8 @@ xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;spa
       
       
     </entry>
+  
+  
   
   
   
@@ -2863,6 +2870,8 @@ $77 = {
       
       
     </entry>
+  
+  
   
   
   
@@ -3830,6 +3839,8 @@ cpu.pressure            memory.peak          pids.peak
       
       
     </entry>
+  
+  
   
   
   
@@ -6459,6 +6470,8 @@ H-&amp;gt;A-&amp;gt;?-&amp;gt;B
   
   
   
+  
+  
     <entry>
       
       <title type="html">调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</title>
@@ -6947,6 +6960,8 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
       
       
     </entry>
+  
+  
   
   
   
@@ -10249,6 +10264,8 @@ Time: 2706 ms
   
   
   
+  
+  
     <entry>
       
       <title type="html">偷懒（且不太正确）的暗黑模式配置</title>
@@ -10420,6 +10437,8 @@ iframe, img, image, video, [style*=&quot;background-image&quot;] {
       
       
     </entry>
+  
+  
   
   
   
@@ -12182,6 +12201,8 @@ undefined
   
   
   
+  
+  
     <entry>
       
       <title type="html">THU 半日游：参加 tunight 杂记</title>
@@ -12301,6 +12322,8 @@ undefined
       
       
     </entry>
+  
+  
   
   
   
@@ -12535,6 +12558,8 @@ undefined
   
   
   
+  
+  
     <entry>
       
       <title type="html">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</title>
@@ -12708,6 +12733,8 @@ undefined
       
       
     </entry>
+  
+  
   
   
   
@@ -12887,6 +12914,8 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
       
       
     </entry>
+  
+  
   
   
   
@@ -13094,6 +13123,8 @@ a.out:
   
   
   
+  
+  
     <entry>
       
       <title type="html">重新迁移：回到 Jekyll</title>
@@ -13145,6 +13176,8 @@ a.out:
       
       
     </entry>
+  
+  
   
   
   
@@ -13258,6 +13291,8 @@ a.out:
   
   
   
+  
+  
     <entry>
       
       <title type="html">语言学家</title>
@@ -13365,6 +13400,8 @@ a.out:
       
       
     </entry>
+  
+  
   
   
   
@@ -13508,6 +13545,8 @@ a.out:
   
   
   
+  
+  
     <entry>
       
       <title type="html">从 Jekyll 向 Hexo 迁移</title>
@@ -13555,6 +13594,7 @@ a.out:
       
       
     </entry>
+  
   
   
 </feed>
