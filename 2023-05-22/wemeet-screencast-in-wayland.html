@@ -1122,6 +1122,17 @@
 <p>不过说句题外话，A 站好像也挺惨的，我之前注册账号主要是为了看《摇曳露营》，然后被搞出先审后播之后就没新番了，在竞争上处于明显的劣势。</p>
 </details>
 
+<details>
+<summary>tl;dr</summary>
+<p>(Updated 2024/03/17)</p>
+
+<p>简单来说，该会议软件只能在 <b>rootful xwayland</b> 下才能获取到 xwayland 整个屏幕的信息。你可以先开个 nested wayland compositor（比如说 weston），也可以直接开这个 rootful xwayland（我不清楚 Server-Side Decoration 下直接开有没有边框，不过如果是 CSD-only 的环境（aka, GNOME）的话，需要编译的时候带上 libdecor 参数。作为参考，可以使用我打的 AUR 包：<a href="https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor">xwayland-standalone-with-libdecor</a>）</p>
+
+<p>在这个 rootful xwayland 下面就可以做很多传统 X 的事情了，比如说开个 WM（我推荐用 OpenBox）之类的。</p>
+
+<p>最后缺失的一环是把外面的内容传进来，而 xdg portal 暴露了屏幕共享的接口，可以输出一个 pipewire fd，之后 gstreamer 可以把这个 fd 输出到一个 X 窗口，于是就实现了这个目标。<a href="https://gitlab.gnome.org/-/snippets/19">xdp-screen-cast.py</a> 脚本就帮忙完成了写 DBus 请求等等的麻烦事。</p>
+</details>
+
 <h2 id="不太好的方案">不太好的方案</h2>
 
 <h3 id="虚拟摄像头">虚拟摄像头？</h3>

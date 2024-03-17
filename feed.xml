@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-02-27T10:53:07+00:00</updated>
+  <updated>2024-03-17T14:54:50+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1520,6 +1520,17 @@ SUBLEVEL = 78
 &lt;p&gt;而 YouTube 对应的功能是「播放列表」，而且我可以设置视频不列出在频道里面，所以没有问题。而且原始录制的视频有点大，直接塞个 video 标签，然后让人一开页面就下载几百兆的东西显然不是什么明智的选择。&lt;/p&gt;
 
 &lt;p&gt;不过说句题外话，A 站好像也挺惨的，我之前注册账号主要是为了看《摇曳露营》，然后被搞出先审后播之后就没新番了，在竞争上处于明显的劣势。&lt;/p&gt;
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;tl;dr&lt;/summary&gt;
+&lt;p&gt;(Updated 2024/03/17)&lt;/p&gt;
+
+&lt;p&gt;简单来说，该会议软件只能在 &lt;b&gt;rootful xwayland&lt;/b&gt; 下才能获取到 xwayland 整个屏幕的信息。你可以先开个 nested wayland compositor（比如说 weston），也可以直接开这个 rootful xwayland（我不清楚 Server-Side Decoration 下直接开有没有边框，不过如果是 CSD-only 的环境（aka, GNOME）的话，需要编译的时候带上 libdecor 参数。作为参考，可以使用我打的 AUR 包：&lt;a href=&quot;https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor&quot;&gt;xwayland-standalone-with-libdecor&lt;/a&gt;）&lt;/p&gt;
+
+&lt;p&gt;在这个 rootful xwayland 下面就可以做很多传统 X 的事情了，比如说开个 WM（我推荐用 OpenBox）之类的。&lt;/p&gt;
+
+&lt;p&gt;最后缺失的一环是把外面的内容传进来，而 xdg portal 暴露了屏幕共享的接口，可以输出一个 pipewire fd，之后 gstreamer 可以把这个 fd 输出到一个 X 窗口，于是就实现了这个目标。&lt;a href=&quot;https://gitlab.gnome.org/-/snippets/19&quot;&gt;xdp-screen-cast.py&lt;/a&gt; 脚本就帮忙完成了写 DBus 请求等等的麻烦事。&lt;/p&gt;
 &lt;/details&gt;
 
 &lt;h2 id=&quot;不太好的方案&quot;&gt;不太好的方案&lt;/h2&gt;
