@@ -1547,6 +1547,8 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 
 <p>Update 2 (2023-08-26): 最新版的 xorg-xwayland 做了 libdecor 的适配调整，添加了 resize 的支持，所以另一种思路是在编译 xorg-xwayland 时加上 libdecor 支持，然后扔掉 weston，直接启动 Xwayland。不过 Arch 编译的版本没有加 libdecor，所以我<a href="https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor">打了个 AUR 包</a>自己用，加上 git 版带 GTK plugin 的 libdecor，显示的效果还挺不错。此外 <a href="https://wiki.archlinux.org/title/Openbox#Configuration">openbox 修改配置也很方便</a>，可以在它的菜单中配置在这个新的 X Display 里面可能要用到的东西。可以参考：<a href="https://github.com/taoky/scripts/blob/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/x11/wemeet/start.sh">我现在使用的启动脚本</a> 和 <a href="https://github.com/taoky/scripts/tree/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/dotfile/.config/openbox">我的 openbox 配置</a>。</p>
 
+<p>Update 3 (2024-11-02): Arch 的 <code class="language-plaintext highlighter-rouge">xorg-xwayland</code> 包已经带了 <code class="language-plaintext highlighter-rouge">libdecor</code> 依赖，因此不需要再额外编译我之前打的 AUR 包了。客户端窗口装饰需要添加 <code class="language-plaintext highlighter-rouge">-decorate</code> 参数，此外似乎关闭 <code class="language-plaintext highlighter-rouge">MIT-SHM</code> 扩展会导致一些问题，因此建议把 <code class="language-plaintext highlighter-rouge">-extension MIT-SHM</code> 也删掉。</p>
+
 <p><img src="/pictures/wemeet/xwayland-standalone.png" alt="Standalone xwayland screenshot" /></p>
 
 <hr />

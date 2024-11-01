@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-08-17T03:11:19+00:00</updated>
+  <updated>2024-11-01T19:52:57+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1946,6 +1946,8 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 &lt;/ol&gt;
 
 &lt;p&gt;Update 2 (2023-08-26): 最新版的 xorg-xwayland 做了 libdecor 的适配调整，添加了 resize 的支持，所以另一种思路是在编译 xorg-xwayland 时加上 libdecor 支持，然后扔掉 weston，直接启动 Xwayland。不过 Arch 编译的版本没有加 libdecor，所以我&lt;a href=&quot;https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor&quot;&gt;打了个 AUR 包&lt;/a&gt;自己用，加上 git 版带 GTK plugin 的 libdecor，显示的效果还挺不错。此外 &lt;a href=&quot;https://wiki.archlinux.org/title/Openbox#Configuration&quot;&gt;openbox 修改配置也很方便&lt;/a&gt;，可以在它的菜单中配置在这个新的 X Display 里面可能要用到的东西。可以参考：&lt;a href=&quot;https://github.com/taoky/scripts/blob/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/x11/wemeet/start.sh&quot;&gt;我现在使用的启动脚本&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/taoky/scripts/tree/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/dotfile/.config/openbox&quot;&gt;我的 openbox 配置&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;Update 3 (2024-11-02): Arch 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xorg-xwayland&lt;/code&gt; 包已经带了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libdecor&lt;/code&gt; 依赖，因此不需要再额外编译我之前打的 AUR 包了。客户端窗口装饰需要添加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-decorate&lt;/code&gt; 参数，此外似乎关闭 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MIT-SHM&lt;/code&gt; 扩展会导致一些问题，因此建议把 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-extension MIT-SHM&lt;/code&gt; 也删掉。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/wemeet/xwayland-standalone.png&quot; alt=&quot;Standalone xwayland screenshot&quot; /&gt;&lt;/p&gt;
 
