@@ -1419,7 +1419,7 @@ SUBLEVEL = 78
 <span class="c1">// }</span>
 <span class="c1">// 很好，碍事的 never 没了</span>
 <span class="kd">type</span> <span class="nx">TrueProps</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="p">[</span><span class="nx">P</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">T</span> <span class="k">as</span> <span class="nx">T</span><span class="p">[</span><span class="nx">P</span><span class="p">]</span> <span class="kd">extends</span> <span class="kc">true</span> <span class="p">?</span> <span class="nx">P</span> <span class="p">:</span> <span class="nx">never</span><span class="p">]:</span> <span class="kr">any</span>
+  <span class="p">[</span><span class="nx">P</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">T</span> <span class="kd">as </span><span class="nx">T</span><span class="p">[</span><span class="nx">P</span><span class="p">]</span> <span class="kd">extends</span> <span class="kc">true</span> <span class="p">?</span> <span class="nx">P</span> <span class="p">:</span> <span class="nx">never</span><span class="p">]:</span> <span class="kr">any</span>
 <span class="p">};</span>
 <span class="c1">// 上面这个是 GPT-4 写的类型</span>
 <span class="c1">// 我在后面加了 : any（否则会报错 https://stackoverflow.com/questions/71019327/mapped-type-compiler-error-when-strict-is-true-mapped-object-type-implicitly-ha）</span>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh">
-  <generator uri="http://jekyllrb.com" version="4.3.2">Jekyll</generator>
+  <generator uri="http://jekyllrb.com" version="4.3.4">Jekyll</generator>
   
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-11-19T17:09:53+00:00</updated>
+  <updated>2024-12-21T18:46:24+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -37,6 +37,7 @@
       <published>2023-12-02T06:10:00+00:00</published>
       <updated>2023-12-02T06:10:00+00:00</updated>
       <id>https://blog.taoky.moe/2023-12-02/icpc-2023-hefei-judgehosts-scale</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2023-12-02/icpc-2023-hefei-judgehosts-scale.html">&lt;p&gt;在答应来合肥站帮忙的那天，我怎么都没有想到，赛后自己居然要花好几天时间分析 Linux 内核的问题。&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -711,6 +712,7 @@ cgroup_mutex            326          [&amp;lt;00000000c1655a73&amp;gt;] proc_cgr
 
   &lt;p&gt;A: With &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cgroup_mutex&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shrinker_rwsem&lt;/code&gt;, NO (in Linux &amp;lt; 6.3).&lt;/p&gt;
 &lt;/blockquote&gt;</content>
+      
 
       
       
@@ -760,6 +762,7 @@ cgroup_mutex            326          [&amp;lt;00000000c1655a73&amp;gt;] proc_cgr
       <published>2023-10-22T14:00:00+00:00</published>
       <updated>2023-10-22T14:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline.html">&lt;p&gt;今年没空（也没心情）写详细的 writeup 了，所以只能大概讲讲我对每道题的思路和一些观点了。&lt;/p&gt;
 
 &lt;!-- more --&gt;
@@ -1075,7 +1078,7 @@ SUBLEVEL = 78
 &lt;span class=&quot;c1&quot;&gt;// }&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;// 很好，碍事的 never 没了&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;TrueProps&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;keyof&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;never&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;any&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;keyof&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;as &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;P&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;never&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;any&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;// 上面这个是 GPT-4 写的类型&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;// 我在后面加了 : any（否则会报错 https://stackoverflow.com/questions/71019327/mapped-type-compiler-error-when-strict-is-true-mapped-object-type-implicitly-ha）&lt;/span&gt;
@@ -1454,6 +1457,7 @@ SUBLEVEL = 78
 &lt;h2 id=&quot;小章鱼的曲奇部分&quot;&gt;小章鱼的曲奇（部分）&lt;/h2&gt;
 
 &lt;p&gt;第一问 &lt;a href=&quot;https://github.com/tna0y/Python-random-module-cracker&quot;&gt;https://github.com/tna0y/Python-random-module-cracker&lt;/a&gt;，第三问看提示，然后看代码发现 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zip()&lt;/code&gt; 只取比较短的那个 list 作为长度，因此只要输入一个值就够了。&lt;/p&gt;</content>
+      
 
       
       
@@ -1505,6 +1509,7 @@ SUBLEVEL = 78
       <published>2023-05-22T20:00:00+00:00</published>
       <updated>2023-05-22T20:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html">&lt;p&gt;&lt;a href=&quot;https://aur.archlinux.org/packages/wemeet-bin&quot;&gt;众所周知&lt;/a&gt;，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -2032,6 +2037,7 @@ xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;spa
 &lt;p&gt;我用这个方案开过了几次会，还挺舒服的，相比于开个 VM 也更流畅。&lt;/p&gt;
 
 &lt;p&gt;其实如果某会议软件搞个 Web 版本就没这么多破事了。&lt;/p&gt;</content>
+      
 
       
       
@@ -2083,6 +2089,7 @@ xclip &lt;span class=&quot;nt&quot;&gt;-selection&lt;/span&gt; clipboard &lt;spa
       <published>2023-02-17T20:30:00+00:00</published>
       <updated>2023-02-17T20:30:00+00:00</updated>
       <id>https://blog.taoky.moe/2023-02-17/gnome-debug-performance</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html">&lt;p&gt;距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，&lt;a href=&quot;https://ftp.lug.ustc.edu.cn/%E6%B4%BB%E5%8A%A8/2022.9.20_%E8%BD%AF%E4%BB%B6%E8%87%AA%E7%94%B1%E6%97%A5/slides/gnome-wayland-user-perspective.pdf&quot;&gt;这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides&lt;/a&gt;）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。&lt;/p&gt;
 
 &lt;p&gt;而且，Wayland session 还带来了一点负加成：不能只重启混成器（在这里是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gnome-shell&lt;/code&gt;）而保留其他的用户进程。也就是说，靠 Alt + F2 然后输入 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r&lt;/code&gt; 是做不到的。这导致我每隔两三天就要 logout 然后再 login，否则到最后鼠标晃一晃都卡，生产力大幅降低。因此前段时间我打算来尝试解决这个问题。&lt;/p&gt;
@@ -2847,6 +2854,7 @@ $77 = {
 &lt;p&gt;其实还挺开心的，虽然我还是不知道 perf 那个输出是怎么回事。同时，我也希望这篇文章能帮助读者调试类似的性能问题：有关 gnome-shell 性能调试的技巧网络上很少，我也试过 sysprof，对于这个例子没有给出有价值的信息（可能是漏了啥，比如说 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fno-omit-frame-pointer&lt;/code&gt; 之类，虽然没有查过，但是猜测 Arch 没开这个 flag）。同时使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcore&lt;/code&gt; 也对调试起到了相当大的帮助（因为显然不能直接 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gdb attach&lt;/code&gt; 上去，否则整个图形界面就卡住了）。&lt;/p&gt;
 
 &lt;p&gt;感觉如果之后再有有趣的调试经历的话，「调试一则」或许可以弄成一个系列也说不准。&lt;/p&gt;</content>
+      
 
       
       
@@ -2898,6 +2906,7 @@ $77 = {
       <published>2023-01-01T16:00:00+00:00</published>
       <updated>2023-01-01T16:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage.html">&lt;p&gt;故事的背景是：这周我在用 Rust 写&lt;a href=&quot;https://adventofcode.com/2022/&quot;&gt;今年 Advent of Code&lt;/a&gt; 的题目。全部完成之后，我想写个程序统一统计一下我写的程序的运行时间和最大占用内存。&lt;/p&gt;
 
 &lt;p&gt;运行时间的计算很简单，但是最大占用内存怎么处理呢？最简单的办法是轮询 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/&amp;lt;PID&amp;gt;/statm&lt;/code&gt;，就能拿到程序占用的 RSS（Resident set size），或者如果要把被换出到 swap 的页也算进去的话，就用慢一点但是更精确的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/&amp;lt;PID&amp;gt;/smaps&lt;/code&gt;（Linux 2.6.14+）或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/&amp;lt;PID&amp;gt;/smaps_rollup&lt;/code&gt;（&lt;a href=&quot;https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=493b0e9d945fa9dfe96be93ae41b4ca4b6fdb317&quot;&gt;Linux 4.14+&lt;/a&gt;）：像 htop 这样的工具在 Linux 下获取每个进程的信息就是用读取 procfs 内容的方式实现的。（参考 &lt;a href=&quot;https://man7.org/linux/man-pages/man5/proc.5.html&quot;&gt;proc(5)&lt;/a&gt;）&lt;/p&gt;
@@ -3535,7 +3544,7 @@ rmdir /sys/fs/cgroup/adventofcode-2022
 
 &lt;p&gt;&lt;img src=&quot;/pictures/maxmem/kita1.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;让我翻翻文档.jpg&lt;/em&gt; &lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;让我翻翻文档.jpg&lt;/em&gt; &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;If rusage is not NULL, the struct rusage to which  it  points  will  be
 filled  with  accounting information about the child.  See getrusage(2)
@@ -3813,11 +3822,12 @@ cpu.pressure            memory.peak          pids.peak
 
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
       &lt;p&gt;截图自《孤独摇滚》第三集，&lt;del&gt;建议没看的都快去看&lt;/del&gt;。 &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
+      
 
       
       
@@ -3867,6 +3877,7 @@ cpu.pressure            memory.peak          pids.peak
       <published>2022-11-27T13:00:00+00:00</published>
       <updated>2022-11-27T13:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-11-27/geekgame-v2-wp</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2022-11-27/geekgame-v2-wp.html">&lt;p&gt;又是新的一年，在 Hackergame 2022 结束之后，PKU 的 GeekGame 也开始了。其实我还是挺期待今年能整出什么活的。&lt;/p&gt;
 
 &lt;p&gt;比赛的整体体验还不错，作为 hackergame staff 也能以选手的身份体会到了为了做题疯狂刷夜的感觉。最后总榜第 2 名。&lt;/p&gt;
@@ -6444,6 +6455,7 @@ H-&amp;gt;A-&amp;gt;?-&amp;gt;B
 &lt;p&gt;挺好的，终于体验了一次比赛位列前三的感觉。希望 GeekGame 也越办越好，多整好活。&lt;/p&gt;
 
 &lt;p&gt;另外这个礼拜我的作息成功地被调到了 UTC+0。之后慢慢调回来吧。&lt;/p&gt;</content>
+      
 
       
       
@@ -6495,6 +6507,7 @@ H-&amp;gt;A-&amp;gt;?-&amp;gt;B
       <published>2022-07-21T18:18:00+00:00</published>
       <updated>2022-07-21T18:18:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">&lt;p&gt;Update 1 (2022/10/30): &lt;a href=&quot;https://fwupd.org/lvfs/devices/com.lenovo.ThinkPadN3MET.firmware&quot;&gt;T14 Gen3 的固件升级 N3MET08W&lt;/a&gt; 已经修复了这个问题，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fwupdmgr&lt;/code&gt; 更新即可。&lt;/p&gt;
 
 &lt;p&gt;最近购买了一台 ThinkPad T14 Gen3 作为我的新笔记本，替代掉原来用的内存只有 8GB、SSD 已经快满了的 MBP。到手之后就把 Windows 11 格了装 Arch Linux（本来试了一下 NixOS，结果发现图形界面不知道为什么总是开不出来，最后暂时放弃了）。距离我上次把 Linux 桌面作为主力已经过去了将近 9 年的时间，相比于当时来讲，Linux 桌面的进步其实挺大的，虽然……可能还是没到所谓的「Linux 桌面元年」吧。&lt;/p&gt;
@@ -6937,6 +6950,7 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
 &lt;p class=&quot;center&quot;&gt;&lt;em&gt;不也挺好吗.jpg&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;我没有量化对比过 S3 和 S0ix 的耗电情况，只是 S0ix 睡眠恢复后似乎不会让任何东西坏掉，而 S3 睡眠会让触摸板一卡一卡的（好像可以通过重新加载 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;psmouse&lt;/code&gt; 来恢复），休眠（Hibernate）会让 sof 音频固件出问题（可以通过重新加载 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;snd_sof_pci_intel_tgl&lt;/code&gt; 来恢复）。&lt;/p&gt;</content>
+      
 
       
       
@@ -6988,6 +7002,7 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
       <published>2022-05-04T07:44:00+00:00</published>
       <updated>2022-05-04T07:44:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial.html">&lt;p&gt;尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 &lt;a href=&quot;https://github.com/rust-lang/rustlings/&quot;&gt;rustlings&lt;/a&gt; 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。&lt;/p&gt;
 
 &lt;p&gt;最后发现，（至少对于我来说）入门一门语言最好的方式是把自己实际的需求用这门语言去试一遍：在写了几个实用的脚本程序，用 Rust 去做了一门课的课程实验之后，我发现使用 Rust &lt;strong&gt;根本没有那么难&lt;/strong&gt;。&lt;/p&gt;
@@ -7853,7 +7868,7 @@ error: could not compile `helloworld` due to previous error
 
     &lt;p&gt;与之相对应的，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;impl trait&lt;/code&gt; 可以在编译期已知参数结构体的情况下为结构体生成对应的代码（相比于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Box&amp;lt;dyn trait&amp;gt;&lt;/code&gt;，它在运行时的开销更小，但是生成的程序的体积更大，因为需要为每种结构体都生成函数实现）。&lt;/p&gt;
 
-    &lt;p&gt;参考代码&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;：&lt;/p&gt;
+    &lt;p&gt;参考代码&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;：&lt;/p&gt;
 
     &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Madoka&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Homura&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -8147,7 +8162,7 @@ error: could not compile `ports-distinfo-parse` due to previous error
 
 &lt;p&gt;与此同时我们需要添加依赖，和之前 regex 和 walkdir 不同，为了使用以上的语法，我们需要设定 crate 需要使用的 feature，就像这样子：&lt;/p&gt;
 
-&lt;div class=&quot;language-toml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;clap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;py&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;py&quot;&gt;features&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;derive&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;div class=&quot;language-toml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;py&quot;&gt;clap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;py&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;py&quot;&gt;features&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;derive&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;试运行：&lt;/p&gt;
@@ -10237,11 +10252,12 @@ Time: 2706 ms
 
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
       &lt;p&gt;emmm 事实上，可以肯定 Rust 开发组里有《魔法少女小圆》的忠实粉丝。去 &lt;a href=&quot;https://github.com/rust-lang/rust&quot;&gt;https://github.com/rust-lang/rust&lt;/a&gt; 里搜索看看就能看到&lt;a href=&quot;https://github.com/rust-lang/rust/search?q=madoka&quot;&gt;测试代码里有多少 madoka&lt;/a&gt; 了。以及在 17 年的时候，甚至&lt;a href=&quot;https://web.archive.org/web/20170606180621/https://doc.rust-lang.org/error-index.html&quot;&gt;在错误 E0432 的解释&lt;/a&gt;里也有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;homura::Madoka&lt;/code&gt;（当然现在没有了）。我写的时候一直想玩这个梗，终于在这里用上了（ &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
+      
 
       
       
@@ -10289,6 +10305,7 @@ Time: 2706 ms
       <published>2022-03-10T07:42:00+00:00</published>
       <updated>2022-03-10T07:42:00+00:00</updated>
       <id>https://blog.taoky.moe/2022-03-10/lazy-dark-mode</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2022-03-10/lazy-dark-mode.html">&lt;p&gt;Update (2023/10/20): 部署了用 darkreader 生成的暗黑模式 CSS，并且参考 &lt;a href=&quot;https://sergeyski.com/css-color-scheme-and-iframes-lessons-learned-from-disqus-background-bug/&quot;&gt;https://sergeyski.com/css-color-scheme-and-iframes-lessons-learned-from-disqus-background-bug/&lt;/a&gt; 修了 Disqus 的问题。&lt;/p&gt;
 
 &lt;p&gt;这两天心血来潮，给自己好几个月没动的 blog 加了暗黑模式。起因是昨天在垃圾邮件箱看到了 &lt;a href=&quot;https://browser.kagi.com/&quot;&gt;Orion 浏览器&lt;/a&gt;的 Beta 版更新邮件，然后想起来自己当时好像确实填了注册信息，就下载下来试了试，顺便看了看它们的 GitHub organization 里面的东西（虽然浏览器本体不是开源的）。然后就看到有个&lt;a href=&quot;https://github.com/OrionBrowser/DarkMode&quot;&gt;快速为页面配置暗黑模式的脚本&lt;/a&gt;（MIT License）：&lt;/p&gt;
@@ -10418,6 +10435,7 @@ iframe, img, image, video, [style*=&quot;background-image&quot;] {
 &lt;/ul&gt;
 
 &lt;p&gt;希望之后自己能每个月都写点儿东西。&lt;/p&gt;</content>
+      
 
       
       
@@ -10465,6 +10483,7 @@ iframe, img, image, video, [style*=&quot;background-image&quot;] {
       <published>2021-11-21T14:00:00+00:00</published>
       <updated>2021-11-21T14:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2021-11-21/geekgame-v1-wp</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2021-11-21/geekgame-v1-wp.html">&lt;p&gt;作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。&lt;/p&gt;
 
 &lt;p&gt;我的用户名是「taoky # 好吃就是高兴」（与 hackergame staff 名单里我的昵称呼应，本来以为用户名有 tag 支持的，但是发现没有，也懒得改名字了），最后总榜第 6 名。&lt;/p&gt;
@@ -12175,6 +12194,7 @@ undefined
 &lt;p class=&quot;center&quot;&gt;&lt;img src=&quot;/pictures/geekgame-wp/extra/copilot4.png&quot; alt=&quot;copilot-4&quot; /&gt;&lt;/p&gt;
 
 &lt;p class=&quot;center&quot;&gt;&lt;em&gt;图 13. 好像哪里不对，又好像没啥问题.png&lt;/em&gt;&lt;/p&gt;</content>
+      
 
       
       
@@ -12226,6 +12246,7 @@ undefined
       <published>2021-04-18T08:10:00+00:00</published>
       <updated>2021-04-18T08:10:00+00:00</updated>
       <id>https://blog.taoky.moe/2021-04-18/tunight</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2021-04-18/tunight.html">&lt;p&gt;博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。&lt;/p&gt;
 
 &lt;hr /&gt;
@@ -12301,6 +12322,7 @@ undefined
 &lt;p&gt;最后合了个影，愉快结束了。&lt;em&gt;（虽然脸盲的我，还是没有记住谁是谁。）&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;( ^ ^ )/&lt;/p&gt;</content>
+      
 
       
       
@@ -12350,13 +12372,14 @@ undefined
       <published>2019-07-08T04:33:00+00:00</published>
       <updated>2019-07-08T04:33:00+00:00</updated>
       <id>https://blog.taoky.moe/2019-07-08/epoll-101</id>
-      <content type="html" xml:base="https://blog.taoky.moe/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-07-08/epoll-101.html">&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 是 Linux 下的一种 I/O 事件通知机制&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 作为一种提高性能的方式被不少人拿去用，虽然理解与写 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。&lt;/p&gt;
 
 &lt;p&gt;在介绍 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 之前，不如让我们来看看，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 到底是怎么出现的。&lt;/p&gt;
 
 &lt;h2 id=&quot;网页服务器与-c10k-问题&quot;&gt;网页服务器与 C10K 问题&lt;/h2&gt;
 
-&lt;p&gt;C10K 问题指同时处理一万个并发连接时的优化问题&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;C10K 问题指同时处理一万个并发连接时的优化问题&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;h3 id=&quot;起初&quot;&gt;起初……&lt;/h3&gt;
 
@@ -12378,7 +12401,7 @@ undefined
 
 &lt;p&gt;首先由某个函数来告诉我们文件描述符准备好读/写，然后我们对那个文件描述符做短小快速的处理，最后回到那个函数，不停循环。我们不用太担心这样对性能会不会带来比较大的影响，因为网络的 I/O 相比 CPU 来讲慢得多。这样的话我们的单个进程/线程也可以处理好多个连接了。&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; 就可以做到「通知」的作用。它使用的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;select()&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; 就可以做到「通知」的作用。它使用的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fd_set&lt;/code&gt; 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。&lt;/p&gt;
 
 &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;writefds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
            &lt;span class=&quot;n&quot;&gt;fd_set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exceptfds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeval&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -12439,7 +12462,7 @@ undefined
   &lt;li&gt;如果是水平触发，那么 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的话（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt; &lt;strong&gt;不能保证&lt;/strong&gt;一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt;，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的话（&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt; &lt;strong&gt;不能保证&lt;/strong&gt;一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt;，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;p&gt;文档对使用边缘触发给出的建议是：&lt;/p&gt;
 
@@ -12459,16 +12482,16 @@ undefined
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLOUT&lt;/code&gt;: 输出 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write&lt;/code&gt;) 事件。&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLRDHUP&lt;/code&gt;: 对方关闭连接，或者 shutdown 了写入端的事件。
     &lt;ul&gt;
-      &lt;li&gt;「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt; 之后跑一次 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt;，返回 0 后判断对方已经 shutdown 了写入端&lt;sup id=&quot;fnref:5&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+      &lt;li&gt;「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLIN&lt;/code&gt; 之后跑一次 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt;，返回 0 后判断对方已经 shutdown 了写入端&lt;sup id=&quot;fnref:5&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLPRI&lt;/code&gt;: 文件描述符异常（接收紧急数据&lt;sup id=&quot;fnref:6&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;）。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLPRI&lt;/code&gt;: 文件描述符异常（接收紧急数据&lt;sup id=&quot;fnref:6&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;）。&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLERR&lt;/code&gt;: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLHUP&lt;/code&gt;: 文件描述符被「挂断」，对方 shutdown 或关闭了连接&lt;sup id=&quot;fnref:7&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLHUP&lt;/code&gt;: 文件描述符被「挂断」，对方 shutdown 或关闭了连接&lt;sup id=&quot;fnref:7&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLET&lt;/code&gt;: 边缘触发。&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt;: 当文件描述符从 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 中被拿出来后，就不会再被其他对 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_wait()&lt;/code&gt; 的调用中拿出来了。例如，多个线程使用同一个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。&lt;/li&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLWAKEUP&lt;/code&gt;: 保证事件在等待/处理的时候，系统不会进入休眠状态。&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt;: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 也能达到类似的效果，只是每次都额外多出了一个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 系统调用&lt;sup id=&quot;fnref:8&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt;: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 也能达到类似的效果，只是每次都额外多出了一个 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll_ctl()&lt;/code&gt; 系统调用&lt;sup id=&quot;fnref:8&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;。&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;实现网页服务器的思路与一些问题&quot;&gt;实现网页服务器的思路与一些问题&lt;/h2&gt;
@@ -12495,7 +12518,7 @@ undefined
 &lt;p&gt;以上提到的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLONESHOT&lt;/code&gt; 和 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; 可以部分解决这样的惊群问题，除此之外，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SO_REUSEPORT&lt;/code&gt; 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.&lt;sup id=&quot;fnref:8:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+  &lt;p&gt;The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EPOLLEXCLUSIVE&lt;/code&gt; flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.&lt;sup id=&quot;fnref:8:1&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;或许真的拿 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;epoll&lt;/code&gt; 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……&lt;/p&gt;
@@ -12510,32 +12533,33 @@ undefined
 
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Epoll&quot;&gt;https://en.wikipedia.org/wiki/Epoll&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/C10k_problem&quot;&gt;https://en.wikipedia.org/wiki/C10k_problem&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:3&quot;&gt;
       &lt;p&gt;参考了 CSAPP 的 13.2 节。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:4&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&quot;&gt;https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:5&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:5&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;amp;pg=PA1343&amp;amp;lpg=PA1343&amp;amp;dq=EPOLLRDHUP+edge+trigger&amp;amp;source=bl&amp;amp;ots=kMHdB9wVu3&amp;amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;amp;hl=zh-CN&amp;amp;sa=X&amp;amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;amp;q=EPOLLRDHUP edge trigger&amp;amp;f=false&quot;&gt;The Linux Programming Interface: A Linux and UNIX System Programming Handbook&lt;/a&gt; &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:6&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:6&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&quot;&gt;https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen&lt;/a&gt; &lt;a href=&quot;#fnref:6&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:7&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:7&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&quot;&gt;https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated&lt;/a&gt; &lt;a href=&quot;#fnref:7&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:8&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:8&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&quot;&gt;https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/&lt;/a&gt; &lt;a href=&quot;#fnref:8&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:8:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
+      
 
       
       
@@ -12583,6 +12607,7 @@ undefined
       <published>2019-02-23T12:00:00+00:00</published>
       <updated>2019-02-23T12:00:00+00:00</updated>
       <id>https://blog.taoky.moe/2019-02-23/installing-os-on-vm</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2019-02-23/installing-os-on-vm.html">&lt;p&gt;感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（&lt;a href=&quot;https://ibugone.com/p/15&quot;&gt;English&lt;/a&gt;，&lt;a href=&quot;https://ibugone.com/p/15-cn&quot;&gt;中文&lt;/a&gt;）。&lt;/p&gt;
 
 &lt;p&gt;主要目的是帮助使用 Mac 的同学简单配置虚拟机，以应对本学期的 操作系统原理与设计 课程（还有日常可能需要的 Windows 需求）。&lt;/p&gt;
@@ -12714,6 +12739,7 @@ undefined
 &lt;p&gt;将自己加入 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vboxsf&lt;/code&gt; 用户组。重启即可。默认目录会被挂载在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/media&lt;/code&gt; 下。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/vm/vb-shared-folder.png&quot; alt=&quot;VirtualBox Shared Folder&quot; /&gt;&lt;/p&gt;</content>
+      
 
       
       
@@ -12761,6 +12787,7 @@ undefined
       <published>2019-02-19T05:53:00+00:00</published>
       <updated>2019-02-19T05:53:00+00:00</updated>
       <id>https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem.html">&lt;p&gt;昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr +i&lt;/code&gt; 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。&lt;/p&gt;
 
 &lt;p&gt;（PS：Linux 上的 Docker 未见此问题）&lt;/p&gt;
@@ -12830,7 +12857,7 @@ ERROR: Unable to lock database: Read-only file system
 ERROR: Failed to open apk database: Read-only file system
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt;，但是一些基础的东西还是比较齐的——甚至有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wget&lt;/code&gt;。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 的啊&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt;，但是一些基础的东西还是比较齐的——甚至有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wget&lt;/code&gt;。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr&lt;/code&gt; 的啊&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;p&gt;这就尴尬了。&lt;/p&gt;
 
@@ -12883,18 +12910,19 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
 
 &lt;p&gt;从 BusyBox 的源码中可以找到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chattr.c&lt;/code&gt;，该文件属于 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;e2fsprogs&lt;/code&gt;。分析代码可以发现在解码完参数之后，调用了宏 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fsetflags(name, flags)&lt;/code&gt;（实际指向函数 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fgetsetflags(name, NULL, flags)&lt;/code&gt;），通过 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ioctl&lt;/code&gt; 对文件的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flags&lt;/code&gt; 进行了修改。&lt;/p&gt;
 
-&lt;p&gt;目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。而在虚拟环境中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df -hT&lt;/code&gt; 可以看到，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;（虚拟磁盘）是以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ext4&lt;/code&gt; 挂在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib&lt;/code&gt; 上的。&lt;/p&gt;
+&lt;p&gt;目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;。而在虚拟环境中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;df -hT&lt;/code&gt; 可以看到，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt;（虚拟磁盘）是以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ext4&lt;/code&gt; 挂在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib&lt;/code&gt; 上的。&lt;/p&gt;
 
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://busybox.net/downloads/BusyBox.html&quot;&gt;https://busybox.net/downloads/BusyBox.html&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&quot;&gt;https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
+      
 
       
       
@@ -12942,6 +12970,7 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 &lt;span class
       <published>2019-02-12T12:01:00+00:00</published>
       <updated>2019-02-12T12:01:00+00:00</updated>
       <id>https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device.html">&lt;p&gt;这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 &lt;a href=&quot;https://coolbooter.com/&quot;&gt;CoolBooter&lt;/a&gt; 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh&lt;/code&gt; 到我们的设备上搞事啦。&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;base&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ➜  ~ ssh root@192.168.0.109
@@ -12950,7 +12979,7 @@ Kud:~ root# uname -a
 Darwin Kud 13.0.0 Darwin Kernel Version 13.0.0: Wed Feb 13 21:37:47 PST 2013; root:xnu-2107.7.55.2.2~1/RELEASE_ARM_S5L8942X iPad2,5 arm P105AP Darwin
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;但是系统内置的命令很少，基本干不了什么事情（当然要想 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt-get&lt;/code&gt;——所以我们在 Cydia 中安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.6 Transitional&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.7 Strict&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;，然后就可以抛弃掉这个缓慢的前端界面了。&lt;/p&gt;
+&lt;p&gt;但是系统内置的命令很少，基本干不了什么事情（当然要想 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apt-get&lt;/code&gt;——所以我们在 Cydia 中安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.6 Transitional&lt;/code&gt; 或者 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APT 0.7 Strict&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;，然后就可以抛弃掉这个缓慢的前端界面了。&lt;/p&gt;
 
 &lt;p&gt;默认的 APT 源（在 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/apt/sources.list.d/&lt;/code&gt; 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。&lt;/p&gt;
 
@@ -12975,7 +13004,7 @@ org.coolstar.llvm-clang64 - LLVM, Clang, and LLD 5.0.1 for iOS/arm64
 # 以下省略
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;但如果你去尝试安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，会发现缺少 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libgcc&lt;/code&gt; 的依赖。所以还是去安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.coolstar.iostoolchain&lt;/code&gt; 吧（据说&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 的版本比 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LLVM+Clang&lt;/code&gt; 工具链要老得多）。&lt;/p&gt;
+&lt;p&gt;但如果你去尝试安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt;，会发现缺少 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libgcc&lt;/code&gt; 的依赖。所以还是去安装 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.coolstar.iostoolchain&lt;/code&gt; 吧（据说&lt;sup id=&quot;fnref:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcc&lt;/code&gt; 的版本比 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LLVM+Clang&lt;/code&gt; 工具链要老得多）。&lt;/p&gt;
 
 &lt;p&gt;好，安装完这一套工具链，写个 Hello, world! 编译看看。&lt;/p&gt;
 
@@ -13009,7 +13038,7 @@ clang-3.7: error: linker &lt;span class=&quot;nb&quot;&gt;command &lt;/span&gt;f
 
 &lt;h2 id=&quot;关于-sdk&quot;&gt;关于 SDK&lt;/h2&gt;
 
-&lt;p&gt;为了解决这个问题，我们需要 iOS 对应的 SDK。在下载&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;对应版本的 SDK 之后，我们可以看看里面有什么东西。&lt;/p&gt;
+&lt;p&gt;为了解决这个问题，我们需要 iOS 对应的 SDK。在下载&lt;sup id=&quot;fnref:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;对应版本的 SDK 之后，我们可以看看里面有什么东西。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/ios-compile/sdk.png&quot; alt=&quot;The structure of iOS SDK&quot; /&gt;&lt;/p&gt;
 
@@ -13050,7 +13079,7 @@ a.out:
 	/usr/lib/libSystem.B.dylib &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;compatibility version 1.0.0, current version 173.8.0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dylib&lt;/code&gt; 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.so&lt;/code&gt;。而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libSystem&lt;/code&gt; 库提供了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libc&lt;/code&gt; 的功能&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dylib&lt;/code&gt; 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.so&lt;/code&gt;。而 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libSystem&lt;/code&gt; 库提供了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libc&lt;/code&gt; 的功能&lt;sup id=&quot;fnref:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot; role=&quot;doc-noteref&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
 
 &lt;h2 id=&quot;开始编译&quot;&gt;开始编译&lt;/h2&gt;
 
@@ -13087,20 +13116,21 @@ a.out:
 
 &lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
   &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:1&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&quot;&gt;https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:2&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;http://iphonedevwiki.net/index.php/On-device_toolchains&quot;&gt;http://iphonedevwiki.net/index.php/On-device_toolchains&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:3&quot;&gt;
       &lt;p&gt;见 &lt;a href=&quot;http://resources.airnativeextensions.com/ios/&quot;&gt;http://resources.airnativeextensions.com/ios/&lt;/a&gt;，&lt;a href=&quot;https://github.com/theos/sdks&quot;&gt;https://github.com/theos/sdks&lt;/a&gt; 上也有几个不同的版本。 &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
-    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+    &lt;li id=&quot;fn:4&quot;&gt;
       &lt;p&gt;&lt;a href=&quot;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&quot;&gt;https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;</content>
+      
 
       
       
@@ -13148,6 +13178,7 @@ a.out:
       <published>2019-02-12T09:17:00+00:00</published>
       <updated>2019-02-12T09:17:00+00:00</updated>
       <id>https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again.html">&lt;p&gt;再次迁移回了 Jekyll。&lt;/p&gt;
 
 &lt;p&gt;从 Hexo 迁移回去的很大一个原因是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给人带来的无力感：我只想简简单单做一件事情，但是 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npm&lt;/code&gt; 给我带来了无穷无尽的依赖，还有 GitHub 时不时给我发送的安全警告。&lt;/p&gt;
@@ -13159,6 +13190,7 @@ a.out:
 &lt;p&gt;Hexo 的 &lt;a href=&quot;https://github.com/theme-next/hexo-theme-next&quot;&gt;NexT 主题&lt;/a&gt; 确实很漂亮，但是实话讲有点审美疲劳了吧（尤其是看到有一大帮人用了之后）。原来的评论系统使用的是 &lt;a href=&quot;https://github.com/imsun/gitment&quot;&gt;Gitment&lt;/a&gt;——把 GitHub Issues 搞成评论确实是一个很新奇的主意，但是看到 repo 的 issues 里面一堆让我感到有点尴尬，而且一个更现实的问题是：根本没人评论啊。&lt;/p&gt;
 
 &lt;p&gt;花了一点时间，重新搞回来了，没有遇到太糟糕的问题，顺便为了用各种 plugins，搞了 CI 部署 GitHub Pages，感谢 @iBug 提供的示例脚本。&lt;/p&gt;</content>
+      
 
       
       
@@ -13204,6 +13236,7 @@ a.out:
       <published>2018-08-29T16:36:12+00:00</published>
       <updated>2018-08-29T16:36:12+00:00</updated>
       <id>https://blog.taoky.moe/2018-08-29/freshman-year</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2018-08-29/freshman-year.html">&lt;p&gt;我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -13269,6 +13302,7 @@ a.out:
 &lt;hr /&gt;
 
 &lt;p&gt;EOF&lt;/p&gt;</content>
+      
 
       
       
@@ -13316,6 +13350,7 @@ a.out:
       <published>2018-07-14T10:09:29+00:00</published>
       <updated>2018-07-14T10:09:29+00:00</updated>
       <id>https://blog.taoky.moe/2018-07-14/language-gaokao-composition</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2018-07-14/language-gaokao-composition.html">&lt;p&gt;据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -13381,6 +13416,7 @@ a.out:
 &lt;p&gt;他又看了一眼结果，似乎明白了什么。&lt;/p&gt;
 
 &lt;p&gt;（完）&lt;/p&gt;</content>
+      
 
       
       
@@ -13428,6 +13464,7 @@ a.out:
       <published>2017-08-09T11:29:29+00:00</published>
       <updated>2017-08-09T11:29:29+00:00</updated>
       <id>https://blog.taoky.moe/2017-08-09/after-gaokao</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2017-08-09/after-gaokao.html">&lt;p&gt;其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。&lt;/p&gt;
 
 &lt;p&gt;在框架成功迁移到 Hexo 之后，我觉得是时候应该开始填坑了。（不过那篇关于 BMP 的文章我暂时不想填）&lt;/p&gt;
@@ -13523,6 +13560,7 @@ a.out:
 &lt;p&gt;其实写到这里，我开始有些害怕了，不知道我将会在大学面临什么。我当然清楚上大学不是去玩的，可是我究竟会遇见什么呢？&lt;/p&gt;
 
 &lt;p&gt;祝我好运。祝各位好运。&lt;/p&gt;</content>
+      
 
       
       
@@ -13570,11 +13608,13 @@ a.out:
       <published>2017-08-08T20:26:46+00:00</published>
       <updated>2017-08-08T20:26:46+00:00</updated>
       <id>https://blog.taoky.moe/2017-08-08/migration-to-hexo</id>
+      
       <content type="html" xml:base="https://blog.taoky.moe/2017-08-08/migration-to-hexo.html">&lt;p&gt;这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。&lt;/p&gt;
 
 &lt;p&gt;界面相比原来要更清晰一些。评论系统将会更换，因为使用 Disqus 的网络情况太过糟糕（不过还好的是，终于有人评论了我……可惜评论迁不过来）。另外将增加（并没有什么用的）站点统计。&lt;/p&gt;
 
 &lt;p&gt;EOF&lt;/p&gt;</content>
+      
 
       
       

@@ -704,7 +704,7 @@ Kud:~ root# uname -a
 Darwin Kud 13.0.0 Darwin Kernel Version 13.0.0: Wed Feb 13 21:37:47 PST 2013; root:xnu-2107.7.55.2.2~1/RELEASE_ARM_S5L8942X iPad2,5 arm P105AP Darwin
 </span></code></pre></div></div>
 
-<p>但是系统内置的命令很少，基本干不了什么事情（当然要想 <code class="language-plaintext highlighter-rouge">rm -rf /</code> 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 <code class="language-plaintext highlighter-rouge">apt-get</code>——所以我们在 Cydia 中安装 <code class="language-plaintext highlighter-rouge">APT 0.6 Transitional</code> 或者 <code class="language-plaintext highlighter-rouge">APT 0.7 Strict</code><sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>，然后就可以抛弃掉这个缓慢的前端界面了。</p>
+<p>但是系统内置的命令很少，基本干不了什么事情（当然要想 <code class="language-plaintext highlighter-rouge">rm -rf /</code> 删光文件跑路还是可以的）。我们知道，Cydia 实际上是使用的 Debian 的那一套来管理软件包的，但是找不到 <code class="language-plaintext highlighter-rouge">apt-get</code>——所以我们在 Cydia 中安装 <code class="language-plaintext highlighter-rouge">APT 0.6 Transitional</code> 或者 <code class="language-plaintext highlighter-rouge">APT 0.7 Strict</code><sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup>，然后就可以抛弃掉这个缓慢的前端界面了。</p>
 
 <p>默认的 APT 源（在 <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list.d/</code> 里面）的命令行工具比我原先想象的要多不少。要是能够装个编译器来编译我们自己写的程序就好了。</p>
 
@@ -729,7 +729,7 @@ org.coolstar.llvm-clang64 - LLVM, Clang, and LLD 5.0.1 for iOS/arm64
 # 以下省略
 </span></code></pre></div></div>
 
-<p>但如果你去尝试安装 <code class="language-plaintext highlighter-rouge">gcc</code>，会发现缺少 <code class="language-plaintext highlighter-rouge">libgcc</code> 的依赖。所以还是去安装 <code class="language-plaintext highlighter-rouge">org.coolstar.iostoolchain</code> 吧（据说<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> <code class="language-plaintext highlighter-rouge">gcc</code> 的版本比 <code class="language-plaintext highlighter-rouge">LLVM+Clang</code> 工具链要老得多）。</p>
+<p>但如果你去尝试安装 <code class="language-plaintext highlighter-rouge">gcc</code>，会发现缺少 <code class="language-plaintext highlighter-rouge">libgcc</code> 的依赖。所以还是去安装 <code class="language-plaintext highlighter-rouge">org.coolstar.iostoolchain</code> 吧（据说<sup id="fnref:2"><a href="#fn:2" class="footnote" rel="footnote" role="doc-noteref">2</a></sup> <code class="language-plaintext highlighter-rouge">gcc</code> 的版本比 <code class="language-plaintext highlighter-rouge">LLVM+Clang</code> 工具链要老得多）。</p>
 
 <p>好，安装完这一套工具链，写个 Hello, world! 编译看看。</p>
 
@@ -763,7 +763,7 @@ clang-3.7: error: linker <span class="nb">command </span>failed with <span class
 
 <h2 id="关于-sdk">关于 SDK</h2>
 
-<p>为了解决这个问题，我们需要 iOS 对应的 SDK。在下载<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>对应版本的 SDK 之后，我们可以看看里面有什么东西。</p>
+<p>为了解决这个问题，我们需要 iOS 对应的 SDK。在下载<sup id="fnref:3"><a href="#fn:3" class="footnote" rel="footnote" role="doc-noteref">3</a></sup>对应版本的 SDK 之后，我们可以看看里面有什么东西。</p>
 
 <p><img src="/pictures/ios-compile/sdk.png" alt="The structure of iOS SDK"></p>
 
@@ -804,7 +804,7 @@ a.out:
 	/usr/lib/libSystem.B.dylib <span class="o">(</span>compatibility version 1.0.0, current version 173.8.0<span class="o">)</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">dylib</code> 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 <code class="language-plaintext highlighter-rouge">*.so</code>。而 <code class="language-plaintext highlighter-rouge">libSystem</code> 库提供了 <code class="language-plaintext highlighter-rouge">libc</code> 的功能<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup>。</p>
+<p><code class="language-plaintext highlighter-rouge">dylib</code> 格式是 macOS/iOS 的动态库格式，类似于 Linux 下的 <code class="language-plaintext highlighter-rouge">*.so</code>。而 <code class="language-plaintext highlighter-rouge">libSystem</code> 库提供了 <code class="language-plaintext highlighter-rouge">libc</code> 的功能<sup id="fnref:4"><a href="#fn:4" class="footnote" rel="footnote" role="doc-noteref">4</a></sup>。</p>
 
 <h2 id="开始编译">开始编译</h2>
 
@@ -841,16 +841,16 @@ a.out:
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1" role="doc-endnote">
+    <li id="fn:1">
       <p><a href="https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/">https://www.reddit.com/r/jailbreak/comments/3dpzkj/tutorial_fun_with_aptcache_and_aptget_install_apt/</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:2" role="doc-endnote">
+    <li id="fn:2">
       <p><a href="http://iphonedevwiki.net/index.php/On-device_toolchains">http://iphonedevwiki.net/index.php/On-device_toolchains</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:3" role="doc-endnote">
+    <li id="fn:3">
       <p>见 <a href="http://resources.airnativeextensions.com/ios/">http://resources.airnativeextensions.com/ios/</a>，<a href="https://github.com/theos/sdks">https://github.com/theos/sdks</a> 上也有几个不同的版本。 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:4" role="doc-endnote">
+    <li id="fn:4">
       <p><a href="https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html">https://www.oreilly.com/library/view/mac-os-x/0596003560/ch05s02.html</a> <a href="#fnref:4" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>

@@ -716,13 +716,13 @@
   
 
   <div class="post-content" itemprop="articleBody">
-    <p><code class="language-plaintext highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="language-plaintext highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="language-plaintext highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
+    <p><code class="language-plaintext highlighter-rouge">epoll</code> 是 Linux 下的一种 I/O 事件通知机制<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup>——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。<code class="language-plaintext highlighter-rouge">epoll</code> 作为一种提高性能的方式被不少人拿去用，虽然理解与写 <code class="language-plaintext highlighter-rouge">epoll</code> 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。</p>
 
 <p>在介绍 <code class="language-plaintext highlighter-rouge">epoll</code> 之前，不如让我们来看看，<code class="language-plaintext highlighter-rouge">epoll</code> 到底是怎么出现的。</p>
 
 <h2 id="网页服务器与-c10k-问题">网页服务器与 C10K 问题</h2>
 
-<p>C10K 问题指同时处理一万个并发连接时的优化问题<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>。</p>
+<p>C10K 问题指同时处理一万个并发连接时的优化问题<sup id="fnref:2"><a href="#fn:2" class="footnote" rel="footnote" role="doc-noteref">2</a></sup>。</p>
 
 <h3 id="起初">起初……</h3>
 
@@ -744,7 +744,7 @@
 
 <p>首先由某个函数来告诉我们文件描述符准备好读/写，然后我们对那个文件描述符做短小快速的处理，最后回到那个函数，不停循环。我们不用太担心这样对性能会不会带来比较大的影响，因为网络的 I/O 相比 CPU 来讲慢得多。这样的话我们的单个进程/线程也可以处理好多个连接了。</p>
 
-<p><code class="language-plaintext highlighter-rouge">select()</code><sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup> 就可以做到「通知」的作用。它使用的 <code class="language-plaintext highlighter-rouge">fd_set</code> 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。</p>
+<p><code class="language-plaintext highlighter-rouge">select()</code><sup id="fnref:3"><a href="#fn:3" class="footnote" rel="footnote" role="doc-noteref">3</a></sup> 就可以做到「通知」的作用。它使用的 <code class="language-plaintext highlighter-rouge">fd_set</code> 结构体（其实是一个定长的 buffer）中存储了多个描述符。描述符分成了三类——准备好读取、准备好写入、发生错误。函数原型如下。</p>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">select</span><span class="p">(</span><span class="kt">int</span> <span class="n">nfds</span><span class="p">,</span> <span class="n">fd_set</span> <span class="o">*</span><span class="n">readfds</span><span class="p">,</span> <span class="n">fd_set</span> <span class="o">*</span><span class="n">writefds</span><span class="p">,</span>
            <span class="n">fd_set</span> <span class="o">*</span><span class="n">exceptfds</span><span class="p">,</span> <span class="k">struct</span> <span class="n">timeval</span> <span class="o">*</span><span class="n">timeout</span><span class="p">);</span>
@@ -805,7 +805,7 @@
   <li>如果是水平触发，那么 <code class="language-plaintext highlighter-rouge">epoll_wait()</code> 不会阻塞（因为还能读），你可以继续愉快地读取数据；但边缘触发时就会阻塞住，因为文件描述符的状态没有发生变化。</li>
 </ol>
 
-<p>如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 <code class="language-plaintext highlighter-rouge">epoll_wait()</code> 的话（<code class="language-plaintext highlighter-rouge">read()</code> 和 <code class="language-plaintext highlighter-rouge">write()</code> <strong>不能保证</strong>一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 <code class="language-plaintext highlighter-rouge">read()</code> 或者 <code class="language-plaintext highlighter-rouge">write()</code>，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup>。</p>
+<p>如果使用边缘触发，那么就要将文件描述符设置为非阻塞的。因为由上一个例子可以看到，在边缘触发状态下，如果数据没有读/写完就 <code class="language-plaintext highlighter-rouge">epoll_wait()</code> 的话（<code class="language-plaintext highlighter-rouge">read()</code> 和 <code class="language-plaintext highlighter-rouge">write()</code> <strong>不能保证</strong>一定能把你所指定数量字节的信息都读/写完），那么你就永远不会再知道你还可以读/写这个文件描述符了。因此为了完成读写的任务，就不得不循环 <code class="language-plaintext highlighter-rouge">read()</code> 或者 <code class="language-plaintext highlighter-rouge">write()</code>，直到最后一次确认没有东西可以再读/写了。如果文件描述符是阻塞的话，最后一次执行读写函数的时候就会卡在那里<sup id="fnref:4"><a href="#fn:4" class="footnote" rel="footnote" role="doc-noteref">4</a></sup>。</p>
 
 <p>文档对使用边缘触发给出的建议是：</p>
 
@@ -825,16 +825,16 @@
   <li><code class="language-plaintext highlighter-rouge">EPOLLOUT</code>: 输出 (<code class="language-plaintext highlighter-rouge">write</code>) 事件。</li>
   <li><code class="language-plaintext highlighter-rouge">EPOLLRDHUP</code>: 对方关闭连接，或者 shutdown 了写入端的事件。
     <ul>
-      <li>「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 <code class="language-plaintext highlighter-rouge">EPOLLIN</code> 之后跑一次 <code class="language-plaintext highlighter-rouge">read()</code>，返回 0 后判断对方已经 shutdown 了写入端<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote" rel="footnote">5</a></sup>。</li>
+      <li>「在边缘触发的情况下判断对方 shutdown 连接的时候很有用」。这可以使代码更简单，否则就需要识别到 <code class="language-plaintext highlighter-rouge">EPOLLIN</code> 之后跑一次 <code class="language-plaintext highlighter-rouge">read()</code>，返回 0 后判断对方已经 shutdown 了写入端<sup id="fnref:5"><a href="#fn:5" class="footnote" rel="footnote" role="doc-noteref">5</a></sup>。</li>
     </ul>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">EPOLLPRI</code>: 文件描述符异常（接收紧急数据<sup id="fnref:6" role="doc-noteref"><a href="#fn:6" class="footnote" rel="footnote">6</a></sup>）。</li>
+  <li><code class="language-plaintext highlighter-rouge">EPOLLPRI</code>: 文件描述符异常（接收紧急数据<sup id="fnref:6"><a href="#fn:6" class="footnote" rel="footnote" role="doc-noteref">6</a></sup>）。</li>
   <li><code class="language-plaintext highlighter-rouge">EPOLLERR</code>: 文件描述符错误。读取端被关闭后写入端也会报这个事件。不需要特殊指定。</li>
-  <li><code class="language-plaintext highlighter-rouge">EPOLLHUP</code>: 文件描述符被「挂断」，对方 shutdown 或关闭了连接<sup id="fnref:7" role="doc-noteref"><a href="#fn:7" class="footnote" rel="footnote">7</a></sup>。</li>
+  <li><code class="language-plaintext highlighter-rouge">EPOLLHUP</code>: 文件描述符被「挂断」，对方 shutdown 或关闭了连接<sup id="fnref:7"><a href="#fn:7" class="footnote" rel="footnote" role="doc-noteref">7</a></sup>。</li>
   <li><code class="language-plaintext highlighter-rouge">EPOLLET</code>: 边缘触发。</li>
   <li><code class="language-plaintext highlighter-rouge">EPOLLONESHOT</code>: 当文件描述符从 <code class="language-plaintext highlighter-rouge">epoll_wait()</code> 中被拿出来后，就不会再被其他对 <code class="language-plaintext highlighter-rouge">epoll_wait()</code> 的调用中拿出来了。例如，多个线程使用同一个 <code class="language-plaintext highlighter-rouge">epoll</code> 实例的时候，当某个线程拿出某个文件描述符的时候，即使这个文件描述符在处理的过程中发生了事件，其他线程也不会接收到，避免了线程之间的竞争的问题。</li>
   <li><code class="language-plaintext highlighter-rouge">EPOLLWAKEUP</code>: 保证事件在等待/处理的时候，系统不会进入休眠状态。</li>
-  <li><code class="language-plaintext highlighter-rouge">EPOLLEXCLUSIVE</code>: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 <code class="language-plaintext highlighter-rouge">EPOLLONESHOT</code> 也能达到类似的效果，只是每次都额外多出了一个 <code class="language-plaintext highlighter-rouge">epoll_ctl()</code> 系统调用<sup id="fnref:8" role="doc-noteref"><a href="#fn:8" class="footnote" rel="footnote">8</a></sup>。</li>
+  <li><code class="language-plaintext highlighter-rouge">EPOLLEXCLUSIVE</code>: 保证一个事件发生的时候，只有一个进程/线程会被唤醒。用 <code class="language-plaintext highlighter-rouge">EPOLLONESHOT</code> 也能达到类似的效果，只是每次都额外多出了一个 <code class="language-plaintext highlighter-rouge">epoll_ctl()</code> 系统调用<sup id="fnref:8"><a href="#fn:8" class="footnote" rel="footnote" role="doc-noteref">8</a></sup>。</li>
 </ul>
 
 <h2 id="实现网页服务器的思路与一些问题">实现网页服务器的思路与一些问题</h2>
@@ -861,7 +861,7 @@
 <p>以上提到的 <code class="language-plaintext highlighter-rouge">EPOLLONESHOT</code> 和 <code class="language-plaintext highlighter-rouge">EPOLLEXCLUSIVE</code> 可以部分解决这样的惊群问题，除此之外，使用 <code class="language-plaintext highlighter-rouge">SO_REUSEPORT</code> 设置监听的 socket，使多个 socket 共享同一个端口，也可以缓解这种问题。但是：</p>
 
 <blockquote>
-  <p>The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with <code class="language-plaintext highlighter-rouge">EPOLLEXCLUSIVE</code> flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.<sup id="fnref:8:1" role="doc-noteref"><a href="#fn:8" class="footnote" rel="footnote">8</a></sup></p>
+  <p>The best and the only scalable approach is to use recent Kernel 4.5+ and use level-triggered events with <code class="language-plaintext highlighter-rouge">EPOLLEXCLUSIVE</code> flag. This will ensure only one thread is woken for an event, avoid “thundering herd” issue and scale properly across multiple CPU’s.<sup id="fnref:8:1"><a href="#fn:8" class="footnote" rel="footnote" role="doc-noteref">8</a></sup></p>
 </blockquote>
 
 <p>或许真的拿 <code class="language-plaintext highlighter-rouge">epoll</code> 来实现一个正确、高效的服务器，真的不是什么容易的事情啊……</p>
@@ -876,28 +876,28 @@
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1" role="doc-endnote">
+    <li id="fn:1">
       <p><a href="https://en.wikipedia.org/wiki/Epoll">https://en.wikipedia.org/wiki/Epoll</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:2" role="doc-endnote">
+    <li id="fn:2">
       <p><a href="https://en.wikipedia.org/wiki/C10k_problem">https://en.wikipedia.org/wiki/C10k_problem</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:3" role="doc-endnote">
+    <li id="fn:3">
       <p>参考了 CSAPP 的 13.2 节。 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:4" role="doc-endnote">
+    <li id="fn:4">
       <p><a href="https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function">https://stackoverflow.com/questions/14643249/why-having-to-use-non-blocking-fd-in-a-edge-triggered-epoll-function</a> <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:5" role="doc-endnote">
+    <li id="fn:5">
       <p><a href="https://books.google.com.sg/books?id=Ps2SH727eCIC&amp;pg=PA1343&amp;lpg=PA1343&amp;dq=EPOLLRDHUP+edge+trigger&amp;source=bl&amp;ots=kMHdB9wVu3&amp;sig=ACfU3U3NjhfO358eEjue0qzBxtjB-UK6Fw&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwii_cSBqajjAhVIOY8KHcImA044ChDoATADegQICRAB#v=onepage&amp;q=EPOLLRDHUP edge trigger&amp;f=false">The Linux Programming Interface: A Linux and UNIX System Programming Handbook</a> <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:6" role="doc-endnote">
+    <li id="fn:6">
       <p><a href="https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen">https://stackoverflow.com/questions/10681624/epollpri-when-does-this-case-happen</a> <a href="#fnref:6" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:7" role="doc-endnote">
+    <li id="fn:7">
       <p><a href="https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated">https://stackoverflow.com/questions/52976152/tcp-when-is-epollhup-generated</a> <a href="#fnref:7" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:8" role="doc-endnote">
+    <li id="fn:8">
       <p><a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/">https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/</a> <a href="#fnref:8" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:8:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a></p>
     </li>
   </ol>

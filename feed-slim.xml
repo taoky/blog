@@ -1,0 +1,1056 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh">
+  <generator uri="http://jekyllrb.com" version="4.3.4">Jekyll</generator>
+  
+  
+  <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
+  <updated>2024-12-21T18:46:24+00:00</updated>
+  <id>https://blog.taoky.moe//</id>
+
+  
+    <title type="html">taoky’s blog (summary)</title>
+  
+
+  
+    <subtitle>taoky&apos;s blog</subtitle>
+  
+
+  
+    <author>
+        <name>taoky</name>
+      
+      
+    </author>
+  
+
+  
+  
+  
+    <entry>
+      
+      <title type="html">Do Your Judgehosts Scale? 对 ICPC 2023 合肥站评测问题的分析</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-12-02/icpc-2023-hefei-judgehosts-scale.html" rel="alternate" type="text/html" title="Do Your Judgehosts Scale? 对 ICPC 2023 合肥站评测问题的分析" />
+      
+      <published>2023-12-02T06:10:00+00:00</published>
+      <updated>2023-12-02T06:10:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-12-02/icpc-2023-hefei-judgehosts-scale</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2023-12-02/icpc-2023-hefei-judgehosts-scale.html">在答应来合肥站帮忙的那天，我怎么都没有想到，赛后自己居然要花好几天时间分析 Linux 内核的问题。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="kernel" />
+      
+        <category term="debug" />
+      
+        <category term="server" />
+      
+
+      
+        <summary type="html">在答应来合肥站帮忙的那天，我怎么都没有想到，赛后自己居然要花好几天时间分析 Linux 内核的问题。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">taoky’s GeekGame v3 writeups outline</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline.html" rel="alternate" type="text/html" title="taoky&apos;s GeekGame v3 writeups outline" />
+      
+      <published>2023-10-22T14:00:00+00:00</published>
+      <updated>2023-10-22T14:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2023-10-22/geekgame-v3-wp-outline.html">今年没空（也没心情）写详细的 writeup 了，所以只能大概讲讲我对每道题的思路和一些观点了。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="pku" />
+      
+        <category term="ctf" />
+      
+        <category term="writeup" />
+      
+        <category term="geekgame" />
+      
+
+      
+        <summary type="html">今年没空（也没心情）写详细的 writeup 了，所以只能大概讲讲我对每道题的思路和一些观点了。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html" rel="alternate" type="text/html" title="在 Wayland 下对某会议软件的屏幕共享方案，以及一些笔记" />
+      
+      <published>2023-05-22T20:00:00+00:00</published>
+      <updated>2023-05-22T20:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html">众所周知，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="wemeet" />
+      
+        <category term="wayland" />
+      
+        <category term="gstreamer" />
+      
+        <category term="streaming" />
+      
+
+      
+        <summary type="html">众所周知，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">调试一则：为什么 GNOME 在我的电脑上这么慢？</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html" rel="alternate" type="text/html" title="调试一则：为什么 GNOME 在我的电脑上这么慢？" />
+      
+      <published>2023-02-17T20:30:00+00:00</published>
+      <updated>2023-02-17T20:30:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-02-17/gnome-debug-performance</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2023-02-17/gnome-debug-performance.html">距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="Linux" />
+      
+        <category term="GNOME" />
+      
+        <category term="debug" />
+      
+        <category term="perf" />
+      
+
+      
+        <summary type="html">距离我切换到 Linux 作为自己的主力桌面环境已经过去了半年的时间。在这半年里，我一直在使用 GNOME Wayland 作为桌面环境，总体上来讲，体验还算不错，虽然有一些小问题和槽点（作为参考，这是我在去年九月 USTCLUG 的软件自由日上分享的闪电演讲 slides）。其中其他的问题都可以通过某些方式缓解，但是对我影响最大的问题是：GNOME 跑起来最开始很流畅，但是两三天之后就越来越卡，CPU 占用也很高。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">一点碎碎念和笔记：统计外部程序最大内存使用量的实现</title>
+      
+      
+      <link href="https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage.html" rel="alternate" type="text/html" title="一点碎碎念和笔记：统计外部程序最大内存使用量的实现" />
+      
+      <published>2023-01-01T16:00:00+00:00</published>
+      <updated>2023-01-01T16:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2023-01-01/shattered-notes-max-ram-usage.html">故事的背景是：这周我在用 Rust 写今年 Advent of Code 的题目。全部完成之后，我想写个程序统一统计一下我写的程序的运行时间和最大占用内存。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="Linux" />
+      
+        <category term="cgroups" />
+      
+        <category term="kernel" />
+      
+
+      
+        <summary type="html">故事的背景是：这周我在用 Rust 写今年 Advent of Code 的题目。全部完成之后，我想写个程序统一统计一下我写的程序的运行时间和最大占用内存。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">taoky’s GeekGame v2 (2022) writeups</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-11-27/geekgame-v2-wp.html" rel="alternate" type="text/html" title="taoky&apos;s GeekGame v2 (2022) writeups" />
+      
+      <published>2022-11-27T13:00:00+00:00</published>
+      <updated>2022-11-27T13:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-11-27/geekgame-v2-wp</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2022-11-27/geekgame-v2-wp.html">又是新的一年，在 Hackergame 2022 结束之后，PKU 的 GeekGame 也开始了。其实我还是挺期待今年能整出什么活的。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="pku" />
+      
+        <category term="ctf" />
+      
+        <category term="writeup" />
+      
+        <category term="geekgame" />
+      
+
+      
+        <summary type="html">又是新的一年，在 Hackergame 2022 结束之后，PKU 的 GeekGame 也开始了。其实我还是挺期待今年能整出什么活的。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html" rel="alternate" type="text/html" title="调试一则：让 i915 在 ThinkPad T14 Gen3 上正常工作" />
+      
+      <published>2022-07-21T18:18:00+00:00</published>
+      <updated>2022-07-21T18:18:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2022-07-21/i915-debug-on-tpt14gen3.html">Update 1 (2022/10/30): T14 Gen3 的固件升级 N3MET08W 已经修复了这个问题，使用 fwupdmgr 更新即可。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="Linux" />
+      
+        <category term="kernel" />
+      
+        <category term="debug" />
+      
+        <category term="i915" />
+      
+
+      
+        <summary type="html">Update 1 (2022/10/30): T14 Gen3 的固件升级 N3MET08W 已经修复了这个问题，使用 fwupdmgr 更新即可。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">A Naive Rust Tutorial</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial.html" rel="alternate" type="text/html" title="A Naive Rust Tutorial" />
+      
+      <published>2022-05-04T07:44:00+00:00</published>
+      <updated>2022-05-04T07:44:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2022-05-04/a-naive-rust-tutorial.html">尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 rustlings 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="rust" />
+      
+        <category term="tutorial" />
+      
+
+      
+        <summary type="html">尽管 Rust 官方有非常详尽的资料，但是在很多人眼里，Rust 仍然是一门非常难以上手的语言。我最开始的时候也看过 The Book（The Rust Programming Language）的前几章，发现自己看不下去之后也把 rustlings 里面的 exercises 全部做了一遍，但是还是感觉难以下咽。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">偷懒（且不太正确）的暗黑模式配置</title>
+      
+      
+      <link href="https://blog.taoky.moe/2022-03-10/lazy-dark-mode.html" rel="alternate" type="text/html" title="偷懒（且不太正确）的暗黑模式配置" />
+      
+      <published>2022-03-10T07:42:00+00:00</published>
+      <updated>2022-03-10T07:42:00+00:00</updated>
+      <id>https://blog.taoky.moe/2022-03-10/lazy-dark-mode</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2022-03-10/lazy-dark-mode.html">Update (2023/10/20): 部署了用 darkreader 生成的暗黑模式 CSS，并且参考 https://sergeyski.com/css-color-scheme-and-iframes-lessons-learned-from-disqus-background-bug/ 修了 Disqus 的问题。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="css" />
+      
+        <category term="darkmode" />
+      
+
+      
+        <summary type="html">Update (2023/10/20): 部署了用 darkreader 生成的暗黑模式 CSS，并且参考 https://sergeyski.com/css-color-scheme-and-iframes-lessons-learned-from-disqus-background-bug/ 修了 Disqus 的问题。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">taoky’s GeekGame v1 (2021) writeups</title>
+      
+      
+      <link href="https://blog.taoky.moe/2021-11-21/geekgame-v1-wp.html" rel="alternate" type="text/html" title="taoky&apos;s GeekGame v1 (2021) writeups" />
+      
+      <published>2021-11-21T14:00:00+00:00</published>
+      <updated>2021-11-21T14:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2021-11-21/geekgame-v1-wp</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2021-11-21/geekgame-v1-wp.html">作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="pku" />
+      
+        <category term="ctf" />
+      
+        <category term="writeup" />
+      
+        <category term="geekgame" />
+      
+
+      
+        <summary type="html">作为隔壁 Hackergame 的 staff 前来围观。因为自己基本不会 binary，数学也不会，所以主要完成的是 misc 和 web 这两个分类的题目。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">THU 半日游：参加 tunight 杂记</title>
+      
+      
+      <link href="https://blog.taoky.moe/2021-04-18/tunight.html" rel="alternate" type="text/html" title="THU 半日游：参加 tunight 杂记" />
+      
+      <published>2021-04-18T08:10:00+00:00</published>
+      <updated>2021-04-18T08:10:00+00:00</updated>
+      <id>https://blog.taoky.moe/2021-04-18/tunight</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2021-04-18/tunight.html">博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="life" />
+      
+
+      
+        <category term="tuna" />
+      
+        <category term="tunight" />
+      
+        <category term="thu" />
+      
+
+      
+        <summary type="html">博客已经接近两年没更新了。从现在的眼光来看，我写的技术文章不多，质量也不算高，但是在写博客方面，遇到的困境就是「忙的时候没空写，闲的时候懒得（敲键盘）写」。我快本科毕业了，从写上一篇博文开始（2019/07/08），世界发生了太多的变化，自己也获得了一大堆坑需要填上。争取之后更新的频率能提高一些。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">epoll 的故事</title>
+      
+      
+      <link href="https://blog.taoky.moe/2019-07-08/epoll-101.html" rel="alternate" type="text/html" title="epoll 的故事" />
+      
+      <published>2019-07-08T04:33:00+00:00</published>
+      <updated>2019-07-08T04:33:00+00:00</updated>
+      <id>https://blog.taoky.moe/2019-07-08/epoll-101</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-07-08/epoll-101.html">epoll 是 Linux 下的一种 I/O 事件通知机制1——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。epoll 作为一种提高性能的方式被不少人拿去用，虽然理解与写 epoll 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。 https://en.wikipedia.org/wiki/Epoll &amp;#8617;</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="tech" />
+      
+
+      
+        <category term="epoll" />
+      
+        <category term="Linux" />
+      
+
+      
+        <summary type="html">epoll 是 Linux 下的一种 I/O 事件通知机制1——这样写的话，总让人感觉不知所云。写这个主要是因为今年的 OSH 课程有一个写高性能静态页面的网页服务器的实验。epoll 作为一种提高性能的方式被不少人拿去用，虽然理解与写 epoll 代码并不是什么容易的事情，而且最后还是会有各种各样的问题。 https://en.wikipedia.org/wiki/Epoll &amp;#8617;</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">水文 | 在 macOS 下配置虚拟机，安装其他操作系统</title>
+      
+      
+      <link href="https://blog.taoky.moe/2019-02-23/installing-os-on-vm.html" rel="alternate" type="text/html" title="水文 | 在 macOS 下配置虚拟机，安装其他操作系统" />
+      
+      <published>2019-02-23T12:00:00+00:00</published>
+      <updated>2019-02-23T12:00:00+00:00</updated>
+      <id>https://blog.taoky.moe/2019-02-23/installing-os-on-vm</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-23/installing-os-on-vm.html">感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（English，中文）。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="虚拟机" />
+      
+        <category term="Linux" />
+      
+        <category term="macOS" />
+      
+
+      
+        <summary type="html">感谢 @iBug 的邀稿。他的在 Windows/Linux 下设置 VMWare 虚拟机的教程在此（English，中文）。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround</title>
+      
+      
+      <link href="https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem.html" rel="alternate" type="text/html" title="在 Docker for Mac 上使文件不可变（immutable）后容器无法删除的 workaround" />
+      
+      <published>2019-02-19T05:53:00+00:00</published>
+      <updated>2019-02-19T05:53:00+00:00</updated>
+      <id>https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-19/docker-for-mac-chattr-i-problem.html">昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 chattr +i 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="Docker" />
+      
+        <category term="Mac" />
+      
+        <category term="Troubleshoot" />
+      
+
+      
+        <summary type="html">昨天，学长 @zzh1996 发现在 Docker for Mac 的容器中对文件 chattr +i 之后，容器就无法被正常删除。我在自己的电脑上复现了这个问题，并且，嗯，最后成功删掉了。在这里记录一下这个 workaround。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">在 iOS 设备上编译原生 lc3tools</title>
+      
+      
+      <link href="https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device.html" rel="alternate" type="text/html" title="在 iOS 设备上编译原生 lc3tools" />
+      
+      <published>2019-02-12T12:01:00+00:00</published>
+      <updated>2019-02-12T12:01:00+00:00</updated>
+      <id>https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/compiling-lc3tools-on-ios-device.html">这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 CoolBooter 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 ssh 到我们的设备上搞事啦。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="iOS" />
+      
+        <category term="jailbreak" />
+      
+        <category term="编译" />
+      
+
+      
+        <summary type="html">这次寒假回家的时候，给已经慢得要死的 iPad mini 降级到了 iOS 8.4.1，然后用 CoolBooter 装上了 iOS 6.1.3（因为 iOS 8 还是很慢）——反正设备里面已经没有任何有用的数据了，怎么搞都可以。既然如此，在安装上 OpenSSH 之后就可以 ssh 到我们的设备上搞事啦。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">重新迁移：回到 Jekyll</title>
+      
+      
+      <link href="https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again.html" rel="alternate" type="text/html" title="重新迁移：回到 Jekyll" />
+      
+      <published>2019-02-12T09:17:00+00:00</published>
+      <updated>2019-02-12T09:17:00+00:00</updated>
+      <id>https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2019-02-12/migration-to-jekyll-again.html">再次迁移回了 Jekyll。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+
+      
+        <category term="Jekyll" />
+      
+        <category term="Hexo" />
+      
+
+      
+        <summary type="html">再次迁移回了 Jekyll。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">瞎写的大一一年总结</title>
+      
+      
+      <link href="https://blog.taoky.moe/2018-08-29/freshman-year.html" rel="alternate" type="text/html" title="瞎写的大一一年总结" />
+      
+      <published>2018-08-29T16:36:12+00:00</published>
+      <updated>2018-08-29T16:36:12+00:00</updated>
+      <id>https://blog.taoky.moe/2018-08-29/freshman-year</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2018-08-29/freshman-year.html">我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="总结" />
+      
+
+      
+        <category term="总结" />
+      
+        <category term="大一" />
+      
+
+      
+        <summary type="html">我主博客的文章太少了，所以打算在假期的最后加一篇。以后打算再多写点技术类的东西，毕竟把这里完全作为个人生活的记录处不像是 GitHub Pages 的正确用法啊😂，作为一个 CS 系的同学，不写点跟这有关的东西好像对不起自己啊，虽然怕是一开学，就没有时间可以给我写东西了。另外，我又开了一个 repo，记录我自己的艺术与娱乐作品点评。链接这里就不放了，不过只要稍微找一找就能轻松找到的。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">语言学家</title>
+      
+      
+      <link href="https://blog.taoky.moe/2018-07-14/language-gaokao-composition.html" rel="alternate" type="text/html" title="语言学家" />
+      
+      <published>2018-07-14T10:09:29+00:00</published>
+      <updated>2018-07-14T10:09:29+00:00</updated>
+      <id>https://blog.taoky.moe/2018-07-14/language-gaokao-composition</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2018-07-14/language-gaokao-composition.html">据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="小说" />
+      
+
+      
+        <category term="高考" />
+      
+        <category term="作品" />
+      
+
+      
+        <summary type="html">据说今年的高考全国都变得简单了。作为一个已经从高中毕业了一年多的「学长」，我恐怕也只能对语文科目的作文说上点什么了。在今年高考之后，我突然想写一下我省的作文题：</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">高考，与高考之后……</title>
+      
+      
+      <link href="https://blog.taoky.moe/2017-08-09/after-gaokao.html" rel="alternate" type="text/html" title="高考，与高考之后……" />
+      
+      <published>2017-08-09T11:29:29+00:00</published>
+      <updated>2017-08-09T11:29:29+00:00</updated>
+      <id>https://blog.taoky.moe/2017-08-09/after-gaokao</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2017-08-09/after-gaokao.html">其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="高考" />
+      
+
+      
+        <category term="高考" />
+      
+        <category term="杂感" />
+      
+
+      
+        <summary type="html">其实高考早就结束了，现在写这个东西可能太迟了一点。虽然其实我很早就想开始写了，但我真的懒得去敲键盘码字。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+  
+  
+    <entry>
+      
+      <title type="html">从 Jekyll 向 Hexo 迁移</title>
+      
+      
+      <link href="https://blog.taoky.moe/2017-08-08/migration-to-hexo.html" rel="alternate" type="text/html" title="从 Jekyll 向 Hexo 迁移" />
+      
+      <published>2017-08-08T20:26:46+00:00</published>
+      <updated>2017-08-08T20:26:46+00:00</updated>
+      <id>https://blog.taoky.moe/2017-08-08/migration-to-hexo</id>
+      
+      <content type="html" xml:base="https://blog.taoky.moe/2017-08-08/migration-to-hexo.html">这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。</content>
+      
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>taoky</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="Hexo" />
+      
+
+      
+        <category term="Jekyll" />
+      
+        <category term="Hexo" />
+      
+
+      
+        <summary type="html">这里已经有很长时间没有更新了……今天突然看到了一些 Hexo 框架的主题，觉得很漂亮，再加上原来使用 Jekyll 的博客目录结构很混乱，我自己也搞不清楚哪个文件夹对应有什么功能，所以最终决定迁移过来。</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+</feed>

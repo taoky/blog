@@ -766,7 +766,7 @@ ERROR: Unable to lock database: Read-only file system
 ERROR: Failed to open apk database: Read-only file system
 </code></pre></div></div>
 
-<p>外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 <code class="language-plaintext highlighter-rouge">chattr</code>，但是一些基础的东西还是比较齐的——甚至有 <code class="language-plaintext highlighter-rouge">wget</code>。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 <code class="language-plaintext highlighter-rouge">chattr</code> 的啊<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>。</p>
+<p>外层虚拟机的系统部分是只读的，装不了什么东西。虽然缺 <code class="language-plaintext highlighter-rouge">chattr</code>，但是一些基础的东西还是比较齐的——甚至有 <code class="language-plaintext highlighter-rouge">wget</code>。如果去运行的话会发现这些工具都来自于 BusyBox。但是，BusyBox 里面应该是有 <code class="language-plaintext highlighter-rouge">chattr</code> 的啊<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup>。</p>
 
 <p>这就尴尬了。</p>
 
@@ -819,14 +819,14 @@ busybox_CHATTR: ELF 32-bit LSB executable, Intel 80386, version 1 <span class="o
 
 <p>从 BusyBox 的源码中可以找到 <code class="language-plaintext highlighter-rouge">chattr.c</code>，该文件属于 <code class="language-plaintext highlighter-rouge">e2fsprogs</code>。分析代码可以发现在解码完参数之后，调用了宏 <code class="language-plaintext highlighter-rouge">fsetflags(name, flags)</code>（实际指向函数 <code class="language-plaintext highlighter-rouge">fgetsetflags(name, NULL, flags)</code>），通过 <code class="language-plaintext highlighter-rouge">ioctl</code> 对文件的 <code class="language-plaintext highlighter-rouge">flags</code> 进行了修改。</p>
 
-<p>目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>。而在虚拟环境中 <code class="language-plaintext highlighter-rouge">df -hT</code> 可以看到，<code class="language-plaintext highlighter-rouge">/dev/sda1</code>（虚拟磁盘）是以 <code class="language-plaintext highlighter-rouge">ext4</code> 挂在 <code class="language-plaintext highlighter-rouge">/var/lib</code> 上的。</p>
+<p>目前，Docker 使用 OverlayFS 文件系统。它是一种 union filesystem，可以让不同文件系统的文件挂载在同一个挂载点上。Docker 以这种方式实现分层镜像<sup id="fnref:2"><a href="#fn:2" class="footnote" rel="footnote" role="doc-noteref">2</a></sup>。而在虚拟环境中 <code class="language-plaintext highlighter-rouge">df -hT</code> 可以看到，<code class="language-plaintext highlighter-rouge">/dev/sda1</code>（虚拟磁盘）是以 <code class="language-plaintext highlighter-rouge">ext4</code> 挂在 <code class="language-plaintext highlighter-rouge">/var/lib</code> 上的。</p>
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1" role="doc-endnote">
+    <li id="fn:1">
       <p><a href="https://busybox.net/downloads/BusyBox.html">https://busybox.net/downloads/BusyBox.html</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
-    <li id="fn:2" role="doc-endnote">
+    <li id="fn:2">
       <p><a href="https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c">https://medium.com/@paccattam/drooling-over-docker-2-understanding-union-file-systems-2e9bf204177c</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>

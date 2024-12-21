@@ -1648,7 +1648,7 @@ error: could not compile `helloworld` due to previous error
 
     <p>与之相对应的，<code class="language-plaintext highlighter-rouge">impl trait</code> 可以在编译期已知参数结构体的情况下为结构体生成对应的代码（相比于 <code class="language-plaintext highlighter-rouge">Box&lt;dyn trait&gt;</code>，它在运行时的开销更小，但是生成的程序的体积更大，因为需要为每种结构体都生成函数实现）。</p>
 
-    <p>参考代码<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>：</p>
+    <p>参考代码<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup>：</p>
 
     <div class="language-rust highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Madoka</span><span class="p">;</span>
@@ -1943,7 +1943,7 @@ error: could not compile `ports-distinfo-parse` due to previous error
 
 <p>与此同时我们需要添加依赖，和之前 regex 和 walkdir 不同，为了使用以上的语法，我们需要设定 crate 需要使用的 feature，就像这样子：</p>
 
-<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">clap</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"3"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span><span class="s">"derive"</span><span class="p">]</span> <span class="p">}</span>
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">clap</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"3"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span><span class="s">"derive"</span><span class="p">]</span> <span class="p">}</span>
 </code></pre></div></div>
 
 <p>试运行：</p>
@@ -4064,7 +4064,7 @@ Time: 2706 ms
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1" role="doc-endnote">
+    <li id="fn:1">
       <p>emmm 事实上，可以肯定 Rust 开发组里有《魔法少女小圆》的忠实粉丝。去 <a href="https://github.com/rust-lang/rust">https://github.com/rust-lang/rust</a> 里搜索看看就能看到<a href="https://github.com/rust-lang/rust/search?q=madoka">测试代码里有多少 madoka</a> 了。以及在 17 年的时候，甚至<a href="https://web.archive.org/web/20170606180621/https://doc.rust-lang.org/error-index.html">在错误 E0432 的解释</a>里也有 <code class="language-plaintext highlighter-rouge">homura::Madoka</code>（当然现在没有了）。我写的时候一直想玩这个梗，终于在这里用上了（ <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>
