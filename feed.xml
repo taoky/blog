@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-12-21T18:46:24+00:00</updated>
+  <updated>2024-12-23T08:38:31+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1513,6 +1513,8 @@ SUBLEVEL = 78
       <content type="html" xml:base="https://blog.taoky.moe/2023-05-22/wemeet-screencast-in-wayland.html">&lt;p&gt;&lt;a href=&quot;https://aur.archlinux.org/packages/wemeet-bin&quot;&gt;众所周知&lt;/a&gt;，某会议软件推出的 Linux 版本在 Wayland session 下是拿不到屏幕的信息的（虽然某种程度上，能有 Linux 版本就已经很不错了）。本文提出了一种扭曲但是可行性更高且更加可靠的方法，并且包括了一些相关的笔记，以及我的一些推测，以备参考。&lt;/p&gt;
 
 &lt;!--more--&gt;
+
+&lt;p&gt;Update (2024/12/23): 读者可以参考使用这个更加无缝的 hook 的方案：&lt;a href=&quot;https://github.com/xuwd1/wemeet-wayland-screenshare&quot;&gt;https://github.com/xuwd1/wemeet-wayland-screenshare&lt;/a&gt;，并且看起来 FlatHub 上的版本&lt;a href=&quot;https://github.com/flathub/com.tencent.wemeet/pull/37&quot;&gt;添加了对应的支持&lt;/a&gt;。&lt;/p&gt;
 
 &lt;details&gt;
 &lt;summary&gt;如果你看不到本文的视频……&lt;/summary&gt;
