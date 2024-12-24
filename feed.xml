@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2024-12-23T08:38:31+00:00</updated>
+  <updated>2024-12-24T09:40:07+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1952,11 +1952,39 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
   &lt;li&gt;&lt;strong&gt;mutter 换成了 openbox，因为 mutter 开出来之后会自己把分辨率调到 5120x2880，然后窗口就特别小，不知道是什么原因。&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Update 2 (2023-08-26): 最新版的 xorg-xwayland 做了 libdecor 的适配调整，添加了 resize 的支持，所以另一种思路是在编译 xorg-xwayland 时加上 libdecor 支持，然后扔掉 weston，直接启动 Xwayland。不过 Arch 编译的版本没有加 libdecor，所以我&lt;a href=&quot;https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor&quot;&gt;打了个 AUR 包&lt;/a&gt;自己用，加上 git 版带 GTK plugin 的 libdecor，显示的效果还挺不错。此外 &lt;a href=&quot;https://wiki.archlinux.org/title/Openbox#Configuration&quot;&gt;openbox 修改配置也很方便&lt;/a&gt;，可以在它的菜单中配置在这个新的 X Display 里面可能要用到的东西。可以参考：&lt;a href=&quot;https://github.com/taoky/scripts/blob/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/x11/wemeet/start.sh&quot;&gt;我现在使用的启动脚本&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/taoky/scripts/tree/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/dotfile/.config/openbox&quot;&gt;我的 openbox 配置&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;Update 2 (2023-08-26): 最新版的 xorg-xwayland 做了 libdecor 的适配调整，添加了 resize 的支持，所以另一种思路是&lt;strong&gt;在编译 xorg-xwayland 时加上 libdecor 支持，然后扔掉 weston，直接启动 Xwayland&lt;/strong&gt;。不过 Arch 编译的版本没有加 libdecor，所以我&lt;a href=&quot;https://aur.archlinux.org/packages/xwayland-standalone-with-libdecor&quot;&gt;打了个 AUR 包&lt;/a&gt;自己用，加上 git 版带 GTK plugin 的 libdecor，显示的效果还挺不错。此外 &lt;a href=&quot;https://wiki.archlinux.org/title/Openbox#Configuration&quot;&gt;openbox 修改配置也很方便&lt;/a&gt;，可以在它的菜单中配置在这个新的 X Display 里面可能要用到的东西。可以参考：&lt;a href=&quot;https://github.com/taoky/scripts/blob/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/x11/wemeet/start.sh&quot;&gt;我现在使用的启动脚本&lt;/a&gt; 和 &lt;a href=&quot;https://github.com/taoky/scripts/tree/f88a9a00eac1931a596dfdcb3d91b626279dc8b1/dotfile/.config/openbox&quot;&gt;我的 openbox 配置&lt;/a&gt;。&lt;/p&gt;
 
-&lt;p&gt;Update 3 (2024-11-02): Arch 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xorg-xwayland&lt;/code&gt; 包已经带了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libdecor&lt;/code&gt; 依赖，因此不需要再额外编译我之前打的 AUR 包了。客户端窗口装饰需要添加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-decorate&lt;/code&gt; 参数，此外似乎关闭 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MIT-SHM&lt;/code&gt; 扩展会导致一些问题，因此建议把 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-extension MIT-SHM&lt;/code&gt; 也删掉。&lt;/p&gt;
+&lt;p&gt;Update 3 (2024-11-02): &lt;strong&gt;Arch 的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xorg-xwayland&lt;/code&gt; 包已经带了 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;libdecor&lt;/code&gt; 依赖，因此不需要再额外编译我之前打的 AUR 包了。客户端窗口装饰需要添加 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-decorate&lt;/code&gt; 参数&lt;/strong&gt;，&lt;strong&gt;此外似乎关闭 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MIT-SHM&lt;/code&gt; 扩展会导致一些问题，因此建议把 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-extension MIT-SHM&lt;/code&gt; 也删掉。&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/pictures/wemeet/xwayland-standalone.png&quot; alt=&quot;Standalone xwayland screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;details&gt;
+&lt;summary&gt;启动脚本（我自己目前的配置）&lt;/summary&gt;
+
+```sh
+#!/bin/sh -e
+
+# Start xwayland
+echo &quot;Starting Xwayland&quot;
+Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -decorate -geometry 1920x1080 &amp;amp;
+
+echo &quot;Waiting for X server to be ready&quot;
+while ! xdpyinfo -display :114 &amp;gt;/dev/null 2&amp;gt;&amp;1; do
+    sleep 1
+done
+
+# Start openbox and wemeet
+echo &quot;Starting openbox&quot;
+DISPLAY=:114 openbox &amp;amp;
+DISPLAY=:114 xcompmgr &amp;amp;
+
+echo &quot;Starting wemeet&quot;
+DISPLAY=:114 flatpak run com.tencent.wemeet
+```
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;strong&gt;以下 Weston 的版本可能还能用，但是不会再更新。&lt;/strong&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -1976,27 +2004,33 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 
 &lt;p&gt;启动脚本很简单，其中 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Xwayland&lt;/code&gt; 的参数是从 x11docker 抄的：&lt;/p&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh -e&lt;/span&gt;
+&lt;details&gt;
+&lt;summary&gt;启动脚本（Weston）&lt;/summary&gt;
 
-&lt;span class=&quot;c&quot;&gt;# Start weston&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting weston&quot;&lt;/span&gt;
-weston &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;/weston.ini &lt;span class=&quot;nt&quot;&gt;--socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 &amp;amp;
+```sh
+#!/bin/sh -e
 
-&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
+# Start weston
+echo &quot;Starting weston&quot;
+weston -c $(pwd)/weston.ini --socket=wayland-114 &amp;amp;
 
-&lt;span class=&quot;c&quot;&gt;# Start xwayland&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting Xwayland&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;WAYLAND_DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 Xwayland :114 &lt;span class=&quot;nt&quot;&gt;-ac&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-retro&lt;/span&gt; +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XINERAMA &lt;span class=&quot;nt&quot;&gt;-xinerama&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; MIT-SHM +extension Composite +extension COMPOSITE &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XTEST &lt;span class=&quot;nt&quot;&gt;-tst&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-dpms&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; off &lt;span class=&quot;nt&quot;&gt;-fullscreen&lt;/span&gt; &amp;amp;
+sleep 3
 
-&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
+# Start xwayland
+echo &quot;Starting Xwayland&quot;
+WAYLAND_DISPLAY=wayland-114 Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -fullscreen &amp;amp;
 
-&lt;span class=&quot;c&quot;&gt;# Start openbox and wemeet&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting openbox&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 openbox &amp;amp;
+sleep 3
 
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting wemeet&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 flatpak run com.tencent.wemeet
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+# Start openbox and wemeet
+echo &quot;Starting openbox&quot;
+DISPLAY=:114 openbox &amp;amp;
+
+echo &quot;Starting wemeet&quot;
+DISPLAY=:114 flatpak run com.tencent.wemeet
+```
+
+&lt;/details&gt;
 
 &lt;p&gt;其中 weston.ini 的内容也是从 x11docker 抄来的：&lt;/p&gt;
 
