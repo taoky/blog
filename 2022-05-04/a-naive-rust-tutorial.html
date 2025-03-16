@@ -1606,7 +1606,9 @@ error: could not compile `helloworld` due to previous error
 
 <p>之后 build/run 的时候就会下载依赖。</p>
 
-<p>PS: <code class="language-plaintext highlighter-rouge">cargo add</code> 功能今年四月份已经加入 cargo 仓库（<a href="https://github.com/rust-lang/cargo/pull/10472">https://github.com/rust-lang/cargo/pull/10472</a>），可能再过几年，添加依赖就不需要手改 toml 了。</p>
+<p>PS: <code class="language-plaintext highlighter-rouge">cargo add</code> 功能今年四月份已经加入 cargo 仓库（<a href="https://github.com/rust-lang/cargo/pull/10472">https://github.com/rust-lang/cargo/pull/10472</a>），<del>可能再过几年，添加依赖就不需要手改 toml 了。</del></p>
+
+<p>Update (2025/03/16)：现在 <code class="language-plaintext highlighter-rouge">cargo add</code> 已经可以直接用了。</p>
 
 <p>解析文件这个问题我们也考虑用正则表达式解决，所以先把<a href="https://github.com/rust-lang/regex">这个依赖</a>加上。</p>
 
@@ -2285,19 +2287,91 @@ error: could not compile `executor-threaded` due to previous error
   <li>协程里面的函数需要是 async 的。</li>
 </ul>
 
-<p>两个流行的 async runtime 实现是 tokio 和 async-std。这里选择 async-std，因为它 “provides an async version of std”，对于修改已有代码来说看起来更方便一些。</p>
+<p><del>两个</del> 最流行的 async runtime 实现是 tokio <del>和 async-std</del>。<del>这里选择 async-std，因为它 “provides an async version of std”，对于修改已有代码来说看起来更方便一些。</del></p>
 
-<p>首先把 <code class="language-plaintext highlighter-rouge">main()</code> 改成 <code class="language-plaintext highlighter-rouge">async</code> 的（需要 attributes feature，<a href="https://docs.rs/async-std/latest/async_std/#examples">https://docs.rs/async-std/latest/async_std/#examples</a>）：</p>
+<p>Update (2025-03-16): async-std 已经不再维护，以下例子更换为 tokio。</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[async_std::main]</span>
+<p>添加 tokio 依赖项：</p>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">tokio</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"1"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span><span class="s">"full"</span><span class="p">]</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>首先把 <code class="language-plaintext highlighter-rouge">main()</code> 改成 <code class="language-plaintext highlighter-rouge">async</code> 的：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[tokio::main]</span>
 <span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>然后 <code class="language-plaintext highlighter-rouge">std::thread::spawn</code> 的对应物是 <code class="language-plaintext highlighter-rouge">async_std::task::spawn</code>，所以我们需要：</p>
+<p>然后 <code class="language-plaintext highlighter-rouge">std::thread::spawn</code> 的对应物是 <code class="language-plaintext highlighter-rouge">tokio::spawn</code>，所以我们需要：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">task</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="c1">// async func</span>
+<span class="p">});</span>
+<span class="k">let</span> <span class="n">stderr</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="c1">// async func</span>
+<span class="p">});</span>
+<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stdout</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stderr</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>之后我们需要一个不会阻塞住的 <code class="language-plaintext highlighter-rouge">BufReader</code>，这可以直接使用 <code class="language-plaintext highlighter-rouge">tokio::io::BufReader</code> 替代，但同时 <code class="language-plaintext highlighter-rouge">stdout</code> 和 <code class="language-plaintext highlighter-rouge">stderr</code> 也需要是异步的，这可以通过将 <code class="language-plaintext highlighter-rouge">std::process::Command</code> 替换为 <code class="language-plaintext highlighter-rouge">tokio::process::Command</code> 来实现。同时 <code class="language-plaintext highlighter-rouge">reader.lines</code> 需要 <code class="language-plaintext highlighter-rouge">tokio::io::AsyncBufReadExt</code> 这个 trait。</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">mut</span> <span class="n">process</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">process</span><span class="p">::</span><span class="nn">Command</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">program</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nf">.args</span><span class="p">(</span><span class="o">&amp;</span><span class="n">program</span><span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])</span>
+    <span class="nf">.stdout</span><span class="p">(</span><span class="nn">Stdio</span><span class="p">::</span><span class="nf">piped</span><span class="p">())</span>
+    <span class="nf">.stderr</span><span class="p">(</span><span class="nn">Stdio</span><span class="p">::</span><span class="nf">piped</span><span class="p">())</span>
+    <span class="nf">.spawn</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+<span class="c1">// ...</span>
+<span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+    <span class="n">reader</span><span class="nf">.lines</span><span class="p">()</span> <span class="c1">// ...</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>但是 <code class="language-plaintext highlighter-rouge">reader.lines()</code> 返回的在 tokio 中不是一个迭代器，而是一个 tokio 自己的结构体，需要用 <code class="language-plaintext highlighter-rouge">next_line().await</code> 来获取下一行。因为 <code class="language-plaintext highlighter-rouge">next_line</code> 可能会失败，顺便加上了 <code class="language-plaintext highlighter-rouge">?</code>，以及 async 块的返回类型。</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">JoinHandle</span><span class="o">&lt;</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">reader</span><span class="nf">.lines</span><span class="p">();</span>
+    <span class="k">while</span> <span class="k">let</span> <span class="nf">Some</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">=</span> <span class="n">lines</span><span class="nf">.next_line</span><span class="p">()</span><span class="k">.await</span><span class="o">?</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{} stdout: {}"</span><span class="p">,</span> <span class="n">displayed_name</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">});</span>
+<span class="k">let</span> <span class="n">stderr</span><span class="p">:</span> <span class="n">JoinHandle</span><span class="o">&lt;</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">reader</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="nn">BufReader</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">stderr</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">reader</span><span class="nf">.lines</span><span class="p">();</span>
+    <span class="k">while</span> <span class="k">let</span> <span class="nf">Some</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">=</span> <span class="n">lines</span><span class="nf">.next_line</span><span class="p">()</span><span class="k">.await</span><span class="o">?</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"{} stderr: {}"</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>最后，<code class="language-plaintext highlighter-rouge">process.wait()</code> 也需要加上 await：</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">return_code</span> <span class="o">=</span> <span class="n">process</span><span class="nf">.wait</span><span class="p">()</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<details>
+<summary>old async-std code</summary>
+<div>
+
+    <p>首先把 <code class="language-plaintext highlighter-rouge">main()</code> 改成 <code class="language-plaintext highlighter-rouge">async</code> 的（需要 attributes feature，<a href="https://docs.rs/async-std/latest/async_std/#examples">https://docs.rs/async-std/latest/async_std/#examples</a>）：</p>
+
+    <div class="language-rust highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nd">#[async_std::main]</span>
+<span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <p>然后 <code class="language-plaintext highlighter-rouge">std::thread::spawn</code> 的对应物是 <code class="language-plaintext highlighter-rouge">async_std::task::spawn</code>，所以我们需要：</p>
+
+    <div class="language-rust highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">stdout</span> <span class="o">=</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">task</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
     <span class="c1">// async func</span>
 <span class="p">});</span>
 <span class="k">let</span> <span class="n">stderr</span> <span class="o">=</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">task</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
@@ -2305,19 +2379,21 @@ error: could not compile `executor-threaded` due to previous error
 <span class="p">});</span>
 <span class="n">stdout</span><span class="k">.await</span><span class="p">;</span>
 <span class="n">stderr</span><span class="k">.await</span><span class="p">;</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>之后 <code class="language-plaintext highlighter-rouge">BufReader</code> 可以直接使用 <code class="language-plaintext highlighter-rouge">async_std::io::BufReader</code> 替代，但是这需要 <code class="language-plaintext highlighter-rouge">stdout</code> 和 <code class="language-plaintext highlighter-rouge">stderr</code> 是可以异步读取的。因此还需要把 <code class="language-plaintext highlighter-rouge">std::process</code> 的实现换成 <code class="language-plaintext highlighter-rouge">async_std::process</code> 的，这需要 unstable feature（<a href="https://docs.rs/async-std/latest/async_std/process/index.html">https://docs.rs/async-std/latest/async_std/process/index.html</a>），启用之后：</p>
+    <p>之后 <code class="language-plaintext highlighter-rouge">BufReader</code> 可以直接使用 <code class="language-plaintext highlighter-rouge">async_std::io::BufReader</code> 替代，但是这需要 <code class="language-plaintext highlighter-rouge">stdout</code> 和 <code class="language-plaintext highlighter-rouge">stderr</code> 是可以异步读取的。因此还需要把 <code class="language-plaintext highlighter-rouge">std::process</code> 的实现换成 <code class="language-plaintext highlighter-rouge">async_std::process</code> 的，这需要 unstable feature（<a href="https://docs.rs/async-std/latest/async_std/process/index.html">https://docs.rs/async-std/latest/async_std/process/index.html</a>），启用之后：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">process</span><span class="p">::{</span><span class="n">exit</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Stdio</span><span class="p">};</span>
+    <div class="language-rust highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">async_std</span><span class="p">::</span><span class="nn">process</span><span class="p">::{</span><span class="n">exit</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Stdio</span><span class="p">};</span>
 
 <span class="c1">// 创建进程的代码不需要更改</span>
 <span class="k">let</span> <span class="n">return_code</span> <span class="o">=</span> <span class="n">process</span><span class="nf">.status</span><span class="p">()</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>最后在 async 函数内引入需要的依赖项，最后加上 await（否则返回 future 之后 async 函数就直接结束了）：</p>
+    <p>最后在 async 函数内引入需要的依赖项，最后加上 await（否则返回 future 之后 async 函数就直接结束了）：</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">async_std</span><span class="p">::{</span>
+    <div class="language-rust highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">async_std</span><span class="p">::{</span>
     <span class="nn">io</span><span class="p">::{</span><span class="nn">prelude</span><span class="p">::</span><span class="n">BufReadExt</span><span class="p">,</span> <span class="n">BufReader</span><span class="p">},</span>
     <span class="nn">prelude</span><span class="p">::</span><span class="n">StreamExt</span><span class="p">,</span>
 <span class="p">};</span>
@@ -2331,7 +2407,10 @@ error: could not compile `executor-threaded` due to previous error
             <span class="nd">println!</span><span class="p">(</span><span class="s">"{} stdout: {}"</span><span class="p">,</span> <span class="n">displayed_name</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
         <span class="p">})</span><span class="k">.await</span><span class="p">;</span>
 <span class="p">});</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
+
+  </div>
+</details>
 
 <p>搞定。这里给出的仅仅是一个示例，async rust 仍然在快速发展中，希望未来写 async 代码能够和写 sync 代码一样容易。</p>
 
