@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2025-01-08T15:40:14+00:00</updated>
+  <updated>2025-03-16T14:02:10+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1960,28 +1960,29 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 
 &lt;details&gt;
 &lt;summary&gt;启动脚本（我自己目前的配置）&lt;/summary&gt;
+&lt;div&gt;
 
-```sh
-#!/bin/sh -e
+    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh -e&lt;/span&gt;
 
-# Start xwayland
-echo &quot;Starting Xwayland&quot;
-Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -decorate -geometry 1920x1080 &amp;amp;
+&lt;span class=&quot;c&quot;&gt;# Start xwayland&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting Xwayland&quot;&lt;/span&gt;
+Xwayland :114 &lt;span class=&quot;nt&quot;&gt;-ac&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-retro&lt;/span&gt; +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XINERAMA &lt;span class=&quot;nt&quot;&gt;-xinerama&lt;/span&gt; +extension Composite +extension COMPOSITE &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XTEST &lt;span class=&quot;nt&quot;&gt;-tst&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-dpms&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; off &lt;span class=&quot;nt&quot;&gt;-decorate&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-geometry&lt;/span&gt; 1920x1080 &amp;amp;
 
-echo &quot;Waiting for X server to be ready&quot;
-while ! xdpyinfo -display :114 &amp;gt;/dev/null 2&amp;gt;&amp;1; do
-    sleep 1
-done
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Waiting for X server to be ready&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; xdpyinfo &lt;span class=&quot;nt&quot;&gt;-display&lt;/span&gt; :114 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;/dev/null 2&amp;gt;&amp;amp;1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;1
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
 
-# Start openbox and wemeet
-echo &quot;Starting openbox&quot;
-DISPLAY=:114 openbox &amp;amp;
-DISPLAY=:114 xcompmgr &amp;amp;
+&lt;span class=&quot;c&quot;&gt;# Start openbox and wemeet&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting openbox&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 openbox &amp;amp;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 xcompmgr &amp;amp;
 
-echo &quot;Starting wemeet&quot;
-DISPLAY=:114 flatpak run com.tencent.wemeet
-```
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting wemeet&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 flatpak run com.tencent.wemeet
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
+  &lt;/div&gt;
 &lt;/details&gt;
 
 &lt;p&gt;&lt;strong&gt;以下 Weston 的版本可能还能用，但是不会再更新。&lt;/strong&gt;&lt;/p&gt;
@@ -2006,30 +2007,31 @@ DISPLAY=:114 flatpak run com.tencent.wemeet
 
 &lt;details&gt;
 &lt;summary&gt;启动脚本（Weston）&lt;/summary&gt;
+&lt;div&gt;
 
-```sh
-#!/bin/sh -e
+    &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh -e&lt;/span&gt;
 
-# Start weston
-echo &quot;Starting weston&quot;
-weston -c $(pwd)/weston.ini --socket=wayland-114 &amp;amp;
+&lt;span class=&quot;c&quot;&gt;# Start weston&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting weston&quot;&lt;/span&gt;
+weston &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;/weston.ini &lt;span class=&quot;nt&quot;&gt;--socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 &amp;amp;
 
-sleep 3
+&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
 
-# Start xwayland
-echo &quot;Starting Xwayland&quot;
-WAYLAND_DISPLAY=wayland-114 Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -fullscreen &amp;amp;
+&lt;span class=&quot;c&quot;&gt;# Start xwayland&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting Xwayland&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;WAYLAND_DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;wayland-114 Xwayland :114 &lt;span class=&quot;nt&quot;&gt;-ac&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-retro&lt;/span&gt; +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XINERAMA &lt;span class=&quot;nt&quot;&gt;-xinerama&lt;/span&gt; +extension Composite +extension COMPOSITE &lt;span class=&quot;nt&quot;&gt;-extension&lt;/span&gt; XTEST &lt;span class=&quot;nt&quot;&gt;-tst&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-dpms&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; off &lt;span class=&quot;nt&quot;&gt;-fullscreen&lt;/span&gt; &amp;amp;
 
-sleep 3
+&lt;span class=&quot;nb&quot;&gt;sleep &lt;/span&gt;3
 
-# Start openbox and wemeet
-echo &quot;Starting openbox&quot;
-DISPLAY=:114 openbox &amp;amp;
+&lt;span class=&quot;c&quot;&gt;# Start openbox and wemeet&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting openbox&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 openbox &amp;amp;
 
-echo &quot;Starting wemeet&quot;
-DISPLAY=:114 flatpak run com.tencent.wemeet
-```
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Starting wemeet&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;:114 flatpak run com.tencent.wemeet
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
+  &lt;/div&gt;
 &lt;/details&gt;
 
 &lt;p&gt;其中 weston.ini 的内容也是从 x11docker 抄来的：&lt;/p&gt;

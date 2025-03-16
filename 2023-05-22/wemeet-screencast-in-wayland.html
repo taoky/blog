@@ -1555,28 +1555,29 @@ pipewiresrc fd=%d path=%u ! jpegenc ! jpegdec ! videoconvert ! xvimagesink
 
 <details>
 <summary>启动脚本（我自己目前的配置）</summary>
+<div>
 
-```sh
-#!/bin/sh -e
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh -e</span>
 
-# Start xwayland
-echo "Starting Xwayland"
-Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -decorate -geometry 1920x1080 &amp;
+<span class="c"># Start xwayland</span>
+<span class="nb">echo</span> <span class="s2">"Starting Xwayland"</span>
+Xwayland :114 <span class="nt">-ac</span> <span class="nt">-retro</span> +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource <span class="nt">-extension</span> XINERAMA <span class="nt">-xinerama</span> +extension Composite +extension COMPOSITE <span class="nt">-extension</span> XTEST <span class="nt">-tst</span> <span class="nt">-dpms</span> <span class="nt">-s</span> off <span class="nt">-decorate</span> <span class="nt">-geometry</span> 1920x1080 &amp;
 
-echo "Waiting for X server to be ready"
-while ! xdpyinfo -display :114 &gt;/dev/null 2&gt;&1; do
-    sleep 1
-done
+<span class="nb">echo</span> <span class="s2">"Waiting for X server to be ready"</span>
+<span class="k">while</span> <span class="o">!</span> xdpyinfo <span class="nt">-display</span> :114 <span class="o">&gt;</span>/dev/null 2&gt;&amp;1<span class="p">;</span> <span class="k">do
+    </span><span class="nb">sleep </span>1
+<span class="k">done</span>
 
-# Start openbox and wemeet
-echo "Starting openbox"
-DISPLAY=:114 openbox &amp;
-DISPLAY=:114 xcompmgr &amp;
+<span class="c"># Start openbox and wemeet</span>
+<span class="nb">echo</span> <span class="s2">"Starting openbox"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 openbox &amp;
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 xcompmgr &amp;
 
-echo "Starting wemeet"
-DISPLAY=:114 flatpak run com.tencent.wemeet
-```
+<span class="nb">echo</span> <span class="s2">"Starting wemeet"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 flatpak run com.tencent.wemeet
+</code></pre></div>    </div>
 
+  </div>
 </details>
 
 <p><strong>以下 Weston 的版本可能还能用，但是不会再更新。</strong></p>
@@ -1601,30 +1602,31 @@ DISPLAY=:114 flatpak run com.tencent.wemeet
 
 <details>
 <summary>启动脚本（Weston）</summary>
+<div>
 
-```sh
-#!/bin/sh -e
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh -e</span>
 
-# Start weston
-echo "Starting weston"
-weston -c $(pwd)/weston.ini --socket=wayland-114 &amp;
+<span class="c"># Start weston</span>
+<span class="nb">echo</span> <span class="s2">"Starting weston"</span>
+weston <span class="nt">-c</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/weston.ini <span class="nt">--socket</span><span class="o">=</span>wayland-114 &amp;
 
-sleep 3
+<span class="nb">sleep </span>3
 
-# Start xwayland
-echo "Starting Xwayland"
-WAYLAND_DISPLAY=wayland-114 Xwayland :114 -ac -retro +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource -extension XINERAMA -xinerama +extension Composite +extension COMPOSITE -extension XTEST -tst -dpms -s off -fullscreen &amp;
+<span class="c"># Start xwayland</span>
+<span class="nb">echo</span> <span class="s2">"Starting Xwayland"</span>
+<span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-114 Xwayland :114 <span class="nt">-ac</span> <span class="nt">-retro</span> +extension RANDR +extension RENDER +extension GLX +extension XVideo +extension DOUBLE-BUFFER +extension SECURITY +extension DAMAGE +extension X-Resource <span class="nt">-extension</span> XINERAMA <span class="nt">-xinerama</span> +extension Composite +extension COMPOSITE <span class="nt">-extension</span> XTEST <span class="nt">-tst</span> <span class="nt">-dpms</span> <span class="nt">-s</span> off <span class="nt">-fullscreen</span> &amp;
 
-sleep 3
+<span class="nb">sleep </span>3
 
-# Start openbox and wemeet
-echo "Starting openbox"
-DISPLAY=:114 openbox &amp;
+<span class="c"># Start openbox and wemeet</span>
+<span class="nb">echo</span> <span class="s2">"Starting openbox"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 openbox &amp;
 
-echo "Starting wemeet"
-DISPLAY=:114 flatpak run com.tencent.wemeet
-```
+<span class="nb">echo</span> <span class="s2">"Starting wemeet"</span>
+<span class="nv">DISPLAY</span><span class="o">=</span>:114 flatpak run com.tencent.wemeet
+</code></pre></div>    </div>
 
+  </div>
 </details>
 
 <p>其中 weston.ini 的内容也是从 x11docker 抄来的：</p>
