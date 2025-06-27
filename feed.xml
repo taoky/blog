@@ -5,7 +5,7 @@
   
   <link href="https://blog.taoky.moe/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://blog.taoky.moe/" rel="alternate" type="text/html" hreflang="zh" />
-  <updated>2025-06-02T13:45:57+00:00</updated>
+  <updated>2025-06-27T16:10:27+00:00</updated>
   <id>https://blog.taoky.moe//</id>
 
   
@@ -1983,6 +1983,8 @@ Xwayland :114 &lt;span class=&quot;nt&quot;&gt;-ac&lt;/span&gt; &lt;span class=&
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
   &lt;/div&gt;
+
+
 &lt;/details&gt;
 
 &lt;p&gt;&lt;strong&gt;以下 Weston 的版本可能还能用，但是不会再更新。&lt;/strong&gt;&lt;/p&gt;
@@ -2032,6 +2034,8 @@ weston &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;si&
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
   &lt;/div&gt;
+
+
 &lt;/details&gt;
 
 &lt;p&gt;其中 weston.ini 的内容也是从 x11docker 抄来的：&lt;/p&gt;
@@ -8649,6 +8653,8 @@ error: could not compile `executor-threaded` due to previous error
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
 
   &lt;/div&gt;
+
+
 &lt;/details&gt;
 
 &lt;p&gt;搞定。这里给出的仅仅是一个示例，async rust 仍然在快速发展中，希望未来写 async 代码能够和写 sync 代码一样容易。&lt;/p&gt;
