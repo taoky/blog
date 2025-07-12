@@ -694,4 +694,52 @@ em {
   line-height: 1 !important;
 }
 
+.float-btn {
+  position: fixed;
+  bottom: 20px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1abc9c;
+  color: #fff !important;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: background 0.25s, opacity 0.25s;
+}
+
+.float-btn:visited {
+  color: #fff !important;
+}
+
+.float-btn:hover {
+  background: #16a085;
+}
+
+.float-btn:active,
+.float-btn:focus-visible {
+  background: #48c9b0;
+  outline: 3px solid #48c9b0;
+}
+
+.float-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+#btn-toc {
+  left: 20px;
+}
+
+#btn-top {
+  right: 20px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 /*# sourceMappingURL=main.css.map */

@@ -44,7 +44,7 @@
 
   <body>
 
-    <header class="site-header">
+    <header id="_top" class="site-header">
 
   <div class="wrapper">
 
@@ -686,7 +686,7 @@
 
   
   <div class="user-toc">
-    <h3>TOC | 目录</h3>
+    <h3 id="_toc">TOC | 目录</h3>
     <ul id="toc" class="section-nav">
 <li class="toc-entry toc-h2"><a href="#网页服务器与-c10k-问题">网页服务器与 C10K 问题</a>
 <ul>
@@ -976,6 +976,33 @@ this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your pag
 <noscript>Disqus comment requires JavaScript.</a></noscript>
     </div>
   
+
+  
+  <a id="btn-toc" class="float-btn" title="TOC" href="#_toc">
+    <svg xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24" width="20" height="20"
+        aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <path d="M4 6h16"/>
+        <path d="M4 12h16"/>
+        <path d="M4 18h16"/>
+      </g>
+    </svg>
+  </a>
+  
+
+  <a id="btn-top" class="float-btn" title="Back to top" href="#_top">
+    <svg xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24" width="20" height="20"
+        aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <path d="M4 18l8-8 8 8"/>
+        <path d="M4 6h16"/>
+      </g>
+    </svg>
+  </a>
 
 </article>
 
